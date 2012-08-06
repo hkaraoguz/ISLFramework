@@ -38,6 +38,9 @@ private slots:
 
     void on_butSaveNormalAngleHist_clicked();
 
+
+    void on_butRotateCloud_clicked();
+
 private:
     Ui::PclDialog *ui;
 };

@@ -39,6 +39,13 @@ void PclDialog::initializeView(){
 
     ui->lEditCloudFileName->setText("depth_");
 
+    ui->lEditRotationXDeg->setText("0");
+
+    ui->lEditRotationYDeg->setText("0");
+
+    ui->lEditRotationZDeg->setText("0");
+
+    ui->lEditScalePointCloud->setText("1");
 
 
 }
@@ -193,5 +200,10 @@ void PclDialog::on_butSaveNormalAngleHist_clicked()
 
         qDebug()<<"Normals successfully saved!!";
     }
+
+}
+
+void PclDialog::on_butRotateCloud_clicked()
+{
 
 }

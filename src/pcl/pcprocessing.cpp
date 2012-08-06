@@ -65,19 +65,7 @@ bool PCprocessing::loadItem(int itemNumber, sensor_msgs::PointCloud2::Ptr cloud)
    // qDebug()<<"datasetitems:: "<<dataSetItems;
 
 
-    Eigen::Matrix4f yy;
 
-    yy<<cos(M_PI/2), 0, sin(M_PI/2), 0,
-            0, 1, 0, 0,
-            -sin(M_PI/2), 0, cos(M_PI/2), 0,
-            0, 0, 0, 1;
-
-    Eigen::Matrix4f xx;
-
-        xx<<1, 0, 0, 0,
-               0, cos(-M_PI/2), -sin(-M_PI/2), 0,
-               0, sin(-M_PI/2), cos(-M_PI/2), 0,
-               0, 0, 0, 1;
    // Eigen::Affine3f rot;
 
   //  Eigen::Affine3f rotMat = Eigen::AngleAxisf(ss);
@@ -94,7 +82,7 @@ bool PCprocessing::loadItem(int itemNumber, sensor_msgs::PointCloud2::Ptr cloud)
 
     pcl::io::loadPCDFile(itemPath.toStdString(),*cloud);
 
-      pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
+    pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
 
     pcl::fromROSMsg(*cloud,tempCloud);
 
@@ -130,6 +118,26 @@ bool PCprocessing::loadItem(int itemNumber, sensor_msgs::PointCloud2::Ptr cloud)
 
 
 }
+
+void PCprocessing::rotatePointCloud(sensor_msgs::PointCloud2_::Ptr input)
+{
+    Eigen::Matrix4f yy;
+
+    yy<<cos(M_PI/2), 0, sin(M_PI/2), 0,
+            0, 1, 0, 0,
+            -sin(M_PI/2), 0, cos(M_PI/2), 0,
+            0, 0, 0, 1;
+
+    Eigen::Matrix4f xx;
+
+        xx<<1, 0, 0, 0,
+               0, cos(-M_PI/2), -sin(-M_PI/2), 0,
+               0, sin(-M_PI/2), cos(-M_PI/2), 0,
+               0, 0, 0, 1;
+
+
+}
+
 sensor_msgs::PointCloud2::Ptr PCprocessing::getCurrentCloud()
 {
 
