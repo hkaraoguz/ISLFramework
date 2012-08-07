@@ -80,26 +80,17 @@ bool PCprocessing::loadItem(int itemNumber, sensor_msgs::PointCloud2::Ptr cloud)
 
     itemPath.append(dataSetItems.at(itemNumber));
 
-    pcl::io::loadPCDFile(itemPath.toStdString(),*cloud);
+    if( pcl::io::loadPCDFile(itemPath.toStdString(),*cloud) < 0)return false;
+
+    qDebug()<<"Loaded item path: "<<itemPath;
 
     pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
 
     pcl::fromROSMsg(*cloud,tempCloud);
 
-    for(long k = 0; k < tempCloud.width; k++){
-
-        pcl::PointXYZRGB pt =  tempCloud.points[k];
-
-        pt.x = pt.x/1000;
-        pt.y = pt.y/1000;
-        pt.z = pt.z/1000;
-
-        tempCloud.points[k] = pt;
 
 
-    }
-
-        pcl::toROSMsg(tempCloud,*cloud);
+    pcl::toROSMsg(tempCloud,*cloud);
 
 
   //   pcl::transformPointCloud(tempCloud,tempCloud,xx*yy);
@@ -119,21 +110,85 @@ bool PCprocessing::loadItem(int itemNumber, sensor_msgs::PointCloud2::Ptr cloud)
 
 }
 
-void PCprocessing::rotatePointCloud(sensor_msgs::PointCloud2_::Ptr input)
+void PCprocessing::rotatePointCloud(sensor_msgs::PointCloud2::Ptr input, int rotX, int rotY, int rotZ)
 {
     Eigen::Matrix4f yy;
 
-    yy<<cos(M_PI/2), 0, sin(M_PI/2), 0,
+    double xRad = rotX*M_PI/180;
+
+    double yRad = rotY*M_PI/180;
+
+    double zRad = rotZ*M_PI/180;
+
+    yy<<cos(yRad), 0, sin(yRad), 0,
             0, 1, 0, 0,
-            -sin(M_PI/2), 0, cos(M_PI/2), 0,
+            -sin(yRad), 0, cos(yRad), 0,
             0, 0, 0, 1;
 
     Eigen::Matrix4f xx;
 
         xx<<1, 0, 0, 0,
-               0, cos(-M_PI/2), -sin(-M_PI/2), 0,
-               0, sin(-M_PI/2), cos(-M_PI/2), 0,
+               0, cos(xRad), -sin(xRad), 0,
+               0, sin(xRad), cos(xRad), 0,
                0, 0, 0, 1;
+
+
+     Eigen::Matrix4f zz;
+
+     zz<<cos(zRad),-sin(zRad), 0, 0,
+             sin(zRad), cos(zRad), 0, 0,
+                   0, 0, 1, 0,
+                   0, 0, 0, 1;
+
+
+
+        pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
+
+        pcl::fromROSMsg(*input,tempCloud);
+
+
+        pcl::transformPointCloud(tempCloud,tempCloud,xx*yy*zz);
+
+        pcl::toROSMsg(tempCloud,*currentCloud);
+
+
+        viewer->removeAllPointClouds();
+        viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+
+
+        viewer->resetCamera();
+
+}
+void PCprocessing::scalePointCloud(sensor_msgs::PointCloud2::Ptr input, int scale)
+{
+
+    pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
+
+    pcl::fromROSMsg(*input,tempCloud);
+
+
+    for(long k = 0; k < tempCloud.width; k++){
+
+        pcl::PointXYZRGB pt =  tempCloud.points[k];
+
+        pt.x = pt.x/scale;
+        pt.y = pt.y/scale;
+        pt.z = pt.z/scale;
+
+        tempCloud.points[k] = pt;
+
+
+    }
+
+       pcl::toROSMsg(tempCloud,*input);
+
+
+       viewer->removeAllPointClouds();
+       viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+
+
+       viewer->resetCamera();
+
 
 
 }
@@ -296,4 +351,23 @@ bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr no
     file2.close();
 
     return true;
+}
+bool PCprocessing::savePointCloud(int itemNumber){
+
+
+    if(dataSetPath==NULL) return false;
+
+    if(dataSetItems.size() == 0) return false;
+
+    QString itemPath = dataSetPath;
+
+    itemPath.append(dataSetItems.at(itemNumber));
+
+    pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
+
+    pcl::fromROSMsg(*currentCloud,tempCloud);
+
+    pcl::io::savePCDFileBinary(itemPath.toStdString(),tempCloud);
+
+    return false;
 }

@@ -35,6 +35,10 @@ public:
 
      void rotatePointCloud(sensor_msgs::PointCloud2::Ptr input, int rotX, int rotY, int rotZ);
 
+     void scalePointCloud(sensor_msgs::PointCloud2::Ptr input, int scale);
+
+     bool savePointCloud(int itemNumber);
+
 
 
      sensor_msgs::PointCloud2::Ptr getCurrentCloud();

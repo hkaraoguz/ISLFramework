@@ -120,6 +120,19 @@
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="butSavePointCloud">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>160</y>
+      <width>97</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QTabWidget" name="pclFuncTabs">
    <property name="geometry">

@@ -22,6 +22,8 @@ public:
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viwer;
 
     void initializeView();
+
+  //  bool compareNames(const QString& s1,const QString& s2);
     
 private slots:
     void on_butSetDSetPath_clicked();
@@ -40,6 +42,10 @@ private slots:
 
 
     void on_butRotateCloud_clicked();
+
+    void on_butScalePointCloud_clicked();
+
+    void on_butSavePointCloud_clicked();
 
 private:
     Ui::PclDialog *ui;

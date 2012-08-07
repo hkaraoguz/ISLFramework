@@ -5,7 +5,28 @@
 #include <QVTKWidget.h>
 #include <QFileDialog>
 #include <QDir>
+#include <QtAlgorithms>
+
+bool compareNames(const QString& s1,const QString& s2)
+{
+//apply section(),mid() or whatever to take out the integer part and compare
+
+//for example if all the strings are like "userXXX.jpg"
+    QString temp1=s1.section("cloud",1);//temp1=="XXX.jpg";
+   temp1=temp1.section('.',0,0);//temp1=="XXX"
+
+    QString temp2=s2.section("cloud",1);
+    temp2=temp2.section('.',0,0);
+
+     return (temp1.toInt()<temp2.toInt());
+
+//your code would be more complicated than this as u have different file names
+//and filenames may also contain periods(.) more than once
+
+
+}
 PCprocessing temp;
+
 PclDialog::PclDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PclDialog)
@@ -69,13 +90,15 @@ void PclDialog::on_butSetDSetPath_clicked()
 
         QStringList tempList = pathDir.entryList(list/*, QDir::NoDotDot |QDir::NoDot,QDir::Name*/);
 
+        qSort(tempList.begin(),tempList.end(),compareNames);
+
         QStringList sortedList;
 
         for(int i = 0; i < tempList.size(); i++){
 
             QString mm = ui->lEditCloudFileName->text();//"depth_";
 
-            mm.append(QString::number(i+1));
+            mm.append(QString::number(i));
 
             mm.append(".pcd");
 
@@ -84,11 +107,11 @@ void PclDialog::on_butSetDSetPath_clicked()
 
         }
 
-     //   qDebug()<<"Items"<<sortedList;
+        qDebug()<<"Items"<<tempList;
 
         if(tempList.size() != 0){
 
-            PCprocessing::setDataSetItems(sortedList);
+            PCprocessing::setDataSetItems(tempList);
 
             ui->lEditItemNumber->setText(QString::number(0));
 
@@ -111,7 +134,7 @@ void PclDialog::on_butLoadItem_clicked()
 
     int datasetSize = PCprocessing::getNumofItems();
 
-    if(num > 0 && num <= datasetSize){
+    if(num >= 0 && num <= datasetSize){
 
          // pcl::PointCloud<pcl::PointXYZ> ss = temp.getCurrentCloud();
 
@@ -180,8 +203,6 @@ void PclDialog::on_butVoxelGridFilter_clicked()
      ui->qvtkwidget->update();
 
 
-
-
 }
 
 void PclDialog::on_butCalNormals_clicked()
@@ -205,5 +226,37 @@ void PclDialog::on_butSaveNormalAngleHist_clicked()
 
 void PclDialog::on_butRotateCloud_clicked()
 {
+    int rotX = ui->lEditRotationXDeg->text().toInt();
+
+    int rotY = ui->lEditRotationYDeg->text().toInt();
+
+    int rotZ = ui->lEditRotationZDeg->text().toInt();
+
+
+   temp.rotatePointCloud(temp.getCurrentCloud(),rotX,rotY,rotZ);
+
+    ui->qvtkwidget->update();
 
 }
+
+void PclDialog::on_butScalePointCloud_clicked()
+{
+    int scale = ui->lEditScalePointCloud->text().toInt();
+
+    temp.scalePointCloud(temp.getCurrentCloud(),scale);
+
+    ui->qvtkwidget->update();
+
+}
+
+void PclDialog::on_butSavePointCloud_clicked()
+{
+
+    int itemNumber = ui->lEditItemNumber->text().toInt();
+
+    temp.savePointCloud(itemNumber);
+
+}
+
+
+
