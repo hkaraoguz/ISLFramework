@@ -43,7 +43,7 @@ int main(int argc, char **argv){
 
     return app.exec();
 
-
+//ssss
 
 //    cv::Mat img(145,145,CV_8UC1);
 
