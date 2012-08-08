@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BubbleProcessDialog</class>
+ <widget class="QDialog" name="BubbleProcessDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1338</width>
+    <height>538</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1251</width>
+     <height>481</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>1</number>
+   </property>
+   <widget class="QWidget" name="bubbleCreation">
+    <attribute name="title">
+     <string>Bubble Creation</string>
+    </attribute>
+    <widget class="QGroupBox" name="GBox_read3DFiles">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>331</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Read 3D Files</string>
+     </property>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>22</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Root Directory</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Edit_3DFilesRootDir">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>20</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="But_3DFilesSetRootDir">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>19</y>
+        <width>51</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>3D File Extension</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Edit_3DFilesExtension">
+      <property name="geometry">
+       <rect>
+        <x>202</x>
+        <y>48</y>
+        <width>51</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="GBox_writeBubbleFiles">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>331</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Write Bubble Files</string>
+     </property>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>22</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Root Directory</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Edit_writeBubbleFilesRootDir">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>20</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="But_writeBubbleFilesSetRootDir">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>19</y>
+        <width>51</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Bubble File Extension</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Edit_writebubbleFilesExtension">
+      <property name="geometry">
+       <rect>
+        <x>202</x>
+        <y>48</y>
+        <width>51</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>10</y>
+       <width>271</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Options</string>
+     </property>
+     <widget class="QLabel" name="label_11">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>28</y>
+        <width>81</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Pan Angle Limits</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Edit_bubbleCreatorPanLower">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>28</y>
+        <width>51</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Edit_bubbleCreatorPanUpper">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>28</y>
+        <width>51</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_27">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>58</y>
+        <width>81</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Tilt Angle Limits</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Edit_bubbleCreatorTiltLower">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>59</y>
+        <width>51</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Edit_bubbleCreatorTiltUpper">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>59</y>
+        <width>51</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_28">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>88</y>
+        <width>81</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Angle Resolution</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Edit_bubbleCreatorAngleResolution">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>88</y>
+        <width>51</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="ComboBox_bubbleCreatorCoordAxes">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>120</y>
+        <width>69</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>xyz</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>zxy</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="label_97">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>123</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Coordinate Axes</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_98">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>10</y>
+        <width>31</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Lower</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_100">
+      <property name="geometry">
+       <rect>
+        <x>212</x>
+        <y>10</y>
+        <width>31</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Upper</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="bubbleManipulation">
+    <attribute name="title">
+     <string>Bubble Manipulation</string>
+    </attribute>
+    <widget class="QGroupBox" name="GBox_readBubbleFiles">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>411</width>
+       <height>251</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Read Bubble Files</string>
+     </property>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>22</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Root Directory</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Edit_bubbleFilesRootDir">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>20</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="But_bubbleFilesSetRootDir">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>19</y>
+        <width>51</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>151</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Bubble File Extension</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Edit_bubbleFilesExtension">
+      <property name="geometry">
+       <rect>
+        <x>172</x>
+        <y>48</y>
+        <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="But_fetchBubbleFiles">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>80</y>
+        <width>101</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Fetch Bubbles</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="ComboBox_fetchedBubbles">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>80</y>
+        <width>69</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="But_chooseFile">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>50</y>
+        <width>93</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Choose File</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="But_readPoseData">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>120</y>
+        <width>121</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Read Pose Data</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="But_transformBubbles">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>160</y>
+        <width>131</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Transform Bubbles</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="But_calcDiff">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>200</y>
+        <width>131</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Calculate Diff</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Edit_transformSource">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>200</y>
+        <width>31</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="inputMethodHints">
+       <set>Qt::ImhDigitsOnly</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>180</y>
+        <width>101</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Source Bubble</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>180</y>
+        <width>101</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Target Bubble</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="Edit_transformTarget">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>200</y>
+        <width>31</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="inputMethodHints">
+       <set>Qt::ImhDigitsOnly</set>
+      </property>
+     </widget>
+    </widget>
+    <widget class="GLBubbleViewer" name="Widget_BPbubbleViewer" native="true">
+     <property name="geometry">
+      <rect>
+       <x>450</x>
+       <y>10</y>
+       <width>341</width>
+       <height>321</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GLBubbleViewer</class>
+   <extends>QWidget</extends>
+   <header>glbubbleviewer.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

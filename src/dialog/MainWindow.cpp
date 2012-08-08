@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "pcldialog.h"
+#include "bubbleprocessdialog.h"
 
 #include <QtCore/QFile>
 #include <QtGui/QFileDialog>
@@ -208,5 +209,13 @@ void MainWindow::handleRosThreadStart(){
 
      qDebug()<<"Ros thread has started";
 
+
+}
+
+void MainWindow::on_butBubbleProcessing_clicked()
+{
+    BubbleProcessDialog* dlg = new BubbleProcessDialog(this);
+
+    dlg->show();
 
 }

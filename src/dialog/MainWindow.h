@@ -41,6 +41,8 @@ private slots:
     void handleROSStartFailure();
     void handleRosThreadStart();
 
+    void on_butBubbleProcessing_clicked();
+
 private:
     Ui::MainWindow *ui;
     RosThread rosThread;

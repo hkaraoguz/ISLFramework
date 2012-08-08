@@ -27,6 +27,19 @@
      <string>OpenFile</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="butBubbleProcessing">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>10</y>
+      <width>171</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Open Bubble Processing</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>

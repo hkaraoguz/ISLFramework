@@ -7,15 +7,17 @@
 #include <QDir>
 #include <QtAlgorithms>
 
+QString fileNam;
+
 bool compareNames(const QString& s1,const QString& s2)
 {
 //apply section(),mid() or whatever to take out the integer part and compare
 
 //for example if all the strings are like "userXXX.jpg"
-    QString temp1=s1.section("cloud",1);//temp1=="XXX.jpg";
+    QString temp1=s1.section(fileNam,1);//temp1=="XXX.jpg";
    temp1=temp1.section('.',0,0);//temp1=="XXX"
 
-    QString temp2=s2.section("cloud",1);
+    QString temp2=s2.section(fileNam,1);
     temp2=temp2.section('.',0,0);
 
      return (temp1.toInt()<temp2.toInt());
@@ -77,6 +79,8 @@ void PclDialog::on_butSetDSetPath_clicked()
 
     if(path != NULL){
 
+        fileNam = ui->lEditCloudFileName->text();
+
         path.append("/");
 
         PCprocessing::setDataSetPath(path);
@@ -86,6 +90,7 @@ void PclDialog::on_butSetDSetPath_clicked()
 
         QDir pathDir(path);
 
+        // BURAYA DIKKAT ET
         QStringList list("*.pcd");
 
         QStringList tempList = pathDir.entryList(list/*, QDir::NoDotDot |QDir::NoDot,QDir::Name*/);
@@ -94,7 +99,7 @@ void PclDialog::on_butSetDSetPath_clicked()
 
         QStringList sortedList;
 
-        for(int i = 0; i < tempList.size(); i++){
+      /*  for(int i = 0; i < tempList.size(); i++){
 
             QString mm = ui->lEditCloudFileName->text();//"depth_";
 
@@ -105,7 +110,7 @@ void PclDialog::on_butSetDSetPath_clicked()
             sortedList.push_back(mm);
 
 
-        }
+        }*/
 
         qDebug()<<"Items"<<tempList;
 
@@ -134,15 +139,14 @@ void PclDialog::on_butLoadItem_clicked()
 
     int datasetSize = PCprocessing::getNumofItems();
 
-    if(num >= 0 && num <= datasetSize){
+  //  if(num >= 0 && num < datasetSize){
 
          // pcl::PointCloud<pcl::PointXYZ> ss = temp.getCurrentCloud();
 
-          temp.loadItem(num,temp.getCurrentCloud());
+          if(temp.loadItem(num,fileNam,temp.getCurrentCloud()))
+                ui->qvtkwidget->update();
 
-          ui->qvtkwidget->update();
-
-    }
+ //   }
 
 }
 
@@ -155,19 +159,19 @@ void PclDialog::on_butPrevItem_clicked()
 
     int datasetSize = PCprocessing::getNumofItems();
 
-    if(num > 0 && num <= datasetSize){
+   // if(num >= 0 && num < datasetSize){
 
           // pcl::PointCloud<pcl::PointXYZ> ss = temp.getCurrentCloud();
 
-          temp.loadItem(num,temp.getCurrentCloud());
+    if ( temp.loadItem(num,fileNam,temp.getCurrentCloud())){
 
           ui->lEditItemNumber->setText(QString::number(num));
 
           ui->qvtkwidget->update();
 
-
-
     }
+
+  //  }
 
 }
 
@@ -177,21 +181,21 @@ void PclDialog::on_butNextItem_clicked()
 
     num++;
 
-    int datasetSize = PCprocessing::getNumofItems();
+  //  int datasetSize = PCprocessing::getNumofItems();
 
-    if(num > 0 && num <= datasetSize){
+ //   if(num > 0 && num < datasetSize){
 
 
        // pcl::PointCloud<pcl::PointXYZ> ss = temp.getCurrentCloud();
-          temp.loadItem(num,temp.getCurrentCloud());
+    if(temp.loadItem(num, fileNam, temp.getCurrentCloud())){
 
           ui->lEditItemNumber->setText(QString::number(num));
 
           ui->qvtkwidget->update();
 
-
-
     }
+
+  //  }
 
 }
 
@@ -260,3 +264,21 @@ void PclDialog::on_butSavePointCloud_clicked()
 
 
 
+
+void PclDialog::on_lEditCloudFileName_editingFinished()
+{
+    fileNam = ui->lEditCloudFileName->text();
+}
+
+void PclDialog::on_butApplyTransformationtoAll_clicked()
+{
+    for(int i = 0; i < 3; i++){
+
+        ui->butNextItem->click();
+        ui->butScalePointCloud->click();
+        ui->butRotateCloud->click();
+        ui->butSavePointCloud->click();
+
+    }
+
+}

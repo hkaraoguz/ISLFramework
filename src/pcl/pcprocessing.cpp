@@ -60,7 +60,7 @@ void PCprocessing::setViewer(boost::shared_ptr<pcl::visualization::PCLVisualizer
     viewer = viwer;
 
 }
-bool PCprocessing::loadItem(int itemNumber, sensor_msgs::PointCloud2::Ptr cloud)
+bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::PointCloud2::Ptr cloud)
 {
    // qDebug()<<"datasetitems:: "<<dataSetItems;
 
@@ -74,11 +74,21 @@ bool PCprocessing::loadItem(int itemNumber, sensor_msgs::PointCloud2::Ptr cloud)
 
     if(dataSetPath==NULL) return false;
 
-    if(dataSetItems.size() == 0) return false;
+  //  if(dataSetItems.size() == 0) return false;
 
     QString itemPath = dataSetPath;
 
-    itemPath.append(dataSetItems.at(itemNumber));
+    itemPath.append(fileName);
+
+    QString ss;
+
+    ss.setNum(itemNumber);
+
+    itemPath.append(ss);
+
+    itemPath.append(".pcd");
+
+   // itemPath.append(dataSetItems.at(itemNumber));
 
     if( pcl::io::loadPCDFile(itemPath.toStdString(),*cloud) < 0)return false;
 
@@ -361,7 +371,11 @@ bool PCprocessing::savePointCloud(int itemNumber){
 
     QString itemPath = dataSetPath;
 
+    itemPath.append("n");
+
     itemPath.append(dataSetItems.at(itemNumber));
+
+    qDebug()<<itemPath;
 
     pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
 

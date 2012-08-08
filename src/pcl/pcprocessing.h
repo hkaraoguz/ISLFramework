@@ -25,7 +25,7 @@ public:
 
    // void applyVoxelGridFilter(pcl::PointCloud<pcl::PointXYZ>::Ptr input);
 
-     bool loadItem(int itemNumber,sensor_msgs::PointCloud2::Ptr cloud);
+     bool loadItem(int itemNumber, QString fileName, sensor_msgs::PointCloud2::Ptr cloud);
 
      void applyVoxelGridFilter(sensor_msgs::PointCloud2::Ptr input);
 

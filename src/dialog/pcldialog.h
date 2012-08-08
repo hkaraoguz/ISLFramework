@@ -47,6 +47,10 @@ private slots:
 
     void on_butSavePointCloud_clicked();
 
+    void on_lEditCloudFileName_editingFinished();
+
+    void on_butApplyTransformationtoAll_clicked();
+
 private:
     Ui::PclDialog *ui;
 };
