@@ -1,6 +1,7 @@
 #include "pcldialog.h"
 #include "ui_pcldialog.h"
 #include "pcprocessing.h"
+#include "bubbleprocess.h"
 #include <QDebug>
 #include <QVTKWidget.h>
 #include <QFileDialog>
@@ -90,8 +91,12 @@ void PclDialog::on_butSetDSetPath_clicked()
 
         QDir pathDir(path);
 
+        QString ss = fileNam;
+
+        ss.append("*.pcd");
+
         // BURAYA DIKKAT ET
-        QStringList list("*.pcd");
+        QStringList list(ss);
 
         QStringList tempList = pathDir.entryList(list/*, QDir::NoDotDot |QDir::NoDot,QDir::Name*/);
 
@@ -258,7 +263,7 @@ void PclDialog::on_butSavePointCloud_clicked()
 
     int itemNumber = ui->lEditItemNumber->text().toInt();
 
-    temp.savePointCloud(itemNumber);
+    temp.savePointCloud(itemNumber,fileNam);
 
 }
 
@@ -272,13 +277,82 @@ void PclDialog::on_lEditCloudFileName_editingFinished()
 
 void PclDialog::on_butApplyTransformationtoAll_clicked()
 {
-    for(int i = 0; i < 3; i++){
+    int size = temp.getNumofItems();
 
-        ui->butNextItem->click();
-        ui->butScalePointCloud->click();
-        ui->butRotateCloud->click();
-        ui->butSavePointCloud->click();
+    int start = ui->lEditDatasetStart->text().toInt();
+
+    int endd = ui->lEditDatasetEnd->text().toInt();
+
+    for(int i = start; i < endd; i++){
+
+        if(temp.loadItem(i, fileNam, temp.getCurrentCloud()))
+        {
+
+            ui->butScalePointCloud->click();
+            ui->butRotateCloud->click();
+
+            temp.savePointCloud(i,fileNam);
+        }
+
+
+      //  ui->butSavePointCloud->click();
+
+      //  ui->butNextItem->click();
 
     }
+
+}
+
+void PclDialog::on_butGeneratePointCloudBubble_clicked()
+{
+   std::vector<bubblePointXYZ> bubble;
+
+
+
+   sensor_msgs::PointCloud2::Ptr cloud = temp.getCurrentCloud();
+
+   pcl::PointCloud<pcl::PointXYZRGB> normalCloud;
+
+   pcl::fromROSMsg(*cloud,normalCloud);
+
+   for(unsigned int i = 0; i < normalCloud.points.size(); i++){
+
+        bubblePointXYZ pt;
+
+        pt.x = normalCloud.points.at(i).x;
+        pt.y = normalCloud.points.at(i).y;
+        pt.z = normalCloud.points.at(i).z;
+
+        bubble.push_back(pt);
+
+   }
+
+   vector<bubblePoint> sphBubble = bubbleProcess::convertBubXYZ2BubSpherical(bubble,5.6);
+
+   vector<bubblePoint> sphRedBubble = bubbleProcess::reduceBubble(sphBubble);
+
+   QString pathh = temp.getDataSetPath();
+
+
+
+   pathh.append("bubble_");
+   pathh.append(ui->lEditItemNumber->text());
+   pathh.append(".m");
+
+   QFile file(pathh);
+
+   if(file.open(QFile::WriteOnly))
+   {
+
+        bubbleProcess::saveBubble(&file,sphRedBubble);
+
+         file.close();
+
+   }
+
+
+
+
+
 
 }

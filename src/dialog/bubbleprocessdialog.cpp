@@ -207,6 +207,39 @@ void BubbleProcessDialog::on_But_fetchBubbleFiles_clicked()
 
 
     }
+    else{
+
+        QString path = rootPath;
+
+        // Create the path: "path/folder/"
+        path.append("/");
+
+        QStringList fileList = bubbleProcess::getBubblesFileList();
+
+        if(fileList.size()>0){
+
+            for(int i = 0; i < fileList.size(); i++){
+
+                QString totPath = path.append(fileList.at(i));
+
+                qDebug()<<"Total Path is: "<<totPath;
+
+
+                QFile file(totPath);
+
+                if(file.open(QFile::ReadOnly)){
+
+                    vector<bubblePoint> aBubb =  bubbleProcess::readBubble(&file);
+
+                    readBubbles.push_back(aBubb);
+                }
+            }
+
+        }
+
+
+
+    }
 
     bubbleProcess::setBubbles(readBubbles);
 
@@ -358,7 +391,7 @@ void BubbleProcessDialog::on_But_transformBubbles_clicked()
 
     for(unsigned int i = 0; i < bubbles.size()-1; i++){
 
-        vector<bubblePointXYZ> bubbleXYZ =  bubbleProcess::convertBubSph2BubXYZ(bubbles[i]);
+        vector<bubblePointXYZ> bubbleXYZ =  bubbleProcess::convertBubSph2BubXYZ(bubbles[i],15);
 
         positionData diff;
 
@@ -410,7 +443,7 @@ void BubbleProcessDialog::on_But_calcDiff_clicked()
 
    //  vector < vector <bubblePoint> > transformedBubbles;
 
-        vector<bubblePointXYZ> bubbleXYZ =  bubbleProcess::convertBubSph2BubXYZ(bubbles[source]);
+        vector<bubblePointXYZ> bubbleXYZ =  bubbleProcess::convertBubSph2BubXYZ(bubbles[source],15);
 
         positionData diff;
 

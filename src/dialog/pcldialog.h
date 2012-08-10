@@ -51,6 +51,8 @@ private slots:
 
     void on_butApplyTransformationtoAll_clicked();
 
+    void on_butGeneratePointCloudBubble_clicked();
+
 private:
     Ui::PclDialog *ui;
 };

@@ -13,8 +13,8 @@ public:
     double theta; // laser beam angle in radians
     double phi; // tilt angle (pantilt System)
     double rho; //pan angle (pantilt System)
-        double x;
-        double y;
+    double x;
+    double y;
     double z;
 
     QRgb color;
@@ -140,12 +140,15 @@ public:
 	static vector<bubblePoint> readBubble(QFile* file); 
 
 	// Converts bubble in XYZ coordinates to a bubble in spherical coordinates
-	static vector<bubblePoint> convertBubXYZ2BubSpherical(vector<point> bubbleXYZ);
+    static vector<bubblePoint> convertBubXYZ2BubSpherical(vector<point> bubbleXYZ, double maxRange);
+
+    // Converts bubble in XYZ coordinates to a bubble in spherical coordinates
+    static vector<bubblePoint> convertBubXYZ2BubSpherical(vector<bubblePointXYZ> bubbleXYZ, double maxRange);
 
 	// Converts bubble in XYZ coordinates to a bubble in spherical coordinates including heading information
-	static vector<bubblePoint> convertBubXYZ2BubSpherical(vector<point> bubbleXYZ, int heading);
+    static vector<bubblePoint> convertBubXYZ2BubSpherical(vector<point> bubbleXYZ, int heading, double maxRange);
 
-    static vector<bubblePointXYZ> convertBubSph2BubXYZ(vector <bubblePoint> bubble);
+    static vector<bubblePointXYZ> convertBubSph2BubXYZ(vector <bubblePoint> bubble, double maxRange);
 
 private:
 	

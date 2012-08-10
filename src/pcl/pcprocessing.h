@@ -16,6 +16,7 @@ public:
     PCprocessing();
 
     static void setDataSetPath(QString dir);
+    static QString getDataSetPath();
     static void setDataSetItems(QStringList items);
     static int getNumofItems();
 
@@ -37,7 +38,7 @@ public:
 
      void scalePointCloud(sensor_msgs::PointCloud2::Ptr input, int scale);
 
-     bool savePointCloud(int itemNumber);
+     bool savePointCloud(int itemNumber, QString fileName);
 
 
 

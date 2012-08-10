@@ -31,6 +31,11 @@ void PCprocessing::setDataSetPath(QString dir){
     dataSetPath = dir;
 
 }
+QString PCprocessing::getDataSetPath(){
+
+    return dataSetPath;
+
+}
 void PCprocessing::setDataSetItems(QStringList items){
 
     if(dataSetItems.size() > 0){
@@ -362,7 +367,7 @@ bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr no
 
     return true;
 }
-bool PCprocessing::savePointCloud(int itemNumber){
+bool PCprocessing::savePointCloud(int itemNumber, QString fileName){
 
 
     if(dataSetPath==NULL) return false;
@@ -373,7 +378,17 @@ bool PCprocessing::savePointCloud(int itemNumber){
 
     itemPath.append("n");
 
-    itemPath.append(dataSetItems.at(itemNumber));
+    itemPath.append(fileName);
+
+    QString ss;
+
+    ss.setNum(itemNumber);
+
+    itemPath.append(ss);
+
+    itemPath.append(".pcd");
+
+   // itemPath.append(dataSetItems.at(itemNumber));
 
     qDebug()<<itemPath;
 

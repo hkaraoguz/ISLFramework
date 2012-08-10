@@ -193,10 +193,47 @@ vector<bubblePoint> bubbleProcess::readBubble(QFile *file){
 	return result;
 
 }
+vector<bubblePoint> bubbleProcess::convertBubXYZ2BubSpherical(std::vector<bubblePointXYZ> bubbleXYZ, double maxRange){
+
+    // create the result vector
+    vector<bubblePoint> result;
+
+    // for all the points in XYZ bubble
+    for(int i = 0; i < bubbleXYZ.size(); i++){
+
+        bubblePoint bp;
+
+        // Calculate panAngle
+        bp.panAng = (int)round(((atan2(bubbleXYZ[i].y, bubbleXYZ[i].x))*(double)180/3.14159));
+
+        if(bp.panAng < 0)bp.panAng += 360;
+        else if(bp.panAng > 359) bp.panAng -=360;
+        // Calculate the magnitude of XY projection of the laser ray
+        double rXY = sqrt(bubbleXYZ[i].y*bubbleXYZ[i].y + bubbleXYZ[i].x*bubbleXYZ[i].x);
+
+        // Calculate the tilt angle
+        bp.tiltAng = (int)round(((atan2(bubbleXYZ[i].z, rXY))*(double)180/3.14159));
+
+        if(bp.tiltAng < 0)bp.tiltAng += 360;
+        else if(bp.tiltAng > 359) bp.tiltAng -=360;
+
+        // Calculate the r value and normalize it
+        bp.val = (float)sqrt(bubbleXYZ[i].y*bubbleXYZ[i].y + bubbleXYZ[i].x*bubbleXYZ[i].x + bubbleXYZ[i].z*bubbleXYZ[i].z)/maxRange;
+
+        result.push_back(bp);
+
+    }
+
+    // return resulting bubble
+    return result;
+
+
+
+}
 
 
 // Converts a bubble in XYZ space to a bubble in Spherical coordinates
-vector<bubblePoint> bubbleProcess::convertBubXYZ2BubSpherical(std::vector<point> bubbleXYZ){
+vector<bubblePoint> bubbleProcess::convertBubXYZ2BubSpherical(std::vector<point> bubbleXYZ, double maxRange){
 	
 	// create the result vector
 	vector<bubblePoint> result;
@@ -208,15 +245,20 @@ vector<bubblePoint> bubbleProcess::convertBubXYZ2BubSpherical(std::vector<point>
 		
 		// Calculate panAngle
 		bp.panAng = (int)round(((atan2(bubbleXYZ[i].y, bubbleXYZ[i].x))*(double)180/3.14159));
-		
+
+        if(bp.panAng < 0)bp.panAng += 360;
+        else if(bp.panAng > 359) bp.panAng -=360;
 		// Calculate the magnitude of XY projection of the laser ray
 		double rXY = sqrt(bubbleXYZ[i].y*bubbleXYZ[i].y + bubbleXYZ[i].x*bubbleXYZ[i].x);
 
 		// Calculate the tilt angle
 		bp.tiltAng = (int)round(((atan2(bubbleXYZ[i].z, rXY))*(double)180/3.14159));
 
+        if(bp.tiltAng < 0)bp.tiltAng += 360;
+        else if(bp.tiltAng > 359) bp.tiltAng -=360;
+
 		// Calculate the r value and normalize it 
-		bp.val = (float)sqrt(bubbleXYZ[i].y*bubbleXYZ[i].y + bubbleXYZ[i].x*bubbleXYZ[i].x + bubbleXYZ[i].z*bubbleXYZ[i].z)/6000;
+        bp.val = (float)sqrt(bubbleXYZ[i].y*bubbleXYZ[i].y + bubbleXYZ[i].x*bubbleXYZ[i].x + bubbleXYZ[i].z*bubbleXYZ[i].z)/maxRange;
 
 		result.push_back(bp);
 	
@@ -226,7 +268,7 @@ vector<bubblePoint> bubbleProcess::convertBubXYZ2BubSpherical(std::vector<point>
 	return result;
 
 }
-vector<bubblePoint> bubbleProcess::convertBubXYZ2BubSpherical(std::vector<point> bubbleXYZ, int heading){
+vector<bubblePoint> bubbleProcess::convertBubXYZ2BubSpherical(std::vector<point> bubbleXYZ, int heading, double maxRange){
 	
 	vector<bubblePoint> result;
 
@@ -240,7 +282,7 @@ vector<bubblePoint> bubbleProcess::convertBubXYZ2BubSpherical(std::vector<point>
 
 		bp.tiltAng = (int)round(((atan2(bubbleXYZ[i].z, rXY))*(double)180/3.14159));
 
-		bp.val = (float)sqrt(bubbleXYZ[i].y*bubbleXYZ[i].y + bubbleXYZ[i].x*bubbleXYZ[i].x + bubbleXYZ[i].z*bubbleXYZ[i].z)/6000;
+        bp.val = (float)sqrt(bubbleXYZ[i].y*bubbleXYZ[i].y + bubbleXYZ[i].x*bubbleXYZ[i].x + bubbleXYZ[i].z*bubbleXYZ[i].z)/maxRange;
 
 		result.push_back(bp);
 	
@@ -337,7 +379,7 @@ void bubbleProcess::saveBubble(QFile *file, std::vector<bubblePoint> bubble){
 
 
 }
-vector <bubblePointXYZ> bubbleProcess::convertBubSph2BubXYZ(vector<bubblePoint> bubble)
+vector <bubblePointXYZ> bubbleProcess::convertBubSph2BubXYZ(vector<bubblePoint> bubble, double maxRange)
 {
 
     vector <bubblePointXYZ> result;
@@ -352,9 +394,9 @@ vector <bubblePointXYZ> bubbleProcess::convertBubSph2BubXYZ(vector<bubblePoint> 
 
         float val = bubble[i].val;
 
-        pt.z = val*15*sin((float)tilt*3.14159/180);
+        pt.z = val*maxRange*sin((float)tilt*3.14159/180);
 
-        float xy =  val*15*cos((float)tilt*3.14159/180);
+        float xy =  val*maxRange*cos((float)tilt*3.14159/180);
 
         pt.x = xy*cos((float)pan*3.14159/180);
 
