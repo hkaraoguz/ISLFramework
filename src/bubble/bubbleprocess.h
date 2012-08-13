@@ -67,6 +67,10 @@ public:
     
 	bubbleProcess();
 
+    static void calculateDFCoefficients(std::vector <bubblePoint> bubble, QString path, int itemNo);
+
+    static void calculateInvariants(std::vector <bubblePoint> bubble, QString path, int itemNo);
+
     static std::vector<double> calculateEuclideanDiff(vector <bubblePoint> bubble1, vector <bubblePoint> bubble2);
 
     void setBubblesXYZ( std::vector< std::vector<bubblePointXYZ> > bubblesXYZ);

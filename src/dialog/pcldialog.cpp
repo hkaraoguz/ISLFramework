@@ -71,6 +71,16 @@ void PclDialog::initializeView(){
 
     ui->lEditScalePointCloud->setText("1");
 
+    ui->lEditDatasetStart->setText("1");
+
+    ui->lEditDatasetEnd->setText("2");
+
+    ui->lEditCloudMaxRange->setText("6");
+
+
+
+
+
 
 }
 
@@ -307,8 +317,6 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
 {
    std::vector<bubblePointXYZ> bubble;
 
-
-
    sensor_msgs::PointCloud2::Ptr cloud = temp.getCurrentCloud();
 
    pcl::PointCloud<pcl::PointXYZRGB> normalCloud;
@@ -327,7 +335,9 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
 
    }
 
-   vector<bubblePoint> sphBubble = bubbleProcess::convertBubXYZ2BubSpherical(bubble,5.6);
+   double maxRangeMeters = ui->lEditCloudMaxRange->text().toDouble();
+
+   vector<bubblePoint> sphBubble = bubbleProcess::convertBubXYZ2BubSpherical(bubble,maxRangeMeters);
 
    vector<bubblePoint> sphRedBubble = bubbleProcess::reduceBubble(sphBubble);
 
@@ -350,9 +360,82 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
 
    }
 
+   int itemNo = ui->lEditItemNumber->text().toInt();
+
+   qDebug()<<"Item no: "<<itemNo<<"\n";
+
+    bubbleProcess::calculateDFCoefficients(sphRedBubble,temp.getDataSetPath(),itemNo);
 
 
 
+}
+
+void PclDialog::on_butGeneratePointCloudBubbles_clicked()
+{
+    //  double maxRangeMeters = ui->lEditCloudMaxRange->text().toDouble();
 
 
+    int start = ui->lEditDatasetStart->text().toInt();
+
+    int endd = ui->lEditDatasetEnd->text().toInt();
+
+    for(int i = start; i < endd; i++){
+
+        if(temp.loadItem(i, fileNam, temp.getCurrentCloud()))
+        {
+
+
+
+            std::vector<bubblePointXYZ> bubble;
+
+            sensor_msgs::PointCloud2::Ptr cloud = temp.getCurrentCloud();
+
+            pcl::PointCloud<pcl::PointXYZRGB> normalCloud;
+
+            pcl::fromROSMsg(*cloud,normalCloud);
+
+            for(unsigned int i = 0; i < normalCloud.points.size(); i++){
+
+                bubblePointXYZ pt;
+
+                pt.x = normalCloud.points.at(i).x;
+                pt.y = normalCloud.points.at(i).y;
+                pt.z = normalCloud.points.at(i).z;
+
+                bubble.push_back(pt);
+
+            }
+
+            double maxRangeMeters = ui->lEditCloudMaxRange->text().toDouble();
+
+            vector<bubblePoint> sphBubble = bubbleProcess::convertBubXYZ2BubSpherical(bubble,maxRangeMeters);
+
+            vector<bubblePoint> sphRedBubble = bubbleProcess::reduceBubble(sphBubble);
+
+            QString pathh = temp.getDataSetPath();
+
+            pathh.append("bubble_");
+
+            QString ss;
+
+            ss.setNum(i);
+
+            pathh.append(ss);
+            pathh.append(".m");
+
+            QFile file(pathh);
+
+            qDebug()<<"Bubble path is: "<<pathh;
+
+            if(file.open(QFile::WriteOnly))
+            {
+
+                bubbleProcess::saveBubble(&file,sphRedBubble);
+
+                file.close();
+
+            }
+
+        }
+    }
 }

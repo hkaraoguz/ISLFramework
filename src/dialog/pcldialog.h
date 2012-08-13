@@ -53,6 +53,8 @@ private slots:
 
     void on_butGeneratePointCloudBubble_clicked();
 
+    void on_butGeneratePointCloudBubbles_clicked();
+
 private:
     Ui::PclDialog *ui;
 };
