@@ -162,9 +162,11 @@ vector<bubblePoint> bubbleProcess::readBubble(QFile *file){
 
 	vector<bubblePoint> result;
 
+    if(!file->isOpen()) return result;
+
+
     QString line = stream.readLine();
 
-	if(!file->isOpen()) return result;
 
     while(line != NULL)
 	{

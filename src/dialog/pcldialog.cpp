@@ -12,19 +12,19 @@ QString fileNam;
 
 bool compareNames(const QString& s1,const QString& s2)
 {
-//apply section(),mid() or whatever to take out the integer part and compare
+    //apply section(),mid() or whatever to take out the integer part and compare
 
-//for example if all the strings are like "userXXX.jpg"
+    //for example if all the strings are like "userXXX.jpg"
     QString temp1=s1.section(fileNam,1);//temp1=="XXX.jpg";
-   temp1=temp1.section('.',0,0);//temp1=="XXX"
+    temp1=temp1.section('.',0,0);//temp1=="XXX"
 
     QString temp2=s2.section(fileNam,1);
     temp2=temp2.section('.',0,0);
 
-     return (temp1.toInt()<temp2.toInt());
+    return (temp1.toInt()<temp2.toInt());
 
-//your code would be more complicated than this as u have different file names
-//and filenames may also contain periods(.) more than once
+    //your code would be more complicated than this as u have different file names
+    //and filenames may also contain periods(.) more than once
 
 
 }
@@ -37,20 +37,20 @@ PclDialog::PclDialog(QWidget *parent) :
     ui->setupUi(this);
 
     // This is the visualizer that is embedded inside qVTKWidget
-     viwer = boost::shared_ptr<pcl::visualization::PCLVisualizer>(new pcl::visualization::PCLVisualizer ("3D Viewer",false));
+    viwer = boost::shared_ptr<pcl::visualization::PCLVisualizer>(new pcl::visualization::PCLVisualizer ("3D Viewer",false));
 
-     vtkSmartPointer<vtkRenderWindow> renderWindow = viwer->getRenderWindow();
+    vtkSmartPointer<vtkRenderWindow> renderWindow = viwer->getRenderWindow();
 
-     ui->qvtkwidget->SetRenderWindow(renderWindow);
+    ui->qvtkwidget->SetRenderWindow(renderWindow);
 
-      viwer->setBackgroundColor (0, 0, 0);
-      viwer->addCoordinateSystem (1.0);
-      viwer->initCameraParameters ();
+    viwer->setBackgroundColor (0, 0, 0);
+    viwer->addCoordinateSystem (1.0);
+    viwer->initCameraParameters ();
 
-      // Set the viewer of the point cloud processing class
-      PCprocessing::setViewer(this->viwer);
+    // Set the viewer of the point cloud processing class
+    PCprocessing::setViewer(this->viwer);
 
-      this->initializeView();
+    this->initializeView();
 
 
 }
@@ -114,7 +114,7 @@ void PclDialog::on_butSetDSetPath_clicked()
 
         QStringList sortedList;
 
-      /*  for(int i = 0; i < tempList.size(); i++){
+        /*  for(int i = 0; i < tempList.size(); i++){
 
             QString mm = ui->lEditCloudFileName->text();//"depth_";
 
@@ -140,9 +140,9 @@ void PclDialog::on_butSetDSetPath_clicked()
 
 
 
-      //  PCprocessing temp;
+        //  PCprocessing temp;
 
-     //   temp.loadItem(181);
+        //   temp.loadItem(181);
 
 
     }
@@ -154,14 +154,14 @@ void PclDialog::on_butLoadItem_clicked()
 
     int datasetSize = PCprocessing::getNumofItems();
 
-  //  if(num >= 0 && num < datasetSize){
+    //  if(num >= 0 && num < datasetSize){
 
-         // pcl::PointCloud<pcl::PointXYZ> ss = temp.getCurrentCloud();
+    // pcl::PointCloud<pcl::PointXYZ> ss = temp.getCurrentCloud();
 
-          if(temp.loadItem(num,fileNam,temp.getCurrentCloud()))
-                ui->qvtkwidget->update();
+    if(temp.loadItem(num,fileNam,temp.getCurrentCloud()))
+        ui->qvtkwidget->update();
 
- //   }
+    //   }
 
 }
 
@@ -174,19 +174,19 @@ void PclDialog::on_butPrevItem_clicked()
 
     int datasetSize = PCprocessing::getNumofItems();
 
-   // if(num >= 0 && num < datasetSize){
+    // if(num >= 0 && num < datasetSize){
 
-          // pcl::PointCloud<pcl::PointXYZ> ss = temp.getCurrentCloud();
+    // pcl::PointCloud<pcl::PointXYZ> ss = temp.getCurrentCloud();
 
     if ( temp.loadItem(num,fileNam,temp.getCurrentCloud())){
 
-          ui->lEditItemNumber->setText(QString::number(num));
+        ui->lEditItemNumber->setText(QString::number(num));
 
-          ui->qvtkwidget->update();
+        ui->qvtkwidget->update();
 
     }
 
-  //  }
+    //  }
 
 }
 
@@ -196,21 +196,21 @@ void PclDialog::on_butNextItem_clicked()
 
     num++;
 
-  //  int datasetSize = PCprocessing::getNumofItems();
+    //  int datasetSize = PCprocessing::getNumofItems();
 
- //   if(num > 0 && num < datasetSize){
+    //   if(num > 0 && num < datasetSize){
 
 
-       // pcl::PointCloud<pcl::PointXYZ> ss = temp.getCurrentCloud();
+    // pcl::PointCloud<pcl::PointXYZ> ss = temp.getCurrentCloud();
     if(temp.loadItem(num, fileNam, temp.getCurrentCloud())){
 
-          ui->lEditItemNumber->setText(QString::number(num));
+        ui->lEditItemNumber->setText(QString::number(num));
 
-          ui->qvtkwidget->update();
+        ui->qvtkwidget->update();
 
     }
 
-  //  }
+    //  }
 
 }
 
@@ -219,7 +219,7 @@ void PclDialog::on_butVoxelGridFilter_clicked()
 
     temp.applyVoxelGridFilter(temp.getCurrentCloud());
 
-     ui->qvtkwidget->update();
+    ui->qvtkwidget->update();
 
 
 }
@@ -252,7 +252,7 @@ void PclDialog::on_butRotateCloud_clicked()
     int rotZ = ui->lEditRotationZDeg->text().toInt();
 
 
-   temp.rotatePointCloud(temp.getCurrentCloud(),rotX,rotY,rotZ);
+    temp.rotatePointCloud(temp.getCurrentCloud(),rotX,rotY,rotZ);
 
     ui->qvtkwidget->update();
 
@@ -305,9 +305,9 @@ void PclDialog::on_butApplyTransformationtoAll_clicked()
         }
 
 
-      //  ui->butSavePointCloud->click();
+        //  ui->butSavePointCloud->click();
 
-      //  ui->butNextItem->click();
+        //  ui->butNextItem->click();
 
     }
 
@@ -315,15 +315,15 @@ void PclDialog::on_butApplyTransformationtoAll_clicked()
 
 void PclDialog::on_butGeneratePointCloudBubble_clicked()
 {
-   std::vector<bubblePointXYZ> bubble;
+    std::vector<bubblePointXYZ> bubble;
 
-   sensor_msgs::PointCloud2::Ptr cloud = temp.getCurrentCloud();
+    sensor_msgs::PointCloud2::Ptr cloud = temp.getCurrentCloud();
 
-   pcl::PointCloud<pcl::PointXYZRGB> normalCloud;
+    pcl::PointCloud<pcl::PointXYZRGB> normalCloud;
 
-   pcl::fromROSMsg(*cloud,normalCloud);
+    pcl::fromROSMsg(*cloud,normalCloud);
 
-   for(unsigned int i = 0; i < normalCloud.points.size(); i++){
+    for(unsigned int i = 0; i < normalCloud.points.size(); i++){
 
         bubblePointXYZ pt;
 
@@ -333,40 +333,40 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
 
         bubble.push_back(pt);
 
-   }
+    }
 
-   double maxRangeMeters = ui->lEditCloudMaxRange->text().toDouble();
+    double maxRangeMeters = ui->lEditCloudMaxRange->text().toDouble();
 
-   vector<bubblePoint> sphBubble = bubbleProcess::convertBubXYZ2BubSpherical(bubble,maxRangeMeters);
+    vector<bubblePoint> sphBubble = bubbleProcess::convertBubXYZ2BubSpherical(bubble,maxRangeMeters);
 
-   vector<bubblePoint> sphRedBubble = bubbleProcess::reduceBubble(sphBubble);
+    vector<bubblePoint> sphRedBubble = bubbleProcess::reduceBubble(sphBubble);
 
-   QString pathh = temp.getDataSetPath();
+    QString pathh = temp.getDataSetPath();
 
 
 
-   pathh.append("bubble_");
-   pathh.append(ui->lEditItemNumber->text());
-   pathh.append(".m");
+    pathh.append("bubble_");
+    pathh.append(ui->lEditItemNumber->text());
+    pathh.append(".m");
 
-   QFile file(pathh);
+    QFile file(pathh);
 
-   if(file.open(QFile::WriteOnly))
-   {
+    if(file.open(QFile::WriteOnly))
+    {
 
         bubbleProcess::saveBubble(&file,sphRedBubble);
 
-         file.close();
+        file.close();
 
-   }
+    }
 
-   int itemNo = ui->lEditItemNumber->text().toInt();
+    int itemNo = ui->lEditItemNumber->text().toInt();
 
-   qDebug()<<"Item no: "<<itemNo<<"\n";
+    qDebug()<<"Item no: "<<itemNo<<"\n";
 
     bubbleProcess::calculateDFCoefficients(sphRedBubble,temp.getDataSetPath(),itemNo);
 
-
+    bubbleProcess::calculateInvariants(sphRedBubble,temp.getDataSetPath(),itemNo);
 
 }
 
@@ -438,4 +438,45 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 
         }
     }
+}
+
+void PclDialog::on_butCalculateBubbleInvariants_clicked()
+{
+    int start = ui->lEditDatasetStart->text().toInt();
+
+    int endd = ui->lEditDatasetEnd->text().toInt();
+
+    for(int i = start; i < endd; i++){
+
+        QString pathh = temp.getDataSetPath();
+
+        pathh.append("bubble_");
+
+        QString ss;
+
+        ss.setNum(i);
+
+        pathh.append(ss);
+        pathh.append(".m");
+
+        QFile file(pathh);
+
+        qDebug()<<"Bubble path is: "<<pathh;
+
+        if(file.open(QFile::ReadOnly))
+        {
+
+            vector<bubblePoint> bubble =  bubbleProcess::readBubble(&file);
+
+            bubbleProcess::calculateDFCoefficients(bubble,temp.getDataSetPath(),i);
+
+            bubbleProcess::calculateInvariants(bubble,temp.getDataSetPath(),i);
+
+            file.close();
+        }
+
+
+    }
+
+
 }
