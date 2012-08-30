@@ -70,7 +70,7 @@ void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize)
     file.close();
 
 
-  //  cv::transpose(filterOrg,filterOrg);
+    cv::transpose(filterOrg,filterOrg);
 
     cv::convertScaleAbs(filterOrg,filter,128,128);
 

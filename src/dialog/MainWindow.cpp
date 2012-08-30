@@ -80,7 +80,7 @@ void MainWindow::on_openFileButton_clicked()
 {
     QString fileName = "/home/hakan/Downloads/tekImge_CV2_1/filtreler/filtre";
 
-    QString filterType = "h";
+    QString filterType = "v";
 
     ImageProcess::readFilter(fileName,18,29);
 

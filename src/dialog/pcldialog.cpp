@@ -366,14 +366,14 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
 
     qDebug()<<"Item no: "<<itemNo<<"\n";
 
-    bubbleProcess::calculateDFCoefficients(sphRedBubble,temp.getDataSetPath(),"",itemNo);
+    bubbleProcess::calculateDFCoefficients(sphRedBubble,temp.getDataSetPath(),"",itemNo,30,30);
 
 
   //  QString inputBubbleName = ui->lEditInputBubbleName->text();
 
     QString outputFileName =  ui->lEditOutputInvName->text();
 
-    bubbleProcess::calculateInvariants(sphRedBubble,temp.getDataSetPath(),outputFileName,itemNo);
+    bubbleProcess::calculateInvariants(sphRedBubble,temp.getDataSetPath(),outputFileName,itemNo,30,30);
 
 }
 
@@ -479,9 +479,9 @@ void PclDialog::on_butCalculateBubbleInvariants_clicked()
 
             vector<bubblePoint> bubble =  bubbleProcess::readBubble(&file);
 
-            bubbleProcess::calculateDFCoefficients(bubble,temp.getDataSetPath(),"",i);
+            bubbleProcess::calculateDFCoefficients(bubble,temp.getDataSetPath(),"",i,30,30);
 
-            bubbleProcess::calculateInvariants(bubble,temp.getDataSetPath(),outputFileName,i);
+            bubbleProcess::calculateInvariants(bubble,temp.getDataSetPath(),outputFileName,i,30,30);
 
             file.close();
         }
