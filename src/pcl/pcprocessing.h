@@ -32,7 +32,9 @@ public:
 
      void calculateNormals(sensor_msgs::PointCloud2::Ptr input);
 
-     bool saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr normals);
+     bool saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr normals, int itemNumber);
+
+     bool saveNormalPanTiltHistograms(pcl::PointCloud<pcl::Normal>::Ptr normals);
 
      void rotatePointCloud(sensor_msgs::PointCloud2::Ptr input, int rotX, int rotY, int rotZ);
 

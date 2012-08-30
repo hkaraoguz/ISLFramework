@@ -33,13 +33,13 @@ ENDIF(OPENGL_FOUND)
 INCLUDE(${QT_USE_FILE})
 ADD_DEFINITIONS(${QT_DEFINITIONS})
 
-SET(beginner_tutorials_HEADERS src/dialog/MainWindow.h src/threads/rosThread.h src/dialog/pcldialog.h src/dialog/bubbleprocessdialog.h src/dialog/glbubbleviewer.h)
+SET(beginner_tutorials_HEADERS src/dialog/MainWindow.h src/threads/rosThread.h src/dialog/pcldialog.h src/dialog/bubbleprocessdialog.h src/dialog/glbubbleviewer.h src/dialog/imageprocessdialog.h)
 
-SET(beginner_tutorials_NHEADERS  src/pcl/pcprocessing.h src/bubble/bubbleprocess.h src/bubble/bubbletransformer.h) #src/pclViwer.h
+SET(beginner_tutorials_NHEADERS  src/pcl/pcprocessing.h src/bubble/bubbleprocess.h src/bubble/bubbletransformer.h src/imageprocess/imageprocess.h) #src/pclViwer.h
 
-SET(beginner_tutorials_SOURCES src/dialog/MainWindow.cpp src/threads/rosThread.cpp src/dialog/pcldialog.cpp src/pcl/pcprocessing.cpp src/dialog/bubbleprocessdialog.cpp src/dialog/glbubbleviewer.cpp src/bubble/bubbleprocess.cpp src/bubble/bubbletransformer.cpp src/bubble/dfc.cpp src/bubble/invariants.cpp) #src/pclViwer.cpp src/pcprocessing.cpp)
+SET(beginner_tutorials_SOURCES src/dialog/MainWindow.cpp src/threads/rosThread.cpp src/dialog/pcldialog.cpp src/pcl/pcprocessing.cpp src/dialog/bubbleprocessdialog.cpp src/dialog/glbubbleviewer.cpp src/bubble/bubbleprocess.cpp src/bubble/bubbletransformer.cpp src/bubble/dfc.cpp src/bubble/invariants.cpp src/dialog/imageprocessdialog.cpp src/imageprocess/imageprocess.cpp) #src/pclViwer.cpp src/pcprocessing.cpp)
 
-SET(beginner_tutorials_FORMS src/dialog/MainWindow.ui src/dialog/pcldialog.ui src/dialog/bubbleprocessdialog.ui)
+SET(beginner_tutorials_FORMS src/dialog/MainWindow.ui src/dialog/pcldialog.ui src/dialog/bubbleprocessdialog.ui src/dialog/imageprocessdialog.ui)
 
 QT4_WRAP_CPP(beginner_tutorials_HEADERS_MOC ${beginner_tutorials_HEADERS})
 QT4_WRAP_UI(uis_h ${beginner_tutorials_FORMS})
@@ -59,6 +59,7 @@ include_directories(./src/dialog)
 include_directories(./src/pcl)
 include_directories(./src/threads)
 include_directories(./src/bubble)
+include_directories(./src/imageprocess)
 
 #uncomment if you have defined messages
 #rosbuild_genmsg()

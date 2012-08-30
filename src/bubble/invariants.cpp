@@ -13,8 +13,8 @@
 using namespace std;
 
 #define PI 3.14
-#define M 30
-#define N 30
+//#define M 30
+//#define N 30
 
 #define PLACES 63
 #define STARTNO 0
@@ -23,8 +23,12 @@ using namespace std;
 
 using namespace std;
 
-void bubbleProcess::calculateInvariants(vector<bubblePoint> bubble, QString path, int itemNo)
+void bubbleProcess::calculateInvariants(vector<bubblePoint> bubble, QString path, QString fileName , int itemNo, int harmonic1, int harmonic2)
 {
+    int M = harmonic1;
+
+    int N = harmonic2;
+
     int  tourNumber = 3;
     //int main(void) {
     char invariantDosya[150],coeffDosya[150];
@@ -57,7 +61,7 @@ void bubbleProcess::calculateInvariants(vector<bubblePoint> bubble, QString path
 
     fullPath = path;
 
-    fullPath.append("invariants_");
+    fullPath.append(fileName);
     fullPath.append(ss);
     fullPath.append(".m");
 

@@ -1,4 +1,5 @@
 #include "pcprocessing.h"
+#include "bubbleprocess.h"
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
@@ -302,9 +303,32 @@ void PCprocessing::calculateNormals(sensor_msgs::PointCloud2::Ptr input)
 
 
 }
-bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr normals)
+bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr normals,int itemNumber)
 {
-    QFile file("normalAngleHist.txt");
+    if(dataSetPath==NULL) return false;
+
+   // if(dataSetItems.size() == 0) return false;
+
+    QString itemPath = dataSetPath;
+
+  //  itemPath.append("n");
+
+    itemPath.append("normalAngleHistBubble_");
+
+    QString ss;
+
+    ss.setNum(itemNumber);
+
+    itemPath.append(ss);
+
+    itemPath.append(".m");
+
+   // itemPath.append(dataSetItems.at(itemNumber));
+
+    qDebug()<<"Save normal histogram bubble: "<<itemPath;
+
+
+    QFile file(itemPath);
 
     QFile file2("normals.txt");
 
@@ -318,11 +342,13 @@ bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr no
 
     QVector< QVector<int> > angles(360, QVector<int>(360));
 
+    std::vector<bubblePoint> result;
+
     QTextStream stream(&file);
 
-     QTextStream stream2(&file2);
+  //  QTextStream stream2(&file2);
 
-    for(unsigned int i = 0; i < normals->size(); i+=10)
+    for(unsigned int i = 0; i < normals->size(); i+=5)
     {
 
         pcl::Normal pt = normals->points.at(i);
@@ -345,7 +371,7 @@ bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr no
 
         angles[pan][tilt] += 1;
 
-        stream2<<pt.normal_x<<" "<<pt.normal_y<<" "<<pt.normal_z<<" "<<pan<<" "<<" "<<tilt<<"\n";
+   //     stream2<<pt.normal_x<<" "<<pt.normal_y<<" "<<pt.normal_z<<" "<<pan<<" "<<" "<<tilt<<"\n";
 
 
 
@@ -353,8 +379,9 @@ bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr no
 
     for(int i = 0; i < 360; i++){
         for(int j = 0; j < 360; j++){
-            if(angles[i][j]!=0)
-            stream<<i<<" "<<j<<" "<<angles[i][j]<<"\n";
+          //  if(angles[i][j]!=0)
+
+                stream<<i<<" "<<j<<" "<<(double)angles[i][j]/100<<"\n";
 
         }
 
@@ -366,6 +393,12 @@ bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr no
     file2.close();
 
     return true;
+}
+bool PCprocessing::saveNormalPanTiltHistograms(pcl::PointCloud<pcl::Normal>::Ptr normals)
+{
+
+    return false;
+
 }
 bool PCprocessing::savePointCloud(int itemNumber, QString fileName){
 

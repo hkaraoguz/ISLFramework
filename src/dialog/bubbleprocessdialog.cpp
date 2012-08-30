@@ -275,9 +275,9 @@ void BubbleProcessDialog::on_But_chooseFile_clicked()
 
         qDebug()<<"I have read a bubble";
 
-       // ui->Widget_BPbubbleViewer->Points = aBubble;
+        ui->Widget_BPbubbleViewer->Points = aBubble;
 
-        ui->Widget_BPbubbleViewer->setDrawType(DRAW_TYPE_SAVE_VIDEO);
+        ui->Widget_BPbubbleViewer->setDrawType(DRAW_TYPE_DEFAULT);
 
 
 

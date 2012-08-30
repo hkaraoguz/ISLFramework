@@ -185,12 +185,12 @@
     <rect>
      <x>490</x>
      <y>20</y>
-     <width>491</width>
+     <width>501</width>
      <height>451</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -249,6 +249,19 @@
      </property>
      <property name="text">
       <string>Normal Angle Histogram</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="butCalculateAllNormalAngleHistogram">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>210</y>
+       <width>181</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Apply All</string>
      </property>
     </widget>
    </widget>
@@ -439,14 +452,60 @@
     <widget class="QPushButton" name="butCalculateBubbleInvariants">
      <property name="geometry">
       <rect>
-       <x>290</x>
-       <y>140</y>
+       <x>300</x>
+       <y>260</y>
        <width>141</width>
        <height>27</height>
       </rect>
      </property>
      <property name="text">
       <string>Calculate Invariants</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lEditInputBubbleName">
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>170</y>
+       <width>113</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lEditOutputInvName">
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>220</y>
+       <width>113</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>174</y>
+       <width>131</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Input Bubble Name: </string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>223</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Output Invariant Name: </string>
      </property>
     </widget>
    </widget>

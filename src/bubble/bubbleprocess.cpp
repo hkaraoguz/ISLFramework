@@ -35,6 +35,54 @@ QString bubbleProcess::getBubblesRootDirectory(){
 	return bubblesRootDirectory;
 
 }
+vector<bubblePoint> bubbleProcess::convertGrayImage2Bub(cv::Mat grayImage, int focalLengthPixels, int maxval)
+{
+
+    vector<bubblePoint> result;
+
+
+    int centerx = grayImage.cols/2;
+
+    int centery = grayImage.rows/2;
+
+    for(int i = 0; i < grayImage.rows; i++)
+    {
+        for(int j = 0; j < grayImage.cols; j++)
+        {
+            int deltax = centerx - j;
+
+            int deltay = centery - i;
+
+            float pan = atan2((double)deltax,(double)focalLengthPixels);
+
+
+
+            float tilt = atan2((double)deltay,(double)focalLengthPixels);
+
+            float val = (float)grayImage.at<uchar>(i,j)/(float)maxval;
+
+        //    qDebug()<<pan<<" "<<tilt;
+
+            bubblePoint pt;
+
+            pt.panAng = pan*180/M_PI;
+
+            pt.tiltAng = tilt*180/M_PI;
+
+            pt.val = val;
+
+            result.push_back(pt);
+
+        }
+
+
+
+    }
+
+    return result;
+
+
+}
 vector<positionData> bubbleProcess::readPositionData(QFile* file){
 
     vector <positionData> result;

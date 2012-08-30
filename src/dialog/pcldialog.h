@@ -57,6 +57,8 @@ private slots:
 
     void on_butCalculateBubbleInvariants_clicked();
 
+    void on_butCalculateAllNormalAngleHistogram_clicked();
+
 private:
     Ui::PclDialog *ui;
 };

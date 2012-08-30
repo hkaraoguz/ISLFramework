@@ -6,6 +6,7 @@
 #include <vector>
 #include <QFile>
 #include <QRgb>
+#include <opencv2/opencv.hpp>
 
 class point{
 public:
@@ -67,9 +68,9 @@ public:
     
 	bubbleProcess();
 
-    static void calculateDFCoefficients(std::vector <bubblePoint> bubble, QString path, int itemNo);
+    static void calculateDFCoefficients(std::vector <bubblePoint> bubble, QString path, QString fileName, int itemNo,int harmonic1, int harmonic2);
 
-    static void calculateInvariants(std::vector <bubblePoint> bubble, QString path, int itemNo);
+    static void calculateInvariants(std::vector <bubblePoint> bubble, QString path, QString fileName, int itemNo, int harmonic1, int harmonic2);
 
     static std::vector<double> calculateEuclideanDiff(vector <bubblePoint> bubble1, vector <bubblePoint> bubble2);
 
@@ -153,6 +154,8 @@ public:
     static vector<bubblePoint> convertBubXYZ2BubSpherical(vector<point> bubbleXYZ, int heading, double maxRange);
 
     static vector<bubblePointXYZ> convertBubSph2BubXYZ(vector <bubblePoint> bubble, double maxRange);
+
+    static vector<bubblePoint> convertGrayImage2Bub(cv::Mat grayImage, int focalLengthPixels, int maxval);
 
 private:
 	

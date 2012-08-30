@@ -44,7 +44,7 @@ PclDialog::PclDialog(QWidget *parent) :
     ui->qvtkwidget->SetRenderWindow(renderWindow);
 
     viwer->setBackgroundColor (0, 0, 0);
-    viwer->addCoordinateSystem (1.0);
+    //viwer->addCoordinateSystem (1.0);
     viwer->initCameraParameters ();
 
     // Set the viewer of the point cloud processing class
@@ -77,8 +77,9 @@ void PclDialog::initializeView(){
 
     ui->lEditCloudMaxRange->setText("6");
 
+    ui->lEditInputBubbleName->setText("bubble_");
 
-
+    ui->lEditOutputInvName->setText("invariants_");
 
 
 
@@ -235,8 +236,9 @@ void PclDialog::on_butCalNormals_clicked()
 
 void PclDialog::on_butSaveNormalAngleHist_clicked()
 {
+     int itemNumber = ui->lEditItemNumber->text().toInt();
 
-    if(temp.saveNormalAngleHistogram(temp.getCurrentCloudNormals())){
+    if(temp.saveNormalAngleHistogram(temp.getCurrentCloudNormals(),itemNumber)){
 
         qDebug()<<"Normals successfully saved!!";
     }
@@ -364,9 +366,14 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
 
     qDebug()<<"Item no: "<<itemNo<<"\n";
 
-    bubbleProcess::calculateDFCoefficients(sphRedBubble,temp.getDataSetPath(),itemNo);
+    bubbleProcess::calculateDFCoefficients(sphRedBubble,temp.getDataSetPath(),"",itemNo);
 
-    bubbleProcess::calculateInvariants(sphRedBubble,temp.getDataSetPath(),itemNo);
+
+  //  QString inputBubbleName = ui->lEditInputBubbleName->text();
+
+    QString outputFileName =  ui->lEditOutputInvName->text();
+
+    bubbleProcess::calculateInvariants(sphRedBubble,temp.getDataSetPath(),outputFileName,itemNo);
 
 }
 
@@ -446,11 +453,15 @@ void PclDialog::on_butCalculateBubbleInvariants_clicked()
 
     int endd = ui->lEditDatasetEnd->text().toInt();
 
+    QString inputBubbleName = ui->lEditInputBubbleName->text();
+
+    QString outputFileName =  ui->lEditOutputInvName->text();
+
     for(int i = start; i < endd; i++){
 
         QString pathh = temp.getDataSetPath();
 
-        pathh.append("bubble_");
+        pathh.append(inputBubbleName);
 
         QString ss;
 
@@ -468,9 +479,9 @@ void PclDialog::on_butCalculateBubbleInvariants_clicked()
 
             vector<bubblePoint> bubble =  bubbleProcess::readBubble(&file);
 
-            bubbleProcess::calculateDFCoefficients(bubble,temp.getDataSetPath(),i);
+            bubbleProcess::calculateDFCoefficients(bubble,temp.getDataSetPath(),"",i);
 
-            bubbleProcess::calculateInvariants(bubble,temp.getDataSetPath(),i);
+            bubbleProcess::calculateInvariants(bubble,temp.getDataSetPath(),outputFileName,i);
 
             file.close();
         }
@@ -479,4 +490,31 @@ void PclDialog::on_butCalculateBubbleInvariants_clicked()
     }
 
 
+}
+
+void PclDialog::on_butCalculateAllNormalAngleHistogram_clicked()
+{
+    int start = ui->lEditDatasetStart->text().toInt();
+
+    int endd = ui->lEditDatasetEnd->text().toInt();
+
+   // QString inputBubbleName = ui->lEditInputBubbleName->text();
+
+   // QString outputFileName =  ui->lEditOutputInvName->text();
+
+    for(int i = start; i < endd; i++){
+
+        if(temp.loadItem(i, fileNam, temp.getCurrentCloud()))
+        {
+
+            temp.applyVoxelGridFilter(temp.getCurrentCloud());
+
+            temp.calculateNormals(temp.getCurrentCloud());
+
+            if(temp.saveNormalAngleHistogram(temp.getCurrentCloudNormals(),i)){
+
+                qDebug()<<"Normals successfully saved!!";
+            }
+        }
+    }
 }

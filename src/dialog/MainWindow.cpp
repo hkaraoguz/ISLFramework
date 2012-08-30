@@ -2,6 +2,8 @@
 #include "ui_MainWindow.h"
 #include "pcldialog.h"
 #include "bubbleprocessdialog.h"
+#include "bubbleprocess.h"
+#include "imageprocess.h"
 
 #include <QtCore/QFile>
 #include <QtGui/QFileDialog>
@@ -40,6 +42,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
      //    // Give a linear velocity of 0.1 m/s in x direction(forward)
      twist.linear.x = 0.1;
+
+
 }
 
 MainWindow::~MainWindow()
@@ -74,8 +78,73 @@ void MainWindow::sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packe
 
 void MainWindow::on_openFileButton_clicked()
 {
+    QString fileName = "/home/hakan/Downloads/tekImge_CV2_1/filtreler/filtre";
+
+    QString filterType = "h";
+
+    ImageProcess::readFilter(fileName,18,29);
+
+    for(int i = 1; i < 2668; i++){
+
+        QString ss;
+
+        ss.setNum(i);
 
 
+        fileName = "/home/hakan/Development/ISL/Datasets/ImageClef2012/training1/std_cam/rgb_";
+
+        fileName.append(ss);
+
+        fileName.append(".jpg");
+
+        qDebug()<<fileName;
+
+        Mat ress = ImageProcess::loadImage(fileName);
+
+        if(ress.rows != 0){
+
+            Mat ressg;
+
+            cv::cvtColor(ress,ressg,CV_BGR2GRAY);
+
+            ImageProcess::applyFilter(ressg);
+
+            destroyAllWindows();
+
+            vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(ressg,525,255);
+
+            qDebug()<<resultt.size();
+
+            vector<bubblePoint> resred = bubbleProcess::reduceBubble(resultt);
+
+            qDebug()<<resred.size();
+
+
+            fileName ="/home/hakan/Development/ISL/Datasets/ImageClef2012/training1/std_cam/bubble_";
+
+            fileName.append(filterType);
+
+            fileName.append("_");
+
+            fileName.append(ss);
+
+            fileName.append(".m");
+
+            qDebug()<<fileName;
+
+            QFile file(fileName);
+
+            if(file.open(QFile::WriteOnly)){
+
+                bubbleProcess::saveBubble(&file,resred);
+
+                file.close();
+
+            }
+
+        }
+
+}
 
    // createe.publish(twist);
 

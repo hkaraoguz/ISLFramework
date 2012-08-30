@@ -13,16 +13,20 @@
 using namespace std;
 
 #define PI 3.14
-#define M 30
-#define N 30
+//#define M 30
+//#define N 30
 
 #define PLACES 77
 #define STARTNO 1
 
 
 
-void bubbleProcess::calculateDFCoefficients(std::vector<bubblePoint> bubble, QString path, int itemNo)
+void bubbleProcess::calculateDFCoefficients(std::vector<bubblePoint> bubble, QString path, QString fileName, int itemNo, int harmonic1, int harmonic2)
 {
+
+    int M = harmonic1;
+
+    int N = harmonic2;
 
     clock_t start,ends;//Zaman tutmak icin
     float f1=45*PI/180,f2;
@@ -118,7 +122,7 @@ void bubbleProcess::calculateDFCoefficients(std::vector<bubblePoint> bubble, QSt
 
         QString fullPath = path;
 
-        fullPath.append("coeffs_");
+        fullPath.append(fileName);
 
         QString ss;
 
