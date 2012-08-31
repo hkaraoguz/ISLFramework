@@ -103,15 +103,26 @@ void MainWindow::on_openFileButton_clicked()
 
         if(ress.rows != 0){
 
+         //   Mat hsvMat;
+
+        //    cvtColor(ress,hsvMat,CV_BGR2HSV);
+
+         //   vector<Mat> channels;
+
+        //   split(hsvMat,channels);
+
             Mat ressg;
 
             cv::cvtColor(ress,ressg,CV_BGR2GRAY);
 
-            ImageProcess::applyFilter(ressg);
+           Mat sonuc = ImageProcess::applyFilter(ressg);
 
             destroyAllWindows();
 
-            vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(ressg,525,255);
+          //  vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(channels[0],525,180);
+
+            vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
+
 
             qDebug()<<resultt.size();
 
@@ -122,7 +133,7 @@ void MainWindow::on_openFileButton_clicked()
 
             fileName ="/home/hakan/Development/ISL/Datasets/ImageClef2012/training1/std_cam/bubble_";
 
-            fileName.append(filterType);
+            fileName.append(filterType); //filterType
 
             fileName.append("_");
 

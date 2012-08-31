@@ -61,18 +61,25 @@ vector<bubblePoint> bubbleProcess::convertGrayImage2Bub(cv::Mat grayImage, int f
 
             float val = (float)grayImage.at<uchar>(i,j)/(float)maxval;
 
+            if(val > 0){
         //    qDebug()<<pan<<" "<<tilt;
 
-            bubblePoint pt;
+                bubblePoint pt;
 
-            pt.panAng = pan*180/M_PI;
+                pt.panAng = pan*180/M_PI;
 
-            pt.tiltAng = tilt*180/M_PI;
+                if(pt.panAng < 0)pt.panAng += 360;
+                else if(pt.panAng > 359) pt.panAng -=360;
 
-            pt.val = val;
+                pt.tiltAng = tilt*180/M_PI;
 
-            result.push_back(pt);
+                if(pt.tiltAng < 0)pt.tiltAng += 360;
+                else if(pt.tiltAng > 359) pt.tiltAng -=360;
 
+                pt.val = val;
+
+                result.push_back(pt);
+            }
         }
 
 

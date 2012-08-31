@@ -479,9 +479,9 @@ void PclDialog::on_butCalculateBubbleInvariants_clicked()
 
             vector<bubblePoint> bubble =  bubbleProcess::readBubble(&file);
 
-            bubbleProcess::calculateDFCoefficients(bubble,temp.getDataSetPath(),"",i,30,30);
+            bubbleProcess::calculateDFCoefficients(bubble,temp.getDataSetPath(),"",i,10,10);
 
-            bubbleProcess::calculateInvariants(bubble,temp.getDataSetPath(),outputFileName,i,30,30);
+            bubbleProcess::calculateInvariants(bubble,temp.getDataSetPath(),outputFileName,i,10,10);
 
             file.close();
         }

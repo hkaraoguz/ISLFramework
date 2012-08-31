@@ -60,6 +60,7 @@ void bubbleProcess::calculateDFCoefficients(std::vector<bubblePoint> bubble, QSt
 
     sprintf(coeffDosya,"basis.m");
     fstream file_basisRead(coeffDosya,ios::in);
+    if(file_basisRead.is_open()) qDebug()<<"Basis file has been read";
     for (int m=0;m<M;m++)
         for (int n=0;n<N;n++)
             file_basisRead>>m>>n>>a[m][n]>>b[m][n]>>c[m][n]>>d[m][n];
@@ -123,6 +124,8 @@ void bubbleProcess::calculateDFCoefficients(std::vector<bubblePoint> bubble, QSt
         QString fullPath = path;
 
         fullPath.append(fileName);
+
+        fullPath.append("coeffs_");
 
         QString ss;
 
