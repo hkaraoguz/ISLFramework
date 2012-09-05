@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QDir>
 #include <QtAlgorithms>
+#include <QThread>
 
 QString fileNam;
 
@@ -28,7 +29,11 @@ bool compareNames(const QString& s1,const QString& s2)
 
 
 }
-PCprocessing temp;
+void PclDialog::setPCprocessing(PCprocessing *pcprocess){
+
+    this->pcProcessing = pcprocess;
+
+}
 
 PclDialog::PclDialog(QWidget *parent) :
     QDialog(parent),
@@ -44,11 +49,13 @@ PclDialog::PclDialog(QWidget *parent) :
     ui->qvtkwidget->SetRenderWindow(renderWindow);
 
     viwer->setBackgroundColor (0, 0, 0);
-    //viwer->addCoordinateSystem (1.0);
+
     viwer->initCameraParameters ();
 
     // Set the viewer of the point cloud processing class
     PCprocessing::setViewer(this->viwer);
+
+    sleep(1);
 
     this->initializeView();
 
@@ -82,6 +89,7 @@ void PclDialog::initializeView(){
     ui->lEditOutputInvName->setText("invariants_");
 
 
+     viwer->addCoordinateSystem (1.0);
 
 }
 
@@ -159,7 +167,7 @@ void PclDialog::on_butLoadItem_clicked()
 
     // pcl::PointCloud<pcl::PointXYZ> ss = temp.getCurrentCloud();
 
-    if(temp.loadItem(num,fileNam,temp.getCurrentCloud()))
+    if(pcProcessing->loadItem(num,fileNam,pcProcessing->getCurrentCloud()))
         ui->qvtkwidget->update();
 
     //   }
@@ -179,7 +187,7 @@ void PclDialog::on_butPrevItem_clicked()
 
     // pcl::PointCloud<pcl::PointXYZ> ss = temp.getCurrentCloud();
 
-    if ( temp.loadItem(num,fileNam,temp.getCurrentCloud())){
+    if ( pcProcessing->loadItem(num,fileNam,pcProcessing->getCurrentCloud())){
 
         ui->lEditItemNumber->setText(QString::number(num));
 
@@ -203,7 +211,7 @@ void PclDialog::on_butNextItem_clicked()
 
 
     // pcl::PointCloud<pcl::PointXYZ> ss = temp.getCurrentCloud();
-    if(temp.loadItem(num, fileNam, temp.getCurrentCloud())){
+    if(pcProcessing->loadItem(num, fileNam, pcProcessing->getCurrentCloud())){
 
         ui->lEditItemNumber->setText(QString::number(num));
 
@@ -218,7 +226,7 @@ void PclDialog::on_butNextItem_clicked()
 void PclDialog::on_butVoxelGridFilter_clicked()
 {
 
-    temp.applyVoxelGridFilter(temp.getCurrentCloud());
+    pcProcessing->applyVoxelGridFilter(pcProcessing->getCurrentCloud());
 
     ui->qvtkwidget->update();
 
@@ -228,7 +236,7 @@ void PclDialog::on_butVoxelGridFilter_clicked()
 void PclDialog::on_butCalNormals_clicked()
 {
 
-    temp.calculateNormals(temp.getCurrentCloud());
+    pcProcessing->calculateNormals(pcProcessing->getCurrentCloud());
 
     ui->qvtkwidget->update();
 
@@ -238,7 +246,7 @@ void PclDialog::on_butSaveNormalAngleHist_clicked()
 {
      int itemNumber = ui->lEditItemNumber->text().toInt();
 
-    if(temp.saveNormalAngleHistogram(temp.getCurrentCloudNormals(),itemNumber)){
+    if(pcProcessing->saveNormalAngleHistogram(pcProcessing->getCurrentCloudNormals(),itemNumber)){
 
         qDebug()<<"Normals successfully saved!!";
     }
@@ -254,7 +262,7 @@ void PclDialog::on_butRotateCloud_clicked()
     int rotZ = ui->lEditRotationZDeg->text().toInt();
 
 
-    temp.rotatePointCloud(temp.getCurrentCloud(),rotX,rotY,rotZ);
+    pcProcessing->rotatePointCloud(pcProcessing->getCurrentCloud(),rotX,rotY,rotZ);
 
     ui->qvtkwidget->update();
 
@@ -264,7 +272,7 @@ void PclDialog::on_butScalePointCloud_clicked()
 {
     int scale = ui->lEditScalePointCloud->text().toInt();
 
-    temp.scalePointCloud(temp.getCurrentCloud(),scale);
+    pcProcessing->scalePointCloud(pcProcessing->getCurrentCloud(),scale);
 
     ui->qvtkwidget->update();
 
@@ -275,7 +283,7 @@ void PclDialog::on_butSavePointCloud_clicked()
 
     int itemNumber = ui->lEditItemNumber->text().toInt();
 
-    temp.savePointCloud(itemNumber,fileNam);
+    pcProcessing->savePointCloud(itemNumber,fileNam);
 
 }
 
@@ -289,7 +297,7 @@ void PclDialog::on_lEditCloudFileName_editingFinished()
 
 void PclDialog::on_butApplyTransformationtoAll_clicked()
 {
-    int size = temp.getNumofItems();
+    int size = pcProcessing->getNumofItems();
 
     int start = ui->lEditDatasetStart->text().toInt();
 
@@ -297,13 +305,13 @@ void PclDialog::on_butApplyTransformationtoAll_clicked()
 
     for(int i = start; i < endd; i++){
 
-        if(temp.loadItem(i, fileNam, temp.getCurrentCloud()))
+        if(pcProcessing->loadItem(i, fileNam, pcProcessing->getCurrentCloud()))
         {
 
             ui->butScalePointCloud->click();
             ui->butRotateCloud->click();
 
-            temp.savePointCloud(i,fileNam);
+            pcProcessing->savePointCloud(i,fileNam);
         }
 
 
@@ -319,7 +327,7 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
 {
     std::vector<bubblePointXYZ> bubble;
 
-    sensor_msgs::PointCloud2::Ptr cloud = temp.getCurrentCloud();
+    sensor_msgs::PointCloud2::Ptr cloud = pcProcessing->getCurrentCloud();
 
     pcl::PointCloud<pcl::PointXYZRGB> normalCloud;
 
@@ -343,7 +351,7 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
 
     vector<bubblePoint> sphRedBubble = bubbleProcess::reduceBubble(sphBubble);
 
-    QString pathh = temp.getDataSetPath();
+    QString pathh = pcProcessing->getDataSetPath();
 
 
 
@@ -366,14 +374,14 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
 
     qDebug()<<"Item no: "<<itemNo<<"\n";
 
-    bubbleProcess::calculateDFCoefficients(sphRedBubble,temp.getDataSetPath(),"",itemNo,30,30);
+    bubbleProcess::calculateDFCoefficients(sphRedBubble,pcProcessing->getDataSetPath(),"",itemNo,30,30);
 
 
   //  QString inputBubbleName = ui->lEditInputBubbleName->text();
 
     QString outputFileName =  ui->lEditOutputInvName->text();
 
-    bubbleProcess::calculateInvariants(sphRedBubble,temp.getDataSetPath(),outputFileName,itemNo,30,30);
+    bubbleProcess::calculateInvariants(sphRedBubble,pcProcessing->getDataSetPath(),outputFileName,itemNo,30,30);
 
 }
 
@@ -388,14 +396,14 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 
     for(int i = start; i < endd; i++){
 
-        if(temp.loadItem(i, fileNam, temp.getCurrentCloud()))
+        if(pcProcessing->loadItem(i, fileNam, pcProcessing->getCurrentCloud()))
         {
 
 
 
             std::vector<bubblePointXYZ> bubble;
 
-            sensor_msgs::PointCloud2::Ptr cloud = temp.getCurrentCloud();
+            sensor_msgs::PointCloud2::Ptr cloud = pcProcessing->getCurrentCloud();
 
             pcl::PointCloud<pcl::PointXYZRGB> normalCloud;
 
@@ -419,7 +427,7 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 
             vector<bubblePoint> sphRedBubble = bubbleProcess::reduceBubble(sphBubble);
 
-            QString pathh = temp.getDataSetPath();
+            QString pathh = pcProcessing->getDataSetPath();
 
             pathh.append("bubble_");
 
@@ -459,7 +467,7 @@ void PclDialog::on_butCalculateBubbleInvariants_clicked()
 
     for(int i = start; i < endd; i++){
 
-        QString pathh = temp.getDataSetPath();
+        QString pathh = pcProcessing->getDataSetPath();
 
         pathh.append(inputBubbleName);
 
@@ -479,9 +487,9 @@ void PclDialog::on_butCalculateBubbleInvariants_clicked()
 
             vector<bubblePoint> bubble =  bubbleProcess::readBubble(&file);
 
-            bubbleProcess::calculateDFCoefficients(bubble,temp.getDataSetPath(),"",i,10,10);
+            bubbleProcess::calculateDFCoefficients(bubble,pcProcessing->getDataSetPath(),"",i,10,10);
 
-            bubbleProcess::calculateInvariants(bubble,temp.getDataSetPath(),outputFileName,i,10,10);
+            bubbleProcess::calculateInvariants(bubble,pcProcessing->getDataSetPath(),outputFileName,i,10,10);
 
             file.close();
         }
@@ -504,14 +512,14 @@ void PclDialog::on_butCalculateAllNormalAngleHistogram_clicked()
 
     for(int i = start; i < endd; i++){
 
-        if(temp.loadItem(i, fileNam, temp.getCurrentCloud()))
+        if(pcProcessing->loadItem(i, fileNam, pcProcessing->getCurrentCloud()))
         {
 
-            temp.applyVoxelGridFilter(temp.getCurrentCloud());
+            pcProcessing->applyVoxelGridFilter(pcProcessing->getCurrentCloud());
 
-            temp.calculateNormals(temp.getCurrentCloud());
+            pcProcessing->calculateNormals(pcProcessing->getCurrentCloud());
 
-            if(temp.saveNormalAngleHistogram(temp.getCurrentCloudNormals(),i)){
+            if(pcProcessing->saveNormalAngleHistogram(pcProcessing->getCurrentCloudNormals(),i)){
 
                 qDebug()<<"Normals successfully saved!!";
             }

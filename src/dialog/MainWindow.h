@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "pcprocessing.h"
+
 #include <QMainWindow>
 
 #include <ros/ros.h>
@@ -47,6 +49,7 @@ private:
     Ui::MainWindow *ui;
     RosThread rosThread;
     ros::NodeHandle n;
+    PCprocessing pcProcess;
  //   PclViwer* viv;
 };
 

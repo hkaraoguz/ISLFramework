@@ -15,11 +15,11 @@ public:
 
     //Mat filter;
 
-    static void readFilter(QString fileName, int filterNum, int filterSize);
+    static void readFilter(QString fileName, int filterNum, int filterSize, bool transpose, bool save);
 
     static Mat loadImage(QString fileName);
 
-    static Mat applyFilter(Mat grayImage);
+    static Mat applyFilter(Mat singleChannelImage);
 };
 
 #endif // IMAGEPROCESS_H

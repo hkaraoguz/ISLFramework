@@ -9,10 +9,12 @@
 
 #include <QString>
 #include <QStringList>
+#include <opencv2/opencv.hpp>
 
 class PCprocessing
 {
 public:
+
     PCprocessing();
 
     static void setDataSetPath(QString dir);
@@ -38,16 +40,15 @@ public:
 
      void rotatePointCloud(sensor_msgs::PointCloud2::Ptr input, int rotX, int rotY, int rotZ);
 
-     void scalePointCloud(sensor_msgs::PointCloud2::Ptr input, int scale);
+     void scalePointCloud(sensor_msgs::PointCloud2::Ptr input, double scale);
 
      bool savePointCloud(int itemNumber, QString fileName);
-
-
 
      sensor_msgs::PointCloud2::Ptr getCurrentCloud();
 
      pcl::PointCloud<pcl::Normal>::Ptr getCurrentCloudNormals();
 
+     void showPointCloud(sensor_msgs::PointCloud2::Ptr cloud);
 
  private:
 

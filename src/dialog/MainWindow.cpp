@@ -4,6 +4,7 @@
 #include "bubbleprocessdialog.h"
 #include "bubbleprocess.h"
 #include "imageprocess.h"
+#include "imageprocessdialog.h"
 
 #include <QtCore/QFile>
 #include <QtGui/QFileDialog>
@@ -31,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
      boost::shared_ptr<pcl::visualization::PCLVisualizer> viwer(new pcl::visualization::PCLVisualizer ("3D Viewer",false));
 
      PclDialog* newDialog = new PclDialog(this);
+     newDialog->setPCprocessing(&this->pcProcess);
 
      newDialog->show();
 
@@ -78,20 +80,29 @@ void MainWindow::sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packe
 
 void MainWindow::on_openFileButton_clicked()
 {
-    QString fileName = "/home/hakan/Downloads/tekImge_CV2_1/filtreler/filtre";
 
-    QString filterType = "v";
+    ImageProcessDialog* dlg = new ImageProcessDialog(this);
 
-    ImageProcess::readFilter(fileName,18,29);
+    dlg->setPCprocessing(&this->pcProcess);
 
-    for(int i = 1; i < 2668; i++){
+    dlg->show();
+
+ //   QString fileName = "/home/hakan/Downloads/tekImge_CV2_1/filtreler/filtre";
+
+ //   QString filterType = "h";
+
+ //   ImageProcess::readFilter(fileName,18,29,true,false);
+
+ //   cv::destroyAllWindows();
+
+ /*   for(int i = 1; i < 2533; i++){
 
         QString ss;
 
         ss.setNum(i);
 
 
-        fileName = "/home/hakan/Development/ISL/Datasets/ImageClef2012/training1/std_cam/rgb_";
+        fileName = "/home/hakan/Development/ISL/Datasets/ImageClef2012/training2/std_cam/rgb_";
 
         fileName.append(ss);
 
@@ -117,7 +128,7 @@ void MainWindow::on_openFileButton_clicked()
 
            Mat sonuc = ImageProcess::applyFilter(ressg);
 
-            destroyAllWindows();
+       //     destroyAllWindows();
 
           //  vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(channels[0],525,180);
 
@@ -131,7 +142,7 @@ void MainWindow::on_openFileButton_clicked()
             qDebug()<<resred.size();
 
 
-            fileName ="/home/hakan/Development/ISL/Datasets/ImageClef2012/training1/std_cam/bubble_";
+            fileName ="/home/hakan/Development/ISL/Datasets/ImageClef2012/training2/std_cam/bubble_";
 
             fileName.append(filterType); //filterType
 

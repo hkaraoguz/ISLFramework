@@ -12,7 +12,7 @@ ImageProcess::ImageProcess()
 
 }
 
-void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize)
+void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize, bool transpose, bool save)
 {
 
     filterOrg = Mat(filterSize,filterSize,CV_32FC1);
@@ -70,18 +70,27 @@ void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize)
     file.close();
 
 
+    if(transpose)
     cv::transpose(filterOrg,filterOrg);
 
     cv::convertScaleAbs(filterOrg,filter,128,128);
 
     namedWindow("filter");
 
-    imshow("filter",filter);
+    cv::Mat resizedFilter;
+
+    cv::resize(filter,resizedFilter,resizedFilter.size(),5,5);
+
+    imshow("filter",resizedFilter);
 
     waitKey();
 
-   // imwrite("filt.jpeg",kkk);
+    if(save)
+    {
 
+        imwrite("filt.jpg",resizedFilter);
+        qDebug()<<"Filter image saved";
+    }
 
 
 
@@ -94,16 +103,14 @@ Mat ImageProcess::loadImage(QString fileName)
 
     return result;
 
-
-
 }
-Mat ImageProcess::applyFilter(Mat grayImage)
+Mat ImageProcess::applyFilter(Mat singleChannelImage)
 {
-    Mat result = Mat::zeros(grayImage.rows,grayImage.cols,CV_8UC1);
+    Mat result = Mat::zeros(singleChannelImage.rows,singleChannelImage.cols,CV_8UC1);
 
-    cv::GaussianBlur(grayImage,grayImage,cv::Size(11,11),10,10);
+    cv::GaussianBlur(singleChannelImage,singleChannelImage,cv::Size(11,11),10,10);
 
-    cv::filter2D(grayImage,result,result.depth(),filterOrg);
+    cv::filter2D(singleChannelImage,result,result.depth(),filterOrg);
 
   //  cv::threshold(result,result,250,255,CV_THRESH_BINARY);
 
@@ -113,13 +120,11 @@ Mat ImageProcess::applyFilter(Mat grayImage)
 
    // imshow("filterResult",result);
 
-   // imshow("orgImage",grayImage);
+   // imshow("orgImage",singleChannelImage);
 
   //  waitKey();
 
     return result;
-
-
 
 
 }

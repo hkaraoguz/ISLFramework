@@ -9,10 +9,12 @@
 #include <Eigen/Eigen>
 #include <Eigen/Core>
 
+//sensor_msgs::PointCloud2::Ptr currentCloud = sensor_msgs::PointCloud2::Ptr(new sensor_msgs::PointCloud2 ());
 
 double round(double r) {
     return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.5);
 }
+
 
 
 QString dataSetPath;
@@ -104,13 +106,25 @@ bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::Point
 
     pcl::fromROSMsg(*cloud,tempCloud);
 
+//    pcl::toROSMsg(tempCloud,*cloud);
+
+    viewer->removeAllPointClouds();
+
+    viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
 
 
-    pcl::toROSMsg(tempCloud,*cloud);
+  //  viewer->resetCamera();
 
 
-  //   pcl::transformPointCloud(tempCloud,tempCloud,xx*yy);
+    return true;
 
+}
+void PCprocessing::showPointCloud(sensor_msgs::PointCloud2::Ptr cloud)
+{
+
+    pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
+
+    pcl::fromROSMsg(*cloud,tempCloud);
 
     viewer->removeAllPointClouds();
 
@@ -119,8 +133,6 @@ bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::Point
 
     viewer->resetCamera();
 
-
-    return true;
 
 
 
@@ -175,7 +187,7 @@ void PCprocessing::rotatePointCloud(sensor_msgs::PointCloud2::Ptr input, int rot
         viewer->resetCamera();
 
 }
-void PCprocessing::scalePointCloud(sensor_msgs::PointCloud2::Ptr input, int scale)
+void PCprocessing::scalePointCloud(sensor_msgs::PointCloud2::Ptr input, double scale)
 {
 
     pcl::PointCloud<pcl::PointXYZRGB> tempCloud;

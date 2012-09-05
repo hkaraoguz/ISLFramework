@@ -8,6 +8,8 @@
 #include <pcl-1.5/pcl/common/common_headers.h>
 #include <pcl-1.5/pcl/visualization/pcl_visualizer.h>
 
+class PCprocessing;
+
 namespace Ui {
 class PclDialog;
 }
@@ -22,6 +24,8 @@ public:
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viwer;
 
     void initializeView();
+
+    void setPCprocessing(PCprocessing* pcprocess);
 
   //  bool compareNames(const QString& s1,const QString& s2);
     
@@ -59,8 +63,13 @@ private slots:
 
     void on_butCalculateAllNormalAngleHistogram_clicked();
 
+
+
 private:
     Ui::PclDialog *ui;
+
+     PCprocessing* pcProcessing;
+
 };
 
 #endif // PCLDIALOG_H
