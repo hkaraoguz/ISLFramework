@@ -88,6 +88,8 @@ void PclDialog::initializeView(){
 
     ui->lEditOutputInvName->setText("invariants_");
 
+    ui->lEditOutputBubbleName->setText("bubble_");
+
 
      viwer->addCoordinateSystem (1.0);
 
@@ -355,7 +357,7 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
 
 
 
-    pathh.append("bubble_");
+    pathh.append(ui->lEditOutputBubbleName->text());
     pathh.append(ui->lEditItemNumber->text());
     pathh.append(".m");
 

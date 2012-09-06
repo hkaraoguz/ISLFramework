@@ -185,12 +185,12 @@
     <rect>
      <x>490</x>
      <y>20</y>
-     <width>501</width>
+     <width>511</width>
      <height>451</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -390,8 +390,8 @@
     <widget class="QPushButton" name="butGeneratePointCloudBubble">
      <property name="geometry">
       <rect>
-       <x>290</x>
-       <y>60</y>
+       <x>310</x>
+       <y>130</y>
        <width>141</width>
        <height>27</height>
       </rect>
@@ -403,7 +403,7 @@
     <widget class="QLineEdit" name="lEditCloudMaxRange">
      <property name="geometry">
       <rect>
-       <x>300</x>
+       <x>322</x>
        <y>20</y>
        <width>113</width>
        <height>27</height>
@@ -413,7 +413,7 @@
     <widget class="QLabel" name="label_6">
      <property name="geometry">
       <rect>
-       <x>220</x>
+       <x>238</x>
        <y>23</y>
        <width>81</width>
        <height>20</height>
@@ -426,7 +426,7 @@
     <widget class="QLabel" name="label_7">
      <property name="geometry">
       <rect>
-       <x>418</x>
+       <x>440</x>
        <y>24</y>
        <width>61</width>
        <height>17</height>
@@ -439,8 +439,8 @@
     <widget class="QPushButton" name="butGeneratePointCloudBubbles">
      <property name="geometry">
       <rect>
-       <x>290</x>
-       <y>100</y>
+       <x>310</x>
+       <y>170</y>
        <width>141</width>
        <height>27</height>
       </rect>
@@ -452,8 +452,8 @@
     <widget class="QPushButton" name="butCalculateBubbleInvariants">
      <property name="geometry">
       <rect>
-       <x>300</x>
-       <y>260</y>
+       <x>310</x>
+       <y>360</y>
        <width>141</width>
        <height>27</height>
       </rect>
@@ -465,8 +465,8 @@
     <widget class="QLineEdit" name="lEditInputBubbleName">
      <property name="geometry">
       <rect>
-       <x>330</x>
-       <y>170</y>
+       <x>340</x>
+       <y>270</y>
        <width>113</width>
        <height>27</height>
       </rect>
@@ -475,8 +475,8 @@
     <widget class="QLineEdit" name="lEditOutputInvName">
      <property name="geometry">
       <rect>
-       <x>330</x>
-       <y>220</y>
+       <x>340</x>
+       <y>320</y>
        <width>113</width>
        <height>27</height>
       </rect>
@@ -485,8 +485,8 @@
     <widget class="QLabel" name="label_8">
      <property name="geometry">
       <rect>
-       <x>190</x>
-       <y>174</y>
+       <x>200</x>
+       <y>274</y>
        <width>131</width>
        <height>20</height>
       </rect>
@@ -498,14 +498,37 @@
     <widget class="QLabel" name="label_9">
      <property name="geometry">
       <rect>
-       <x>160</x>
-       <y>223</y>
+       <x>170</x>
+       <y>323</y>
        <width>161</width>
        <height>20</height>
       </rect>
      </property>
      <property name="text">
       <string>Output Invariant Name: </string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_10">
+     <property name="geometry">
+      <rect>
+       <x>169</x>
+       <y>63</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Output Bubble Name:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lEditOutputBubbleName">
+     <property name="geometry">
+      <rect>
+       <x>322</x>
+       <y>60</y>
+       <width>113</width>
+       <height>27</height>
+      </rect>
      </property>
     </widget>
    </widget>

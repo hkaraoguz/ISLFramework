@@ -73,6 +73,59 @@ void KinectUtility::convertDepthImage2Cloud(cv::Mat depthImage, sensor_msgs::Poi
 
     pcl::toROSMsg(xyzCloud,*cloud);
 }
+void KinectUtility::convertDepthText2Cloud(char* fileName, sensor_msgs::PointCloud2::Ptr cloud)
+{
+    int width = 640;
+    int height = 480;
+
+    double r = 0;
+
+    double focalLength = 120.0;
+    double pixelSize = 0.10419999808073044;
+    double P2R = pixelSize * ( 1280 / width ) / focalLength;
+
+    static const double fx_d = 1.0 / 5.9421434211923247e+02;
+    static const double fy_d = 1.0 / 5.9104053696870778e+02;
+    static const double cx_d = 3.3930780975300314e+02;
+    static const double cy_d = 2.4273913761751615e+02;
+    char s[256];
+
+    pcl::PointCloud<pcl::PointXYZRGB> xyzCloud;
+    xyzCloud.height = 1;
+
+    std::ifstream is(fileName);
+    if(is.fail()) return;
+
+        for(int j = 0; j < height; j++){
+
+            for(int i = 0; i < width; i++){
+
+            pcl::PointXYZRGB pt;
+
+             is>>s;
+
+            if(strcmp(s,"nan") == 0) r = 0;
+            else r = atof(s);
+
+            pt.x  = r * P2R * ( i - width/2 );
+            pt.y =  r * P2R * ( j - height/2 );
+            pt.z  = r;
+
+
+            xyzCloud.points.push_back(pt);
+
+
+        }
+
+    }
+
+   // xyzCloud.width  = depthImage.rows*depthImage.cols;
+
+    xyzCloud.width  = xyzCloud.points.size();
+
+    pcl::toROSMsg(xyzCloud,*cloud);
+
+}
 
 /*void KinectUtility::saveDatatoXML(vector<point> data, string fileName)
 {

@@ -5,6 +5,8 @@
 //#include "xmlwriter.h"
 #include "pcprocessing.h"
 #include <vector>
+#include <QFile>
+#include <QTextStream>
 
 /*#include "imageprocess.h"
 #include <pcl-1.5/pcl/point_types.h>
@@ -44,7 +46,7 @@ public:
 
     static void convertDepthImage2Cloud(cv::Mat depthImage, sensor_msgs::PointCloud2::Ptr cloud);
 
-
+    static void convertDepthText2Cloud(char* fileName, sensor_msgs::PointCloud2::Ptr cloud);
 
 
 

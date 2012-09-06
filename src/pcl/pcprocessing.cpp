@@ -113,7 +113,7 @@ bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::Point
     viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
 
 
-  //  viewer->resetCamera();
+    viewer->resetCamera();
 
 
     return true;

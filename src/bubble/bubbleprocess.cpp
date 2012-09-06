@@ -317,6 +317,7 @@ vector<bubblePoint> bubbleProcess::convertBubXYZ2BubSpherical(std::vector<point>
 		// Calculate the r value and normalize it 
         bp.val = (float)sqrt(bubbleXYZ[i].y*bubbleXYZ[i].y + bubbleXYZ[i].x*bubbleXYZ[i].x + bubbleXYZ[i].z*bubbleXYZ[i].z)/maxRange;
 
+        if(bp.val > 0 && bp.val <1.0)
 		result.push_back(bp);
 	
 	}

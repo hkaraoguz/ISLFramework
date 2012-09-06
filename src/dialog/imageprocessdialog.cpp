@@ -32,11 +32,19 @@ void ImageProcessDialog::on_but_LoadImage_clicked()
     if(path != NULL)
     {
 
+        //char pathChar[300];
 
 
-        Mat img = ImageProcess::loadImage(path);
 
-        KinectUtility::convertDepthImage2Cloud(img,pcProcess->getCurrentCloud());
+        QByteArray ba = path.toLocal8Bit();
+        char* pathChar = ba.data();
+
+        KinectUtility::convertDepthText2Cloud(pathChar,pcProcess->getCurrentCloud());
+
+
+       // Mat img = ImageProcess::loadImage(path);
+
+       // KinectUtility::convertDepthImage2Cloud(img,pcProcess->getCurrentCloud());
 
         pcProcess->showPointCloud(pcProcess->getCurrentCloud());
 
