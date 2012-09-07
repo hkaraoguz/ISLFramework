@@ -2,17 +2,28 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
-
+#include <QString>
 Mat filter;
 
 Mat filterOrg;
+
+static QString datasetPath;
 
 ImageProcess::ImageProcess()
 {
 
 }
+void ImageProcess::setDataSetPath(QString path){
 
-void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize, bool transpose, bool save)
+    datasetPath = path;
+}
+QString ImageProcess::getDataSetPath(){
+
+
+    return datasetPath;
+}
+
+void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize, bool transpose, bool save, bool show)
 {
 
     filterOrg = Mat(filterSize,filterSize,CV_32FC1);
@@ -71,19 +82,26 @@ void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize, b
 
 
     if(transpose)
-    cv::transpose(filterOrg,filterOrg);
+        cv::transpose(filterOrg,filterOrg);
 
     cv::convertScaleAbs(filterOrg,filter,128,128);
 
-    namedWindow("filter");
+
+
 
     cv::Mat resizedFilter;
 
     cv::resize(filter,resizedFilter,resizedFilter.size(),5,5);
 
-    imshow("filter",resizedFilter);
+    if(show){
+        namedWindow("filter");
 
-    waitKey();
+        imshow("filter",resizedFilter);
+
+        waitKey();
+
+        destroyWindow("filter");
+    }
 
     if(save)
     {
@@ -97,10 +115,21 @@ void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize, b
 
 
 }
-Mat ImageProcess::loadImage(QString fileName)
+Mat ImageProcess::loadImage(QString fileName, bool show)
 {
-    Mat result = imread(fileName.toStdString());
+    Mat result = imread(fileName.toStdString(),-1);
 
+    if(show)
+    {
+
+        namedWindow("img");
+
+        imshow("img",result);
+
+        waitKey();
+
+        destroyWindow("img");
+    }
     return result;
 
 }
@@ -112,17 +141,19 @@ Mat ImageProcess::applyFilter(Mat singleChannelImage)
 
     cv::filter2D(singleChannelImage,result,result.depth(),filterOrg);
 
-  //  cv::threshold(result,result,250,255,CV_THRESH_BINARY);
+    //  cv::threshold(result,result,250,255,CV_THRESH_BINARY);
 
-  //  namedWindow("filterResult");
+    //   namedWindow("filterResult");
 
-   // namedWindow("orgImage");
+    //   namedWindow("orgImage");
 
-   // imshow("filterResult",result);
+    //   imshow("filterResult",result);
 
-   // imshow("orgImage",singleChannelImage);
+    //   imshow("orgImage",singleChannelImage);
 
-  //  waitKey();
+    //  waitKey();
+
+    //  destroyAllWindows();
 
     return result;
 

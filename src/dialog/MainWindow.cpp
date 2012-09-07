@@ -31,10 +31,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
      boost::shared_ptr<pcl::visualization::PCLVisualizer> viwer(new pcl::visualization::PCLVisualizer ("3D Viewer",false));
 
-     PclDialog* newDialog = new PclDialog(this);
-     newDialog->setPCprocessing(&this->pcProcess);
-
-     newDialog->show();
 
  //    viv = new PclViwer();
 
@@ -86,6 +82,12 @@ void MainWindow::on_openFileButton_clicked()
     dlg->setPCprocessing(&this->pcProcess);
 
     dlg->show();
+
+    PclDialog* newDialog = new PclDialog(this);
+    newDialog->setPCprocessing(&this->pcProcess);
+
+    newDialog->show();
+
 
  //   QString fileName = "/home/hakan/Downloads/tekImge_CV2_1/filtreler/filtre";
 

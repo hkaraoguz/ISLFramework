@@ -466,7 +466,7 @@
      <property name="geometry">
       <rect>
        <x>340</x>
-       <y>270</y>
+       <y>240</y>
        <width>113</width>
        <height>27</height>
       </rect>
@@ -476,7 +476,7 @@
      <property name="geometry">
       <rect>
        <x>340</x>
-       <y>320</y>
+       <y>280</y>
        <width>113</width>
        <height>27</height>
       </rect>
@@ -486,7 +486,7 @@
      <property name="geometry">
       <rect>
        <x>200</x>
-       <y>274</y>
+       <y>244</y>
        <width>131</width>
        <height>20</height>
       </rect>
@@ -499,7 +499,7 @@
      <property name="geometry">
       <rect>
        <x>170</x>
-       <y>323</y>
+       <y>283</y>
        <width>161</width>
        <height>20</height>
       </rect>
@@ -526,6 +526,29 @@
       <rect>
        <x>322</x>
        <y>60</y>
+       <width>113</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>323</y>
+       <width>121</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>No of Harmonics:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lEditNoInvariantHarmonics">
+     <property name="geometry">
+      <rect>
+       <x>340</x>
+       <y>320</y>
        <width>113</width>
        <height>27</height>
       </rect>

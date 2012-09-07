@@ -17,7 +17,7 @@ double round(double r) {
 
 
 
-QString dataSetPath;
+static QString dataSetPath;
 QStringList dataSetItems;
 boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer;
 
@@ -110,8 +110,11 @@ bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::Point
 
     viewer->removeAllPointClouds();
 
+    viewer->removeCoordinateSystem();
+
     viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
 
+    viewer->addCoordinateSystem (1.0);
 
     viewer->resetCamera();
 

@@ -429,7 +429,7 @@ void bubbleProcess::saveBubble(QFile *file, std::vector<bubblePoint> bubble){
 	for(long i = 0; i < bubble.size(); i++){
 			
 		// if val is in normal ranges save it
-		if(bubble[i].val < 1)
+        if(bubble[i].val < 1 && bubble[i].val > 0)
 		stream<<(int)bubble[i].panAng<<" "<<(int)bubble[i].tiltAng<<" "<<(double)bubble[i].val<<"\n";
 	
 	

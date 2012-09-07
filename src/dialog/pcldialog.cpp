@@ -91,7 +91,7 @@ void PclDialog::initializeView(){
     ui->lEditOutputBubbleName->setText("bubble_");
 
 
-     viwer->addCoordinateSystem (1.0);
+
 
 }
 
@@ -463,6 +463,8 @@ void PclDialog::on_butCalculateBubbleInvariants_clicked()
 
     int endd = ui->lEditDatasetEnd->text().toInt();
 
+    int noHarmonics = ui->lEditNoInvariantHarmonics->text().toInt();
+
     QString inputBubbleName = ui->lEditInputBubbleName->text();
 
     QString outputFileName =  ui->lEditOutputInvName->text();
@@ -489,9 +491,9 @@ void PclDialog::on_butCalculateBubbleInvariants_clicked()
 
             vector<bubblePoint> bubble =  bubbleProcess::readBubble(&file);
 
-            bubbleProcess::calculateDFCoefficients(bubble,pcProcessing->getDataSetPath(),"",i,10,10);
+            bubbleProcess::calculateDFCoefficients(bubble,pcProcessing->getDataSetPath(),"",i,noHarmonics,noHarmonics);
 
-            bubbleProcess::calculateInvariants(bubble,pcProcessing->getDataSetPath(),outputFileName,i,10,10);
+            bubbleProcess::calculateInvariants(bubble,pcProcessing->getDataSetPath(),outputFileName,i,noHarmonics,noHarmonics);
 
             file.close();
         }
