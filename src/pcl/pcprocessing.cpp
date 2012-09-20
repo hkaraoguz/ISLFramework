@@ -88,11 +88,13 @@ bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::Point
 
     itemPath.append(fileName);
 
-    QString ss;
+    if(itemNumber >=0){
+        QString ss;
 
-    ss.setNum(itemNumber);
+        ss.setNum(itemNumber);
 
-    itemPath.append(ss);
+        itemPath.append(ss);
+    }
 
     itemPath.append(".pcd");
 

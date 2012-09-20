@@ -161,7 +161,11 @@ void PclDialog::on_butSetDSetPath_clicked()
 
 void PclDialog::on_butLoadItem_clicked()
 {
-    int num = ui->lEditItemNumber->text().toInt();
+     int num = 0;
+
+    if(ui->lEditItemNumber->text().length() != 0)
+    num = ui->lEditItemNumber->text().toInt();
+    else num = -1;
 
     int datasetSize = PCprocessing::getNumofItems();
 
