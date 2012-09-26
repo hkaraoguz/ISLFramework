@@ -299,6 +299,8 @@ void PCprocessing::calculateNormals(sensor_msgs::PointCloud2::Ptr input)
 
     if(currentCloudNormals->size() > 0) currentCloudNormals.reset(new pcl::PointCloud<pcl::Normal>());
 
+
+
     //currentCloudNormals = cloud_normals;
 
     // Use all neighbors in a sphere of radius 3cm
@@ -311,7 +313,32 @@ void PCprocessing::calculateNormals(sensor_msgs::PointCloud2::Ptr input)
 
   //  qDebug()<<"normal x :"<<pt.normal_x;
 
+    for(unsigned long i = 0; i < currentCloudNormals->points.size(); i++){
+
+        pcl::Normal pt = currentCloudNormals->points.at(i);
+
+	// Just to see the normals towards me
+        if(fabs(pt.normal_x) < 0.9 )
+        {
+            pt.normal_x = 0;
+            pt.normal_y = 0;
+            pt.normal_z = 0;
+
+            currentCloudNormals->points.at(i) = pt;
+
+
+        }
+
+      //  i = i-1;
+
+
+    }
+
+   // currentCloudNormals->height = currentCloudNormals->size();
+   // currentCloudNormals->width = 1;
+
     viewer->addPointCloudNormals<pcl::PointXYZRGB, pcl::Normal> (tempCloud, currentCloudNormals, 10, 0.05, "normals");
+
 
     viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_COLOR, 1.0, 0.0, 0.0, "normals");
     viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_LINE_WIDTH, 3, "normals");
@@ -363,20 +390,20 @@ bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr no
 
     QTextStream stream(&file);
 
-  //  QTextStream stream2(&file2);
+    QTextStream stream2(&file2);
 
-    for(unsigned int i = 0; i < normals->size(); i+=5)
+    for(unsigned long i = 0; i < normals->size(); i+=5)
     {
 
         pcl::Normal pt = normals->points.at(i);
 
-        double pan = atan2(pt.normal_z,pt.normal_x)*180/3.14159;
+        double pan = atan2(pt.normal_y,pt.normal_x)*180/3.14159;
 
         pan = round(pan);
 
-        double xy = sqrt(pt.normal_x*pt.normal_x + pt.normal_z*pt.normal_z);
+        double xy = sqrt(pt.normal_x*pt.normal_x + pt.normal_y*pt.normal_y);
 
-        double tilt = atan2(pt.normal_y,xy)*180/3.14159;
+        double tilt = atan2(pt.normal_z,xy)*180/3.14159;
 
         tilt = round(tilt);
 
@@ -386,9 +413,13 @@ bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr no
         if(tilt < 0) tilt += 360;
         else if(tilt > 359) tilt -=360;
 
-        angles[pan][tilt] += 1;
+      //  qDebug()<<"pan: "<<pan<<"tilt: "<<tilt;
 
-   //     stream2<<pt.normal_x<<" "<<pt.normal_y<<" "<<pt.normal_z<<" "<<pan<<" "<<" "<<tilt<<"\n";
+        // This is for checking NAN situationss
+        if(pan == pan && tilt == tilt)
+            angles[(int)pan][(int)tilt] += 1;
+
+        stream2<<pt.normal_x<<" "<<pt.normal_y<<" "<<pt.normal_z<<" "<<pan<<" "<<" "<<tilt<<"\n";
 
 
 
@@ -396,9 +427,13 @@ bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr no
 
     for(int i = 0; i < 360; i++){
         for(int j = 0; j < 360; j++){
+
+            double val = (double)angles[i][j]/50;
+
+            if(val > 1) val = 0.99;
           //  if(angles[i][j]!=0)
 
-                stream<<i<<" "<<j<<" "<<(double)angles[i][j]/100<<"\n";
+                stream<<i<<" "<<j<<" "<<val<<"\n";
 
         }
 
