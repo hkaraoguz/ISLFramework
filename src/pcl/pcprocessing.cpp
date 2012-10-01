@@ -313,7 +313,7 @@ void PCprocessing::calculateNormals(sensor_msgs::PointCloud2::Ptr input)
 
   //  qDebug()<<"normal x :"<<pt.normal_x;
 
-    for(unsigned long i = 0; i < currentCloudNormals->points.size(); i++){
+   /* for(unsigned long i = 0; i < currentCloudNormals->points.size(); i++){
 
         pcl::Normal pt = currentCloudNormals->points.at(i);
 
@@ -332,7 +332,7 @@ void PCprocessing::calculateNormals(sensor_msgs::PointCloud2::Ptr input)
       //  i = i-1;
 
 
-    }
+    }*/
 
    // currentCloudNormals->height = currentCloudNormals->size();
    // currentCloudNormals->width = 1;

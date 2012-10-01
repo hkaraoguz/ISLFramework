@@ -9,12 +9,15 @@
 #include <QCheckBox>
 #include <QDebug>
 
+ QString filterpath ;
 
 ImageProcessDialog::ImageProcessDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ImageProcessDialog)
 {
     ui->setupUi(this);
+
+    this->setWindowTitle("Image Process Dialog");
 }
 
 ImageProcessDialog::~ImageProcessDialog()
@@ -36,7 +39,6 @@ void ImageProcessDialog::on_but_LoadImage_clicked()
     {
 
         //char pathChar[300];
-
 
 
         QByteArray ba = path.toLocal8Bit();
@@ -88,17 +90,22 @@ void ImageProcessDialog::on_butSetDSetPath_clicked()
 
 void ImageProcessDialog::on_butLoadFilter_clicked()
 {
-    QString fileName = "/home/hakan/Downloads/tekImge_CV2_1/filtreler/filtre";
+    //QString fileName = "/home/hakan/Downloads/tekImge_CV2_1/filtreler/filtre";
 
-    QString filterType = "h";
+    // Get the root directory
+    filterpath =   QFileDialog::getOpenFileName(this,"Open Filter File","/home/hakan/Development", tr("*.txt"));
 
-    if(ui->cBoxTransposeFilter->checkState()  == Qt::Checked)
-        ImageProcess::readFilter(fileName,18,29,true,false,true);
-    else
-        ImageProcess::readFilter(fileName,18,29,false,false,true);
+    if(filterpath != NULL)
+    {
+      //  QString filterType = "h";
 
-    cv::destroyAllWindows();
+        if(ui->cBoxTransposeFilter->checkState()  == Qt::Checked)
+        ImageProcess::readFilter(filterpath,18,29,true,false,true);
+        else
+        ImageProcess::readFilter(filterpath,18,29,false,false,true);
 
+        cv::destroyAllWindows();
+    }
 }
 
 void ImageProcessDialog::on_butApplyAll_clicked()
@@ -281,19 +288,21 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
 void ImageProcessDialog::on_cBoxTransposeFilter_stateChanged(int arg1)
 {
-    QString fileName = "/home/hakan/Downloads/tekImge_CV2_1/filtreler/filtre";
+    if(filterpath != NULL){
 
-    if(arg1 == Qt::Checked){
+        if(arg1 == Qt::Checked){
 
 
 
-        ImageProcess::readFilter(fileName,18,29,true,false,true);
+            ImageProcess::readFilter(filterpath,18,29,true,false,true);
 
-    }
-    else{
+        }
+        else
+        {
 
-        ImageProcess::readFilter(fileName,18,29,false,false,true);
+            ImageProcess::readFilter(filterpath,18,29,false,false,true);
 
+        }
     }
 }
 

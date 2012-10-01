@@ -30,13 +30,13 @@ void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize, b
 
     QString dirr = fileName;
 
-    QString str;
+   /* QString str;
 
     str.setNum(filterNum);
 
     dirr.append(str);
 
-    dirr.append(".txt");
+    dirr.append(".txt"); */
 
     qDebug()<<"Dir is :"<<dirr;
 
