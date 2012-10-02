@@ -8,6 +8,9 @@
 #include <QFileDialog>
 #include <QCheckBox>
 #include <QDebug>
+#include <QListView>
+#include <QAbstractItemModel>
+#include <QStringListModel>
 
  QString filterpath ;
 
@@ -97,12 +100,12 @@ void ImageProcessDialog::on_butLoadFilter_clicked()
 
     if(filterpath != NULL)
     {
-      //  QString filterType = "h";
+        //  QString filterType = "h";
 
         if(ui->cBoxTransposeFilter->checkState()  == Qt::Checked)
-        ImageProcess::readFilter(filterpath,18,29,true,false,true);
+            ImageProcess::readFilter(filterpath,18,29,true,false,true);
         else
-        ImageProcess::readFilter(filterpath,18,29,false,false,true);
+            ImageProcess::readFilter(filterpath,18,29,false,false,true);
 
         cv::destroyAllWindows();
     }
@@ -110,35 +113,91 @@ void ImageProcessDialog::on_butLoadFilter_clicked()
 
 void ImageProcessDialog::on_butApplyAll_clicked()
 {
+    if(this->imageFiles.size() <= 0) return;
+
+    if(this->filters.size() != this->invariantFileNames.size()) return;
+
+    if(this->filters.size() != this->bubbleFileNames.size()) return;
+
+
+
+    // Her bir filtre icin
+    for(int i = 0; i < filters.size(); i++){
+
+        ImageProcess::readFilter(filters.at(i),18,29,false,false,true);
+
+        for(int j = 1; j <= this->imageFiles.size(); j++){
+
+            QString tempPath = imageFiles.at(j-1);
+
+            qDebug()<<"Temp path: "<<tempPath;
+
+            Mat img = ImageProcess::loadImage(tempPath,false);
+
+            // qDebug()<<img.channels();
+
+            Mat ressg;
+
+            cv::cvtColor(img,ressg,CV_BGR2GRAY);
+
+            Mat sonuc = ImageProcess::applyFilter(ressg);
+
+            //  vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(channels[0],525,180);
+
+            vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
+
+            QString saveBubbleName = ImageProcess::getDataSetPath();
+
+            saveBubbleName.append(this->bubbleFileNames.at(i));
+
+            QString str;
+
+            str.setNum(j);
+
+            saveBubbleName.append(str);
+
+            saveBubbleName.append(".m");
+
+            qDebug()<<saveBubbleName;
+
+            vector<bubblePoint> resred ;
+
+            QFile file(saveBubbleName);
+
+            if(file.open(QFile::WriteOnly)){
+
+                qDebug()<<resultt.size();
+
+                resred = bubbleProcess::reduceBubble(resultt);
+
+                qDebug()<<resred.size();
+
+                bubbleProcess::saveBubble(&file,resred);
+
+                file.close();
+
+            }
+            int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
+
+            bubbleProcess::calculateDFCoefficients(resred,ImageProcess::getDataSetPath(),"",j,noHarmonics,noHarmonics);
+
+            bubbleProcess::calculateInvariants(resred,ImageProcess::getDataSetPath(),this->invariantFileNames.at(i),j,noHarmonics,noHarmonics);
+
+
+
+
+        }
+
+    }
 
    // int start = ui->lEditDatasetStart->text().toInt();
 
    // int end = ui->lEditDatasetEnd->text().toInt();
 
-    QString path = ImageProcess::getDataSetPath();
-
-    if(path == NULL) return;
 
 
-    QString fileName = ui->lEditCloudFileName->text();
 
-    QDir dirPath(path);
-
-    dirPath.setFilter(QDir::NoDotAndDotDot | QDir::Files);
-
-    //dirPath.setNameFilters();
-
-    QFileDialog dialog(this);
-    dialog.setDirectory(dirPath);
-    dialog.setFileMode(QFileDialog::ExistingFiles);
-    dialog.setNameFilter("All image files (*.png *.jpeg *.jpg)");
-    QStringList fileNames;
-
-    if (dialog.exec())
-        fileNames = dialog.selectedFiles();
-
-
-    for(unsigned int i = 1; i <= fileNames.size(); i++)
+  /*  for(unsigned int i = 1; i <= fileNames.size(); i++)
     {
 
         QString tempPath = fileNames[i-1];
@@ -171,17 +230,11 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
         QString saveBubbleName = path;
 
-        saveBubbleName.append("bubble_");
+        saveBubbleName.append(ui->lEditBubbleNameFilter->text());
 
-        if(ui->cBoxTransposeFilter->checkState() == Qt::Checked){
 
-            saveBubbleName.append("v_");
 
-        }
-        else
-            saveBubbleName.append("h_");
-
-        QString str;
+       QString str;
 
         str.setNum(i);
 
@@ -210,80 +263,9 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
     }
 
-    /*   for(int i = 1; i < 2533; i++){
-
-           QString ss;
-
-           ss.setNum(i);
 
 
-           fileName = "/home/hakan/Development/ISL/Datasets/ImageClef2012/training2/std_cam/rgb_";
-
-           fileName.append(ss);
-
-           fileName.append(".jpg");
-
-           qDebug()<<fileName;
-
-           Mat ress = ImageProcess::loadImage(fileName);
-
-           if(ress.rows != 0){
-
-            //   Mat hsvMat;
-
-           //    cvtColor(ress,hsvMat,CV_BGR2HSV);
-
-            //   vector<Mat> channels;
-
-           //   split(hsvMat,channels);
-
-               Mat ressg;
-
-               cv::cvtColor(ress,ressg,CV_BGR2GRAY);
-
-              Mat sonuc = ImageProcess::applyFilter(ressg);
-
-          //     destroyAllWindows();
-
-             //  vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(channels[0],525,180);
-
-               vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
-
-
-               qDebug()<<resultt.size();
-
-               vector<bubblePoint> resred = bubbleProcess::reduceBubble(resultt);
-
-               qDebug()<<resred.size();
-
-
-               fileName ="/home/hakan/Development/ISL/Datasets/ImageClef2012/training2/std_cam/bubble_";
-
-               fileName.append(filterType); //filterType
-
-               fileName.append("_");
-
-               fileName.append(ss);
-
-               fileName.append(".m");
-
-               qDebug()<<fileName;
-
-               QFile file(fileName);
-
-               if(file.open(QFile::WriteOnly)){
-
-                   bubbleProcess::saveBubble(&file,resred);
-
-                   file.close();
-
-               }
-
-           }
-
-   }
 */
-
 }
 
 void ImageProcessDialog::on_cBoxTransposeFilter_stateChanged(int arg1)
@@ -405,5 +387,163 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
     }
 
+
+}
+
+void ImageProcessDialog::on_butGenerateInvariants_clicked()
+{
+    QString path = ImageProcess::getDataSetPath();
+
+    if(path == NULL) return;
+
+
+
+   // QString fileName = ui->lEditCloudFileName->text();
+
+    QDir dirPath(path);
+
+    dirPath.setFilter(QDir::NoDotAndDotDot | QDir::Files);
+
+    int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
+
+    //dirPath.setNameFilters();
+
+    QFileDialog dialog(this);
+    dialog.setDirectory(dirPath);
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+
+    QString filt =  ui->lEditBubbleNameFilter->text();
+    filt.append("*");
+    dialog.setNameFilter(filt);
+    QStringList fileNames;
+
+    if (dialog.exec())
+        fileNames = dialog.selectedFiles();
+
+
+    for(unsigned int i = 1; i <= fileNames.size(); i++)
+    {
+
+        QString tempPath = fileNames[i-1];
+
+        QString outputFileName = ui->lEditInvariantName->text();
+
+       // path.append(ui->lEditInvariantName->text());
+
+        QFile file(tempPath);
+
+        qDebug()<<"Bubble path is: "<<tempPath;
+
+        if(file.open(QFile::ReadOnly))
+        {
+
+            vector<bubblePoint> bubble =  bubbleProcess::readBubble(&file);
+
+            bubbleProcess::calculateDFCoefficients(bubble,ImageProcess::getDataSetPath(),"",i,noHarmonics,noHarmonics);
+
+            bubbleProcess::calculateInvariants(bubble,ImageProcess::getDataSetPath(),outputFileName,i,noHarmonics,noHarmonics);
+
+            file.close();
+        }
+
+
+    }
+}
+
+void ImageProcessDialog::on_butAddtoBubbleFileList_clicked()
+{
+
+
+    this->bubbleFileNames<<ui->lEditBubbleNameAdd->text();
+
+    QAbstractItemModel* mod = new QStringListModel(bubbleFileNames);
+
+    ui->listViewBubbleNames->setModel(mod);
+
+    //ui->listViewBubbleNames->model()->insertRow(1);
+    //ui->listViewBubbleNames->model()->insertColumn(1);
+
+   // QVariant m = QVariant(ui->lEditBubbleNameAdd->text());
+
+    //ui->listViewBubbleNames->model()->setData(ui->listViewBubbleNames->model()->index(0,0),m);
+
+
+
+
+}
+
+void ImageProcessDialog::on_butAddtoInputFileNames_clicked()
+{
+    QString path = ImageProcess::getDataSetPath();
+
+    if(path == NULL) return;
+
+
+    QString fileName = ui->lEditCloudFileName->text();
+
+    QDir dirPath(path);
+
+    dirPath.setFilter(QDir::NoDotAndDotDot | QDir::Files);
+
+    //dirPath.setNameFilters();
+
+    QFileDialog dialog(this);
+    dialog.setDirectory(dirPath);
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+    dialog.setNameFilter("All image files (*.png *.jpeg *.jpg)");
+    QStringList fileNames;
+
+    if (dialog.exec())
+        this->imageFiles = dialog.selectedFiles();
+
+
+    QAbstractItemModel* mod = new QStringListModel(this->imageFiles);
+
+    ui->listViewInputFileNames->setModel(mod);
+
+
+
+   // ui->listViewInputFileNames->setSelectionMode(QAbstractItemView::se)
+}
+
+void ImageProcessDialog::on_butAddtoFilterNames_clicked()
+{
+    QString path = ImageProcess::getDataSetPath();
+
+    if(path == NULL) return;
+
+
+    QString fileName = ui->lEditCloudFileName->text();
+
+    QDir dirPath(path);
+
+    dirPath.setFilter(QDir::NoDotAndDotDot | QDir::Files);
+
+    //dirPath.setNameFilters();
+
+    QFileDialog dialog(this);
+    dialog.setDirectory(dirPath);
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+    dialog.setNameFilter("All filter files (*.txt)");
+
+    if (dialog.exec())
+        this->filters = dialog.selectedFiles();
+
+
+    QAbstractItemModel* mod = new QStringListModel(this->filters);
+
+    ui->listViewVisFilterNames->setModel(mod);
+
+}
+
+void ImageProcessDialog::on_butAddtoInvariantNames_clicked()
+{
+
+
+    this->invariantFileNames<<ui->lEditInvariantNameAdd->text();
+
+    QAbstractItemModel* mod = new QStringListModel(this->invariantFileNames);
+
+    ui->listViewInvariantNames->setModel(mod);
 
 }

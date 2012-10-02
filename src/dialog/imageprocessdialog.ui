@@ -6,39 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>788</width>
-    <height>608</height>
+    <width>977</width>
+    <height>832</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QPushButton" name="but_LoadImage">
-   <property name="geometry">
-    <rect>
-     <x>440</x>
-     <y>430</y>
-     <width>97</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Load Image</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="butLoadFilter">
-   <property name="geometry">
-    <rect>
-     <x>440</x>
-     <y>470</y>
-     <width>97</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Load Filter</string>
-   </property>
-  </widget>
   <widget class="QGroupBox" name="gBoxLDSet">
    <property name="geometry">
     <rect>
@@ -195,44 +169,363 @@
      <string>End</string>
     </property>
    </widget>
-  </widget>
-  <widget class="QPushButton" name="butApplyAll">
-   <property name="geometry">
-    <rect>
-     <x>440</x>
-     <y>510</y>
-     <width>97</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Apply All</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="cBoxTransposeFilter">
-   <property name="geometry">
-    <rect>
-     <x>550</x>
-     <y>472</y>
-     <width>141</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Transpose Filter</string>
-   </property>
+   <widget class="QPushButton" name="but_LoadImage">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>80</y>
+      <width>97</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Load Image</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QPushButton" name="butGenerateHueBubble">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>550</y>
+     <x>80</x>
+     <y>310</y>
      <width>151</width>
      <height>27</height>
     </rect>
    </property>
    <property name="text">
     <string>Generate Hue Bubble</string>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="gboxFilterTools">
+   <property name="geometry">
+    <rect>
+     <x>660</x>
+     <y>540</y>
+     <width>271</width>
+     <height>281</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QGroupBox{border: 1px solid #000;}
+border-color: rgb(0, 0, 0);
+</string>
+   </property>
+   <property name="title">
+    <string notr="true">Filter Tools</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+   <property name="flat">
+    <bool>false</bool>
+   </property>
+   <widget class="QPushButton" name="butLoadFilter">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>97</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Load Filter</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cBoxTransposeFilter">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>30</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Transpose Filter</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="butApplyAll">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>150</y>
+      <width>97</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Apply All</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lEditBubbleNameFilter">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>67</y>
+      <width>113</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>74</y>
+      <width>101</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Bubble Name: </string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>117</y>
+      <width>111</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Invariant Name: </string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lEditInvariantName">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>110</y>
+      <width>113</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="butGenerateInvariants">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>240</y>
+      <width>97</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Generate Invs</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lEditNoHarmonicsInvariant">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>193</y>
+      <width>113</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>200</y>
+      <width>101</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Harmonic No:</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QListView" name="listViewBubbleNames">
+   <property name="geometry">
+    <rect>
+     <x>610</x>
+     <y>300</y>
+     <width>161</width>
+     <height>192</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QListView" name="listViewInvariantNames">
+   <property name="geometry">
+    <rect>
+     <x>800</x>
+     <y>300</y>
+     <width>161</width>
+     <height>192</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lEditBubbleNameAdd">
+   <property name="geometry">
+    <rect>
+     <x>632</x>
+     <y>500</y>
+     <width>91</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lEditInvariantNameAdd">
+   <property name="geometry">
+    <rect>
+     <x>832</x>
+     <y>500</y>
+     <width>91</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="butAddtoBubbleFileList">
+   <property name="geometry">
+    <rect>
+     <x>730</x>
+     <y>500</y>
+     <width>31</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>+</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="butAddtoInvariantNames">
+   <property name="geometry">
+    <rect>
+     <x>930</x>
+     <y>500</y>
+     <width>31</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>+</string>
+   </property>
+  </widget>
+  <widget class="QListView" name="listViewInputFileNames">
+   <property name="geometry">
+    <rect>
+     <x>610</x>
+     <y>40</y>
+     <width>161</width>
+     <height>192</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="butAddtoFilterNames">
+   <property name="geometry">
+    <rect>
+     <x>930</x>
+     <y>240</y>
+     <width>31</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>+</string>
+   </property>
+  </widget>
+  <widget class="QListView" name="listViewVisFilterNames">
+   <property name="geometry">
+    <rect>
+     <x>800</x>
+     <y>40</y>
+     <width>161</width>
+     <height>192</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lEditBubbleNameFilter_4">
+   <property name="geometry">
+    <rect>
+     <x>810</x>
+     <y>240</y>
+     <width>113</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lEditBubbleNameAdd_2">
+   <property name="geometry">
+    <rect>
+     <x>632</x>
+     <y>240</y>
+     <width>91</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="butAddtoInputFileNames">
+   <property name="geometry">
+    <rect>
+     <x>730</x>
+     <y>240</y>
+     <width>31</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>+</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>610</x>
+     <y>280</y>
+     <width>101</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Bubble Names</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>800</x>
+     <y>280</y>
+     <width>111</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Invariant Names</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_8">
+   <property name="geometry">
+    <rect>
+     <x>610</x>
+     <y>20</y>
+     <width>101</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>File Names</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_9">
+   <property name="geometry">
+    <rect>
+     <x>800</x>
+     <y>20</y>
+     <width>111</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Filter Names</string>
    </property>
   </widget>
  </widget>

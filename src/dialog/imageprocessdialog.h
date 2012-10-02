@@ -17,6 +17,20 @@ public:
     explicit ImageProcessDialog(QWidget *parent = 0);
     ~ImageProcessDialog();
     void setPCprocessing(PCprocessing* pcprocess);
+
+    // This is for holding the bubble File Names
+    QStringList bubbleFileNames;
+
+    // This is for holding filter file names
+    QStringList filters;
+
+
+    // This is for holding the Image File names
+    QStringList imageFiles;
+
+
+    //This is for holding the invariant File Names
+    QStringList invariantFileNames;
     
 private slots:
 
@@ -31,6 +45,18 @@ private slots:
     void on_cBoxTransposeFilter_stateChanged(int arg1);
 
     void on_butGenerateHueBubble_clicked();
+
+    void on_butGenerateInvariants_clicked();
+
+    void on_butAddtoBubbleFileList_clicked();
+
+
+
+    void on_butAddtoInputFileNames_clicked();
+
+    void on_butAddtoFilterNames_clicked();
+
+    void on_butAddtoInvariantNames_clicked();
 
 private:
 

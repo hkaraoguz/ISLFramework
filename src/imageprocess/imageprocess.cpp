@@ -137,23 +137,23 @@ Mat ImageProcess::applyFilter(Mat singleChannelImage)
 {
     Mat result = Mat::zeros(singleChannelImage.rows,singleChannelImage.cols,CV_8UC1);
 
-    cv::GaussianBlur(singleChannelImage,singleChannelImage,cv::Size(11,11),10,10);
+    cv::GaussianBlur(singleChannelImage,singleChannelImage,cv::Size(5,5),5,5);
 
     cv::filter2D(singleChannelImage,result,result.depth(),filterOrg);
 
     //  cv::threshold(result,result,250,255,CV_THRESH_BINARY);
 
-    //   namedWindow("filterResult");
+   /*    namedWindow("filterResult");
 
-    //   namedWindow("orgImage");
+       namedWindow("orgImage");
 
-    //   imshow("filterResult",result);
+       imshow("filterResult",result);
 
-    //   imshow("orgImage",singleChannelImage);
+       imshow("orgImage",singleChannelImage);
 
-    //  waitKey();
+      waitKey();
 
-    //  destroyAllWindows();
+      destroyAllWindows();*/
 
     return result;
 

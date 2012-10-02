@@ -61,6 +61,7 @@ include_directories(./src/threads)
 include_directories(./src/bubble)
 include_directories(./src/imageprocess)
 include_directories(./src/kinect)
+include_directories(./Qt-Build)
 
 #uncomment if you have defined messages
 #rosbuild_genmsg()
