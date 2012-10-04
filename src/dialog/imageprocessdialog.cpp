@@ -11,6 +11,7 @@
 #include <QListView>
 #include <QAbstractItemModel>
 #include <QStringListModel>
+#include <QKeyEvent>
 
  QString filterpath ;
 
@@ -21,6 +22,13 @@ ImageProcessDialog::ImageProcessDialog(QWidget *parent) :
     ui->setupUi(this);
 
     this->setWindowTitle("Image Process Dialog");
+
+    ui->listViewBubbleNames->grabKeyboard();
+
+   // QKeyEvent* event = new QKeyEvent(QEvent::KeyPress,Qt::Key_Delete,Qt::NoModifier);
+
+
+
 }
 
 ImageProcessDialog::~ImageProcessDialog()
@@ -73,6 +81,16 @@ void ImageProcessDialog::on_butSetDSetPath_clicked()
 
         ui->lEditDSetPath->setText(path);
 
+        if(this->bubbleFileNames.size() > 0){
+
+            this->bubbleFileNames.clear();
+
+            QAbstractItemModel* model = new QStringListModel(this->bubbleFileNames);
+
+            ui->listViewBubbleNames->setModel(model);
+
+        }
+
         return;
 
     }
@@ -124,7 +142,7 @@ void ImageProcessDialog::on_butApplyAll_clicked()
     // Her bir filtre icin
     for(int i = 0; i < filters.size(); i++){
 
-        ImageProcess::readFilter(filters.at(i),18,29,false,false,true);
+        ImageProcess::readFilter(filters.at(i),18,29,false,false,false);
 
         for(int j = 1; j <= this->imageFiles.size(); j++){
 
