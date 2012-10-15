@@ -32,19 +32,19 @@ public:
 
     void cb(const sensor_msgs::PointCloud2ConstPtr& input);
 
-
+    void stopKinect();
 
     static void catchKeyboardEvent(const pcl::visualization::KeyboardEvent& evnt, void* viewer_void);
 
-    pcl::visualization::CloudViewer viv;
+  //  pcl::visualization::CloudViewer viv;
 
     pcl::PointCloud<pcl::PointXYZRGB> cld;
 
-    bool shouldSave = false;
+    bool shouldSave;
 
-    bool shouldQuit = false;
+    bool shouldQuit;
 
-    int frameCounter = 0;
+    int frameCounter;
 
     ros::Subscriber sub;
     

@@ -50,6 +50,10 @@ public:
 
      void showPointCloud(sensor_msgs::PointCloud2::Ptr cloud);
 
+     void showPointCloud(pcl::PointCloud<pcl::PointXYZRGB> cloud);
+
+    static void initializeViewer();
+
  private:
 
      sensor_msgs::PointCloud2::Ptr currentCloud;

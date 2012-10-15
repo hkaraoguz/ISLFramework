@@ -25,6 +25,8 @@ ImageProcessDialog::ImageProcessDialog(QWidget *parent) :
 
     ui->listViewBubbleNames->grabKeyboard();
 
+    this->setAttribute(Qt::WA_DeleteOnClose);
+
    // QKeyEvent* event = new QKeyEvent(QEvent::KeyPress,Qt::Key_Delete,Qt::NoModifier);
 
 

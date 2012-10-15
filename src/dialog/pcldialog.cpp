@@ -8,6 +8,7 @@
 #include <QDir>
 #include <QtAlgorithms>
 #include <QThread>
+#include <pcl-1.5/pcl/common/transforms.h>
 
 QString fileNam;
 
@@ -23,6 +24,8 @@ bool compareNames(const QString& s1,const QString& s2)
     temp2=temp2.section('.',0,0);
 
     return (temp1.toInt()<temp2.toInt());
+
+
 
     //your code would be more complicated than this as u have different file names
     //and filenames may also contain periods(.) more than once
@@ -51,6 +54,8 @@ PclDialog::PclDialog(QWidget *parent) :
     viwer->setBackgroundColor (0, 0, 0);
 
     viwer->initCameraParameters ();
+
+    this->setAttribute(Qt::WA_DeleteOnClose);
 
     // Set the viewer of the point cloud processing class
     PCprocessing::setViewer(this->viwer);
@@ -91,7 +96,7 @@ void PclDialog::initializeView(){
     ui->lEditOutputBubbleName->setText("bubble_");
 
 
-
+    this->grabber = NULL;
 
 }
 
@@ -279,6 +284,24 @@ void PclDialog::on_butScalePointCloud_clicked()
     int scale = ui->lEditScalePointCloud->text().toInt();
 
     pcProcessing->scalePointCloud(pcProcessing->getCurrentCloud(),scale);
+
+    ui->qvtkwidget->update();
+
+
+
+}
+
+void PclDialog::handleKinectFrame(const sensor_msgs::PointCloud2ConstPtr &cloud)
+{
+   // sensor_msgs::PointCloud2::Ptr ncloud = cloud;
+
+    pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
+
+    pcl::fromROSMsg(*cloud,tempCloud);
+
+   // qDebug()<<"Height of captured cloud: "<<tempCloud.height;
+
+    pcProcessing->showPointCloud(tempCloud);
 
     ui->qvtkwidget->update();
 
@@ -533,4 +556,49 @@ void PclDialog::on_butCalculateAllNormalAngleHistogram_clicked()
             }
         }
     }
+}
+
+void PclDialog::on_butKinectStart_clicked()
+{
+    if(!grabber){
+
+        grabber = new KinectGrabber(this);
+
+        qRegisterMetaType< sensor_msgs::PointCloud2ConstPtr >("sensor_msgs::PointCloud2ConstPtr");
+
+        connect(grabber, SIGNAL(frame(const sensor_msgs::PointCloud2ConstPtr&)),this,SLOT(handleKinectFrame(const sensor_msgs::PointCloud2ConstPtr&)));
+
+        connect(grabber,SIGNAL(started()),this,SLOT(handleKinectStart()));
+
+        connect(grabber,SIGNAL(error()),this,SLOT(handleKinectFailed()));
+
+   // ui->qvtkwidget->set
+
+        grabber->grabFromKinect();
+    }
+    else
+    {
+        grabber->stopKinect();
+
+        delete grabber;
+
+        grabber = NULL;
+
+        ui->butKinectStart->setText("Start");
+
+
+
+    }
+}
+
+void PclDialog::handleKinectFailed(){
+
+    qDebug()<<"Failed to start kinect stream!!!";
+
+}
+
+void PclDialog::handleKinectStart(){
+
+    ui->butKinectStart->setText("Stop");
+
 }

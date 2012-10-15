@@ -3,7 +3,7 @@
 
 /*******   PCL DIALOG CLASS: Responsible for ui actions for pcl functions   *****/
 
-
+#include "kinectgrabber.h"
 
 #include <QDialog>
 #include <boost/thread/thread.hpp>
@@ -66,11 +66,20 @@ private slots:
     void on_butCalculateAllNormalAngleHistogram_clicked();
 
 
+    void handleKinectFrame(const sensor_msgs::PointCloud2ConstPtr& cloud);
+
+    void handleKinectStart();
+
+    void handleKinectFailed();
+
+    void on_butKinectStart_clicked();
 
 private:
     Ui::PclDialog *ui;
 
      PCprocessing* pcProcessing;
+
+     KinectGrabber* grabber;
 
 };
 

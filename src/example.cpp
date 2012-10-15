@@ -35,7 +35,7 @@ int main(int argc, char **argv){
 
     //RosThread thread();
 
-    ros::init(argc, argv, "createController");
+    ros::init(argc, argv, "ISLFramework");
 
     MainWindow mw;
 

@@ -1,15 +1,41 @@
 #include "kinectgrabber.h"
 
+static KinectGrabber* thisGrabber;
+
 KinectGrabber::KinectGrabber(QObject *parent) :
     QObject(parent)
 {
 
+    shouldSave = false;
+
+    shouldQuit = false;
+
+    frameCounter = 0;
+
+    thisGrabber = this;
 }
+
+sensor_msgs::PointCloud2ConstPtr cloud;
+
+
+
+/*void emitFrame(){
+
+    emit frame(cloud);
+
+}*/
+
+//Q_DECLARE_METATYPE()
 
 void KinectGrabber::cb(const sensor_msgs::PointCloud2ConstPtr& input){
 
+   // cloud(new sensor_msgs::PointCloud2ConstPtr);
+    //cloud = input;
 
+   // emitFrame();
     emit frame(input);
+
+   // emit thisGrabber->frame(input);
 
     // ROS_INFO("i am here");
 
@@ -23,52 +49,62 @@ void KinectGrabber::cb(const sensor_msgs::PointCloud2ConstPtr& input){
 
  }
 
+
+
 void KinectGrabber::grabFromKinect()
 {
 
 
     QProcess* rosLaunch = new QProcess();
 
-    rosLaunch->setWorkingDirectory(QDir::temp().absolutePath());
+   rosLaunch->setWorkingDirectory(QDir::temp().absolutePath());
      //  rosLaunch->setProcessChannelMode(QProcess::MergedChannels);
 
-    QString launch= "roslaunch openni_launch openni.launch";
+   // QString launch= "roslaunch openni_launch openni.launch";
 
-    QProcess::execute("killall XnSensorServer");
+  //  QProcess::execute("killall XnSensorServer");
 
-    sleep(3);
+  //  sleep(3);
 
-    rosLaunch->start(launch);
+   // rosLaunch->start(launch);
 
    // QProcess::execute("roslaunch", QStringList() << "");
 
   //  openni->start();
 
-   if (!rosLaunch->waitForStarted())
-           return false;
+ //   while(!rosLaunch->waitForStarted());
 
 
     ros::NodeHandle n;
 
-    sub = n.subscribe<sensor_msgs::PointCloud2> ("/camera/depth_registered/points", 1, cb);
+    // If fails, it returns an empty subscriber
+    sub = n.subscribe<sensor_msgs::PointCloud2> ("/camera/depth_registered/points", 1,&KinectGrabber::cb,this);
 
-    if(ros::ok())
-        emit started();
+    if(!sub) emit error();
     else
-        emit error();
-
-    while(ros::ok() && !shouldQuit){
+        emit started();
 
 
-    }
+
+  /*  while(ros::ok() && !shouldQuit){
 
 
-    rosLaunch->terminate();
-    while(rosLaunch->waitForFinished());
+    }*/
+
+
+  //  rosLaunch->terminate();
+  //  while(rosLaunch->waitForFinished());
 
    // n.shutdown();
 
-    emit finished();
+   // emit finished();
 
+
+}
+
+void KinectGrabber::stopKinect(){
+
+
+    sub.shutdown();
 
 }

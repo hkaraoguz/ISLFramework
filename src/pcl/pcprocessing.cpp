@@ -5,6 +5,7 @@
 #include <QTextStream>
 #include <pcl-1.5/pcl/filters/voxel_grid.h>
 #include <pcl-1.5/pcl/common/transforms.h>
+#include <pcl-1.5/pcl/visualization/pcl_visualizer.h>
 #include <Eigen/Geometry>
 #include <Eigen/Eigen>
 #include <Eigen/Core>
@@ -26,12 +27,34 @@ PCprocessing::PCprocessing()
     currentCloud = sensor_msgs::PointCloud2::Ptr(new sensor_msgs::PointCloud2 ());
 
     currentCloudNormals = pcl::PointCloud<pcl::Normal>::Ptr(new pcl::PointCloud<pcl::Normal>());
+
+   // this->initializeViewer();
 }
 
 void PCprocessing::setDataSetPath(QString dir){
 
 
     dataSetPath = dir;
+
+}
+void PCprocessing::initializeViewer(){
+
+    pcl::PointCloud<pcl::PointXYZRGB> cloud;
+
+    viewer->setBackgroundColor(0, 0, 0);
+
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud.makeShared());
+
+
+    //viewer->addPointCloud<pcl::PointXYZRGB>(cloud, rgb, "kinect cloud");
+
+    viewer->addPointCloud<pcl::PointXYZRGB>(cloud.makeShared(),rgb,"kinect cloud");
+
+      viewer->setPointCloudRenderingProperties
+              (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3,"kinect cloud");
+      viewer->addCoordinateSystem(1.0);
+      viewer->initCameraParameters();
+
 
 }
 QString PCprocessing::getDataSetPath(){
@@ -66,6 +89,8 @@ int PCprocessing::getNumofItems()
 void PCprocessing::setViewer(boost::shared_ptr<pcl::visualization::PCLVisualizer> viwer){
 
     viewer = viwer;
+
+    initializeViewer();
 
 }
 bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::PointCloud2::Ptr cloud)
@@ -139,6 +164,26 @@ void PCprocessing::showPointCloud(sensor_msgs::PointCloud2::Ptr cloud)
     viewer->resetCamera();
 
 
+
+
+}
+void PCprocessing::showPointCloud(pcl::PointCloud<pcl::PointXYZRGB> cloud)
+{
+
+  //  viewer->removeAllPointClouds();
+
+    viewer->updatePointCloud(cloud.makeShared(),"kinect cloud");
+
+   // pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud.makeShared());
+
+  //  viewer->addPointCloud<pcl::PointXYZRGB>(cloud.makeShared(),rgb,"sample cloud");
+
+  //  viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
+
+  //  viewer->addCoordinateSystem (1.0);
+
+
+   // viewer->resetCamera();
 
 
 }
