@@ -1,5 +1,6 @@
 #include "kinectgrabber.h"
-
+#include <rosbag/recorder.h>
+#include <rosbag/bag.h>
 static KinectGrabber* thisGrabber;
 
 KinectGrabber::KinectGrabber(QObject *parent) :
@@ -13,6 +14,10 @@ KinectGrabber::KinectGrabber(QObject *parent) :
     frameCounter = 0;
 
     thisGrabber = this;
+
+
+
+
 }
 
 sensor_msgs::PointCloud2ConstPtr cloud;
@@ -28,6 +33,12 @@ sensor_msgs::PointCloud2ConstPtr cloud;
 //Q_DECLARE_METATYPE()
 
 void KinectGrabber::cb(const sensor_msgs::PointCloud2ConstPtr& input){
+
+    rosbag::Bag bag;
+
+    bag.open("irobot_bag",rosbag::bagmode::Write);
+
+    bag.write("/camera/depth_registered/points",ros::Time::now(),input);
 
    // cloud(new sensor_msgs::PointCloud2ConstPtr);
     //cloud = input;
