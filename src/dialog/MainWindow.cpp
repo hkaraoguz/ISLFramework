@@ -77,14 +77,14 @@ void MainWindow::sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packe
 void MainWindow::on_openFileButton_clicked()
 {
 
-    ImageProcessDialog* dlg = new ImageProcessDialog(this);
+    ImageProcessDialog* dlg = new ImageProcessDialog(this,&pcProcess);
 
-    dlg->setPCprocessing(&this->pcProcess);
+    //dlg->setPCprocessing(&this->pcProcess);
 
     dlg->show();
 
-    PclDialog* newDialog = new PclDialog(this);
-    newDialog->setPCprocessing(&this->pcProcess);
+    PclDialog* newDialog = new PclDialog(this,&pcProcess);
+   // newDialog->setPCprocessing(&this->pcProcess);
 
     newDialog->show();
 
@@ -295,9 +295,21 @@ void MainWindow::handleRosThreadStart(){
 
     //    ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
 
-     createe = n.advertise<geometry_msgs::Twist>("cmd_vel",1000);
+  //   createe = n.advertise<geometry_msgs::Twist>("cmd_vel",1000);
 
-     subs = n.subscribe("sensorPacket",1000,&MainWindow::sensorCB,this);
+  //   subs = n.subscribe("sensorPacket",1000,&MainWindow::sensorCB,this);
+
+    robot = new Irobot(this);
+
+    if(robot->initIrobotConnection()){
+
+
+        irobotDialog = new IRobotDialog(this,robot);
+
+        irobotDialog->show();
+
+
+    }
 
 
      qDebug()<<"Ros thread has started";

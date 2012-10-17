@@ -572,6 +572,19 @@
       <string>Start</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="butKinectSave">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>60</y>
+       <width>97</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Save</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>

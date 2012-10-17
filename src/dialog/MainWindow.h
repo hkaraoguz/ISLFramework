@@ -23,6 +23,8 @@
 #include <brown_drivers/irobot_create_2_1/msg_gen/cpp/include/irobot_create_2_1/SensorPacket.h>
 //#include "pclViwer.h"
 
+#include"irobot.h"
+#include "irobotdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -50,6 +52,9 @@ private:
     RosThread rosThread;
     ros::NodeHandle n;
     PCprocessing pcProcess;
+    Irobot* robot;
+    IRobotDialog* irobotDialog;
+
  //   PclViwer* viv;
 };
 

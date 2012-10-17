@@ -22,6 +22,9 @@ class PclDialog : public QDialog
     
 public:
     explicit PclDialog(QWidget *parent = 0);
+
+    PclDialog(QWidget *parent, PCprocessing* pcprocess);
+
     ~PclDialog();
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viwer;
 
@@ -30,7 +33,10 @@ public:
     void setPCprocessing(PCprocessing* pcprocess);
 
   //  bool compareNames(const QString& s1,const QString& s2);
-    
+signals:
+
+    void kinectSave();
+
 private slots:
     void on_butSetDSetPath_clicked();
 
@@ -73,6 +79,8 @@ private slots:
     void handleKinectFailed();
 
     void on_butKinectStart_clicked();
+
+    void on_butKinectSave_clicked();
 
 private:
     Ui::PclDialog *ui;

@@ -1,6 +1,8 @@
 #include "kinectgrabber.h"
 #include <rosbag/recorder.h>
 #include <rosbag/bag.h>
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/opencv.hpp>
 static KinectGrabber* thisGrabber;
 
 KinectGrabber::KinectGrabber(QObject *parent) :
@@ -34,11 +36,12 @@ sensor_msgs::PointCloud2ConstPtr cloud;
 
 void KinectGrabber::cb(const sensor_msgs::PointCloud2ConstPtr& input){
 
-    rosbag::Bag bag;
+    //rosbag::Bag bag;
 
-    bag.open("irobot_bag",rosbag::bagmode::Write);
+    //bag.open("irobot_bag",rosbag::bagmode::Write);
 
-    bag.write("/camera/depth_registered/points",ros::Time::now(),input);
+    //bag.write("/camera/depth_registered/points",ros::Time::now(),input);
+
 
    // cloud(new sensor_msgs::PointCloud2ConstPtr);
     //cloud = input;
@@ -50,8 +53,17 @@ void KinectGrabber::cb(const sensor_msgs::PointCloud2ConstPtr& input){
 
     // ROS_INFO("i am here");
 
-   // pcl::fromROSMsg(*input,cld);
+    if(saveCloud){
 
+        pcl::PointCloud<pcl::PointXYZRGB> cld;
+
+
+        pcl::fromROSMsg(*input,cld);
+
+        pcl::io::savePCDFileBinary("lalala_1.pcd",cld);
+
+        saveCloud = false;
+    }
    //  if (! viv.wasStopped())
    // viv.showCloud(cld.makeShared());
 
@@ -59,6 +71,20 @@ void KinectGrabber::cb(const sensor_msgs::PointCloud2ConstPtr& input){
    // if(shouldQuit)sub.shutdown();
 
  }
+void KinectGrabber::imagecb(const sensor_msgs::ImageConstPtr &input){
+
+
+    if(saveImage)
+    {
+
+        saveImage = false;
+
+        cv_bridge::CvImagePtr img = cv_bridge::toCvCopy(input);
+
+
+        cv::imwrite("lala.jpg",img->image);
+    }
+}
 
 
 
@@ -91,6 +117,8 @@ void KinectGrabber::grabFromKinect()
     // If fails, it returns an empty subscriber
     sub = n.subscribe<sensor_msgs::PointCloud2> ("/camera/depth_registered/points", 1,&KinectGrabber::cb,this);
 
+    imageSub = n.subscribe<sensor_msgs::Image>("/camera/rgb/image_color",1,&KinectGrabber::imagecb,this);
+
     if(!sub) emit error();
     else
         emit started();
@@ -117,5 +145,12 @@ void KinectGrabber::stopKinect(){
 
 
     sub.shutdown();
+
+}
+
+void KinectGrabber::handleSaveRequest(){
+
+    saveCloud = true;
+    saveImage = true;
 
 }

@@ -32,9 +32,11 @@ public:
 
     void cb(const sensor_msgs::PointCloud2ConstPtr& input);
 
+    void imagecb(const sensor_msgs::ImageConstPtr& input);
+
     void stopKinect();
 
-    static void catchKeyboardEvent(const pcl::visualization::KeyboardEvent& evnt, void* viewer_void);
+  //  static void catchKeyboardEvent(const pcl::visualization::KeyboardEvent& evnt, void* viewer_void);
 
   //  pcl::visualization::CloudViewer viv;
 
@@ -47,6 +49,12 @@ public:
     int frameCounter;
 
     ros::Subscriber sub;
+
+    ros::Subscriber imageSub;
+private:
+
+    bool saveImage;
+    bool saveCloud;
     
 signals:
 
@@ -59,6 +67,8 @@ signals:
     void frame(const sensor_msgs::PointCloud2ConstPtr& cloud);
     
 public slots:
+
+    void handleSaveRequest();
 
      void grabFromKinect();
 

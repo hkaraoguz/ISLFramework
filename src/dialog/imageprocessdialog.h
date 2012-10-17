@@ -15,6 +15,9 @@ class ImageProcessDialog : public QDialog
     
 public:
     explicit ImageProcessDialog(QWidget *parent = 0);
+
+    ImageProcessDialog(QWidget *parent, PCprocessing* pcprocess);
+
     ~ImageProcessDialog();
     void setPCprocessing(PCprocessing* pcprocess);
 

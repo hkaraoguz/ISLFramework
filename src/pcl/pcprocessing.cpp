@@ -6,6 +6,7 @@
 #include <pcl-1.5/pcl/filters/voxel_grid.h>
 #include <pcl-1.5/pcl/common/transforms.h>
 #include <pcl-1.5/pcl/visualization/pcl_visualizer.h>
+#include <pcl-1.5/pcl/impl/point_types.hpp>
 #include <Eigen/Geometry>
 #include <Eigen/Eigen>
 #include <Eigen/Core>
@@ -39,6 +40,8 @@ void PCprocessing::setDataSetPath(QString dir){
 }
 void PCprocessing::initializeViewer(){
 
+    viewer->removeAllPointClouds();
+
     pcl::PointCloud<pcl::PointXYZRGB> cloud;
 
     viewer->setBackgroundColor(0, 0, 0);
@@ -53,7 +56,7 @@ void PCprocessing::initializeViewer(){
       viewer->setPointCloudRenderingProperties
               (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3,"kinect cloud");
       viewer->addCoordinateSystem(1.0);
-      viewer->initCameraParameters();
+    //  viewer->initCameraParameters();
 
 
 }
@@ -133,15 +136,49 @@ bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::Point
 
     pcl::fromROSMsg(*cloud,tempCloud);
 
+
+    pcl::PointXYZRGB pt = tempCloud.points.at(0);
+
+    if(pt.r == pt.r ){
+        if(pt.r != 0 || pt.b != 0 || pt.g != 0){
+
+            qDebug()<<"r is"<<pt.r;
+            viewer->removeCoordinateSystem();
+            this->initializeViewer();
+            viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud");
+
+        }
+        else{
+
+            viewer->removeAllPointClouds();
+
+            // viewer->ad
+
+            viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+
+        }
+    }
+    else
+    {
+
+          viewer->removeAllPointClouds();
+
+          // viewer->ad
+
+          viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+
+
+    }
+
 //    pcl::toROSMsg(tempCloud,*cloud);
 
-    viewer->removeAllPointClouds();
+  //  viewer->removeAllPointClouds();
 
-    viewer->removeCoordinateSystem();
+   // viewer->removeCoordinateSystem();
 
-    viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+  //  viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
 
-    viewer->addCoordinateSystem (1.0);
+  //  viewer->addCoordinateSystem (1.0);
 
     viewer->resetCamera();
 

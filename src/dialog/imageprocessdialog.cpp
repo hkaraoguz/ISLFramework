@@ -32,6 +32,19 @@ ImageProcessDialog::ImageProcessDialog(QWidget *parent) :
 
 
 }
+ImageProcessDialog::ImageProcessDialog(QWidget *parent, PCprocessing *pcprocess):QDialog(parent),ui(new Ui::ImageProcessDialog)
+{
+    this->pcProcess = pcprocess;
+
+    ui->setupUi(this);
+
+    this->setWindowTitle("Image Process Dialog");
+
+  //  ui->listViewBubbleNames->grabKeyboard();
+
+    this->setAttribute(Qt::WA_DeleteOnClose);
+
+}
 
 ImageProcessDialog::~ImageProcessDialog()
 {
@@ -40,6 +53,8 @@ ImageProcessDialog::~ImageProcessDialog()
 void ImageProcessDialog::setPCprocessing(PCprocessing *pcprocess){
 
     this->pcProcess = pcprocess;
+
+
 
 }
 
