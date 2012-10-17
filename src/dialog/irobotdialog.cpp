@@ -12,3 +12,23 @@ IRobotDialog::~IRobotDialog()
 {
     delete ui;
 }
+
+void IRobotDialog::on_butRobotForward_clicked()
+{
+
+}
+
+void IRobotDialog::on_butRobotRight_clicked()
+{
+
+}
+
+void IRobotDialog::on_butRobotLeft_clicked()
+{
+
+}
+
+void IRobotDialog::on_butRobotBack_clicked()
+{
+
+}
