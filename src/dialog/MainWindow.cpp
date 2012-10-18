@@ -77,11 +77,11 @@ void MainWindow::sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packe
 void MainWindow::on_openFileButton_clicked()
 {
 
-    ImageProcessDialog* dlg = new ImageProcessDialog(this,&pcProcess);
+   // ImageProcessDialog* dlg = new ImageProcessDialog(this,&pcProcess);
 
     //dlg->setPCprocessing(&this->pcProcess);
 
-    dlg->show();
+  //  dlg->show();
 
     PclDialog* newDialog = new PclDialog(this,&pcProcess);
    // newDialog->setPCprocessing(&this->pcProcess);
