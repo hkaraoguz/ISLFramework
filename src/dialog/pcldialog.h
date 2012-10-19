@@ -26,6 +26,7 @@ public:
     PclDialog(QWidget *parent, PCprocessing* pcprocess);
 
     ~PclDialog();
+
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viwer;
 
     void initializeView();

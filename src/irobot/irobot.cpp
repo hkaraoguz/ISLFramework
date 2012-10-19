@@ -1,5 +1,6 @@
 #include "irobot.h"
 #include <QDebug>
+#include <QIODevice>
 Irobot::Irobot(QObject *parent) :
     QObject(parent)
 {
@@ -26,31 +27,56 @@ void Irobot::sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packet){
 
 bool Irobot::initIrobotConnection()
 {
+    connect(irobotRunProcess,SIGNAL(error(QProcess::ProcessError)),this,SLOT(handleRobotRunError(QProcess::ProcessError)));
 
     QString launchCommand = "rosparam set /brown/irobot_create_2_1/port /dev/ttyUSB0";
 
+    irobotSetSerialProcess->setProcessChannelMode(QProcess::MergedChannels);
     irobotSetSerialProcess->start(launchCommand);
 
-    while(!irobotSetSerialProcess->waitForStarted());
+
+    if(irobotSetSerialProcess->waitForFinished(1000)){
+
+        qDebug()<<"iRobot Serial port has been set";
+    }
 
     irobotSetSerialProcess->close();
 
     launchCommand = "rosrun irobot_create_2_1 driver.py";
 
+    irobotRunProcess->setProcessChannelMode(QProcess::MergedChannels);
     irobotRunProcess->start(launchCommand);
 
-    while(!irobotRunProcess->waitForStarted());
+    if(irobotRunProcess->waitForFinished(3000)){
 
-    qDebug()<<"Everything is ok !!!";
+        QByteArray arr;
 
-    subs = n.subscribe("sensorPacket",1000,&Irobot::sensorCB,this);
+        arr.append(irobotRunProcess->readAll());
 
-    createPublisher = n.advertise<geometry_msgs::Twist>("cmd_vel",1000);
+      //  QString str;
+
+       // str.fromUtf8(arr.data());
+
+        qDebug(arr.data());
+
+
+        qDebug()<<"No irobot connection";
+
+        irobotRunProcess->close();
+    }
+    else{
+        qDebug()<<"Everything is ok !!!";
+
+        subs = n.subscribe("sensorPacket",1000,&Irobot::sensorCB,this);
+
+        createPublisher = n.advertise<geometry_msgs::Twist>("cmd_vel",1000);
 
 
    return true;
     //qDebug()<<"Ros thread has started";
+    }
 
+    return false;
 
 }
 Irobot::~Irobot(){
@@ -61,19 +87,17 @@ Irobot::~Irobot(){
 
     if(irobotSetSerialProcess->isOpen()){
 
-        irobotSetSerialProcess->close();
+        irobotSetSerialProcess->terminate();
 
-        while(!irobotSetSerialProcess->waitForFinished(1000));
-
-        qDebug()<<"Serial Process has just ended";
+        if(irobotSetSerialProcess->waitForFinished(1000));
+            qDebug()<<"Serial Process has just ended";
     }
     if(irobotRunProcess->isOpen()){
 
         irobotRunProcess->terminate();
 
-        irobotRunProcess->waitForFinished(3000);
-
-        qDebug()<<"Irobot run process has just ended";
+        if(irobotRunProcess->waitForFinished(3000))
+                qDebug()<<"Irobot run process has just ended";
 
 
     }
@@ -88,4 +112,9 @@ void Irobot::setMotion(double forward, double angular){
 
     createPublisher.publish(velCommand);
 
+}
+
+void Irobot::handleRobotRunError(QProcess::ProcessError error){
+
+    qDebug()<<error;
 }

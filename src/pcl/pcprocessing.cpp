@@ -21,13 +21,15 @@ double round(double r) {
 
 static QString dataSetPath;
 QStringList dataSetItems;
-boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer;
+//boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer;
 
 PCprocessing::PCprocessing()
 {
     currentCloud = sensor_msgs::PointCloud2::Ptr(new sensor_msgs::PointCloud2 ());
 
     currentCloudNormals = pcl::PointCloud<pcl::Normal>::Ptr(new pcl::PointCloud<pcl::Normal>());
+
+    cloud = pcl::PointCloud<pcl::PointXYZRGB>::Ptr(new pcl::PointCloud<pcl::PointXYZRGB>());
 
    // this->initializeViewer();
 }
@@ -40,25 +42,57 @@ void PCprocessing::setDataSetPath(QString dir){
 }
 void PCprocessing::initializeViewer(){
 
-    viewer->removeAllPointClouds();
+    if(!viewer->removePointCloud("kinect cloud")){
+        viewer->removeAllPointClouds();
+        qDebug()<<viewer;
 
-    pcl::PointCloud<pcl::PointXYZRGB> cloud;
+        cloud->height = 1;
+        cloud->width =1;
+        cloud->is_dense = false;
+        cloud->points.resize (cloud->width * cloud->height);
+        pcl::PointXYZRGB pt ;
+        pt.x = 0;
+        pt.y = 0;
+        pt.z = 0.1;
 
-    viewer->setBackgroundColor(0, 0, 0);
+        pt.r = 0;
+        pt.g = 1;
+        pt.b = 0;
 
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud.makeShared());
+        cloud->points.push_back(pt);
 
+        qDebug()<<"I am here....";
 
-    //viewer->addPointCloud<pcl::PointXYZRGB>(cloud, rgb, "kinect cloud");
-
-    viewer->addPointCloud<pcl::PointXYZRGB>(cloud.makeShared(),rgb,"kinect cloud");
-
-      viewer->setPointCloudRenderingProperties
-              (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3,"kinect cloud");
-      viewer->addCoordinateSystem(1.0);
-    //  viewer->initCameraParameters();
+        pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud);
 
 
+        //viewer->addPointCloud<pcl::PointXYZRGB>(cloud, rgb, "kinect cloud");
+
+          viewer->setBackgroundColor(0, 0, 0);
+
+          qDebug()<<"I am here 2....";
+
+          viewer->addPointCloud<pcl::PointXYZRGB>(cloud,rgb,"kinect cloud");
+
+          qDebug()<<"I am here 3....";
+
+
+        viewer->setPointCloudRenderingProperties
+                (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3,"kinect cloud");
+
+        qDebug()<<"I am here 4....";
+
+        viewer->addCoordinateSystem(1.0);
+
+        qDebug()<<"I am here 5....";
+
+
+          viewer->initCameraParameters();
+
+          qDebug()<<"I am here 6....";
+
+       // viewer->spinOnce();
+    }
 }
 QString PCprocessing::getDataSetPath(){
 
@@ -90,10 +124,13 @@ int PCprocessing::getNumofItems()
 
 }
 void PCprocessing::setViewer(boost::shared_ptr<pcl::visualization::PCLVisualizer> viwer){
+   // if(viewer.use_count()>0)
+   // viewer.reset();
+
 
     viewer = viwer;
 
-    initializeViewer();
+  //  initializeViewer();
 
 }
 bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::PointCloud2::Ptr cloud)

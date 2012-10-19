@@ -2,6 +2,11 @@
 #define MAINWINDOW_H
 
 #include "pcprocessing.h"
+#include "pcldialog.h"
+#include "bubbleprocessdialog.h"
+#include "bubbleprocess.h"
+#include "imageprocess.h"
+#include "imageprocessdialog.h"
 
 #include <QMainWindow>
 
@@ -52,8 +57,11 @@ private:
     RosThread rosThread;
     ros::NodeHandle n;
     PCprocessing pcProcess;
+
     Irobot* robot;
+
     IRobotDialog* irobotDialog;
+    PclDialog* pclDialog;
 
  //   PclViwer* viv;
 };

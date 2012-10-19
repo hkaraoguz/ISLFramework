@@ -4,7 +4,7 @@ include(/opt/ros/fuerte/share/ros/core/rosbuild/rosbuild.cmake)
 #include(/usr/local/lib/vtk-5.8/VTKConfig.cmake)
 #PROJECT(beginner_tutorials)
 include_directories(/usr/local/include/vtk-5.8)
-
+#set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} "-Wl,--large-address-aware")
 # Set the build type.  Options are:
 #  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
 #  Debug          : w/ debug symbols, w/o optimization

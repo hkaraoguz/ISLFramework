@@ -45,6 +45,8 @@ signals:
     
 public slots:
 
+     void handleRobotRunError(QProcess::ProcessError);
+
 
     
 };

@@ -39,27 +39,28 @@ void PclDialog::setPCprocessing(PCprocessing *pcprocess){
 }
 PclDialog::PclDialog(QWidget *parent,PCprocessing* pcprocess) :QDialog(parent),ui(new Ui::PclDialog)
 {
-    pcProcessing = pcprocess;
 
     ui->setupUi(this);
+
+   // this->setAttribute(Qt::WA_DeleteOnClose);
+
+    pcProcessing = pcprocess;
 
     // This is the visualizer that is embedded inside qVTKWidget
     viwer = boost::shared_ptr<pcl::visualization::PCLVisualizer>(new pcl::visualization::PCLVisualizer ("3D Viewer",false));
 
     vtkSmartPointer<vtkRenderWindow> renderWindow = viwer->getRenderWindow();
-
     ui->qvtkwidget->SetRenderWindow(renderWindow);
 
-    viwer->setBackgroundColor (0, 0, 0);
 
-    viwer->initCameraParameters ();
+/********This part is needed in order to solve the random chrash problem of qvtk widget*************/
+    viwer->setupInteractor(ui->qvtkwidget->GetInteractor(),ui->qvtkwidget->GetRenderWindow());
+    viwer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);
+    viwer->getRenderWindow()->Render();
+/****************************************************************************************************/
 
-    this->setAttribute(Qt::WA_DeleteOnClose);
 
-    // Set the viewer of the point cloud processing class
-    PCprocessing::setViewer(this->viwer);
-
-    sleep(1);
+   // sleep(1);
 
     this->initializeView();
 
@@ -72,6 +73,8 @@ PclDialog::PclDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->setAttribute(Qt::WA_DeleteOnClose);
+
     // This is the visualizer that is embedded inside qVTKWidget
     viwer = boost::shared_ptr<pcl::visualization::PCLVisualizer>(new pcl::visualization::PCLVisualizer ("3D Viewer",false));
 
@@ -79,16 +82,18 @@ PclDialog::PclDialog(QWidget *parent) :
 
     ui->qvtkwidget->SetRenderWindow(renderWindow);
 
-    viwer->setBackgroundColor (0, 0, 0);
+   // viwer->setBackgroundColor (0, 0, 0);
 
-    viwer->initCameraParameters ();
+  //  viwer->initCameraParameters ();
 
-    this->setAttribute(Qt::WA_DeleteOnClose);
+
 
     // Set the viewer of the point cloud processing class
-    PCprocessing::setViewer(this->viwer);
+    //setViewer(this->viwer);
+    //PCprocessing::initializeViewer();
 
-    sleep(1);
+
+  //  sleep(1);
 
     this->initializeView();
 
@@ -97,6 +102,9 @@ PclDialog::PclDialog(QWidget *parent) :
 
 PclDialog::~PclDialog()
 {
+
+    viwer.reset();
+
     delete ui;
 }
 void PclDialog::initializeView(){

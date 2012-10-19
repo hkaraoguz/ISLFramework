@@ -22,7 +22,7 @@ public:
     static void setDataSetItems(QStringList items);
     static int getNumofItems();
 
-    static void setViewer(boost::shared_ptr<pcl::visualization::PCLVisualizer> viwer);
+     void setViewer(boost::shared_ptr<pcl::visualization::PCLVisualizer> viwer);
 
    // bool loadItem(int itemNumber, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 
@@ -52,13 +52,19 @@ public:
 
      void showPointCloud(pcl::PointCloud<pcl::PointXYZRGB> cloud);
 
-    static void initializeViewer();
+     void initializeViewer();
 
  private:
+
+      pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud;
+
+   //   pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb;
 
      sensor_msgs::PointCloud2::Ptr currentCloud;
 
      pcl::PointCloud<pcl::Normal>::Ptr currentCloudNormals;
+
+     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer;
  //   pcl::PointCloud<pcl::PointXYZ> currentCloud;
 
 
