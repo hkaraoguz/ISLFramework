@@ -6,6 +6,10 @@
 #include <QtGui/QFileDialog>
 #include <QtCore/QDebug>
 #include <QtGui/QMessageBox>
+#include <QtCore/QTime>
+#include <QtCore/QDateTime>
+
+#include <ros/time.h>
 
 //    // Message publisher for commanding velocity to our robot
 //ros::Publisher  createe;
@@ -93,7 +97,7 @@ void MainWindow::on_openFileButton_clicked()
         pclDialog->raise();
         pclDialog->activateWindow();
 
-
+         connect(pclDialog,SIGNAL(kinectSave()),this,SLOT(handleRobotDataSaveRequest()));
 
 
     }
@@ -143,12 +147,72 @@ void MainWindow::handleRosThreadStart(){
 
 void MainWindow::on_butBubbleProcessing_clicked()
 {
-     pcProcess.initializeViewer();
+   //  pcProcess.initializeViewer();
 
 
 
   //  BubbleProcessDialog* dlg = new BubbleProcessDialog(this);
 
  //   dlg->show();
+
+}
+
+void MainWindow::handleRobotDataSaveRequest()
+{
+
+    if(saveDataFileName == NULL){
+
+        QDateTime noww = QDateTime::currentDateTime();
+
+        saveDataFileName = "robotData_";
+
+        saveDataFileName.append(noww.toString());
+
+        saveDataFileName.append(".txt");
+
+        QFile file(saveDataFileName);
+
+
+        if(file.open(QFile::Append)){
+
+            //   QTime noww = QTime::currentTime();
+
+            //   QTextStream str(&file);
+
+            //   str<<noww.toString()<<"\n";
+
+
+            this->robot->saveData(&file);
+
+            file.close();
+
+
+        }
+
+
+    }
+    else{
+
+        QFile file(saveDataFileName);
+
+
+        if(file.open(QFile::Append)){
+
+            //   QTime noww = QTime::currentTime();
+
+            //   QTextStream str(&file);
+
+            //   str<<noww.toString()<<"\n";
+
+
+            this->robot->saveData(&file);
+
+            file.close();
+
+
+        }
+
+
+    }
 
 }

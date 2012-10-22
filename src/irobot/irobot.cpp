@@ -8,20 +8,71 @@ Irobot::Irobot(QObject *parent) :
 
     irobotRunProcess = new QProcess(this);
 
+    os5000RunProcess = new QProcess(this);
+
+    saveInProgress = false;
+
 }
 
 void Irobot::sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packet){
 
 
-    qDebug()<<packet->batteryCharge;
+    qDebug()<<packet->batteryCharge/100;
 
-    qDebug()<<"Traveled Distance in cms: "<<packet->distance/10;
+    currentSensorPacket = packet;
 
-    qDebug()<<"Angular Rate in degrees: "<<packet->angle;
+   // qDebug()<<"Traveled Distance in cms: "<<packet->distance/10;
+
+   // qDebug()<<"Angular Rate in degrees: "<<packet->angle;
+
+}
+void Irobot::kinectCB(const sensor_msgs::PointCloud2::ConstPtr &packet)
+{
+
+    if(!saveInProgress){
+
+        pcl::fromROSMsg(*packet,currentCloud);
+
+        //currentCloud = packet;
+
+    }
+
+
+}
+void Irobot::os5000CB(const sensor_msgs::Imu::ConstPtr &packet){
+
+
+    if(!saveInProgress)
+        currentOrientation = packet->orientation;
 
 
 
 
+
+}
+void Irobot::saveData(QFile* file)
+{
+    saveInProgress = true;
+
+    QTextStream stream(file);
+
+    double x = (currentSensorPacket->distance/10)*cos((double)currentSensorPacket->angle*M_PI/180);
+
+    double y = (currentSensorPacket->distance/10)*sin((double)currentSensorPacket->angle*M_PI/180);
+
+    stream<<frameCount<<" "<<x<<" "<<y<<" "<<currentSensorPacket->angle<<" "<<currentOrientation.z<<"\n";
+
+    QString str = "kinectFrame_";
+
+    str.append(QString::number(frameCount));
+
+    str.append(".pcd");
+
+  /*  pcl::io::savePCDFileBinary(str.toStdString(),currentCloud);*/
+
+    frameCount++;
+
+    saveInProgress = false;
 
 }
 
@@ -41,6 +92,12 @@ bool Irobot::initIrobotConnection()
     }
 
     irobotSetSerialProcess->close();
+
+    launchCommand = "rosrun os5000 oscompass";
+
+  //  os5000RunProcess->start(launchCommand);
+
+    os5000Subscriber = n.subscribe("os5000_data",10,&Irobot::os5000CB,this);
 
     launchCommand = "rosrun irobot_create_2_1 driver.py";
 
@@ -65,15 +122,16 @@ bool Irobot::initIrobotConnection()
         irobotRunProcess->close();
     }
     else{
+
         qDebug()<<"Everything is ok !!!";
 
-        subs = n.subscribe("sensorPacket",1000,&Irobot::sensorCB,this);
+        createSubscriber = n.subscribe("sensorPacket",100,&Irobot::sensorCB,this);
 
-        createPublisher = n.advertise<geometry_msgs::Twist>("cmd_vel",1000);
+        createPublisher = n.advertise<geometry_msgs::Twist>("cmd_vel",100);
 
 
-   return true;
-    //qDebug()<<"Ros thread has started";
+        return true;
+
     }
 
     return false;
@@ -83,13 +141,13 @@ Irobot::~Irobot(){
 
     n.shutdown();
 
-    subs.shutdown();
+    createSubscriber.shutdown();
 
     if(irobotSetSerialProcess->isOpen()){
 
         irobotSetSerialProcess->terminate();
 
-        if(irobotSetSerialProcess->waitForFinished(1000));
+        if(irobotSetSerialProcess->waitForFinished(1000))
             qDebug()<<"Serial Process has just ended";
     }
     if(irobotRunProcess->isOpen()){

@@ -600,8 +600,6 @@ void PclDialog::on_butKinectStart_clicked()
 
         grabber = new KinectGrabber(this);
 
-
-
         qRegisterMetaType< sensor_msgs::PointCloud2ConstPtr >("sensor_msgs::PointCloud2ConstPtr");
 
         connect(grabber, SIGNAL(frame(const sensor_msgs::PointCloud2ConstPtr&)),this,SLOT(handleKinectFrame(const sensor_msgs::PointCloud2ConstPtr&)));
@@ -646,5 +644,7 @@ void PclDialog::handleKinectStart(){
 void PclDialog::on_butKinectSave_clicked()
 {
     emit kinectSave();
+
+
 
 }

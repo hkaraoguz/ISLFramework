@@ -52,6 +52,8 @@ private slots:
 
     void on_butBubbleProcessing_clicked();
 
+    void handleRobotDataSaveRequest();
+
 private:
     Ui::MainWindow *ui;
     RosThread rosThread;
@@ -62,6 +64,8 @@ private:
 
     IRobotDialog* irobotDialog;
     PclDialog* pclDialog;
+
+    QString saveDataFileName;
 
  //   PclViwer* viv;
 };
