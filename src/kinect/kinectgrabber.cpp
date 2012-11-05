@@ -1,8 +1,8 @@
 #include "kinectgrabber.h"
 #include <rosbag/recorder.h>
 #include <rosbag/bag.h>
-#include <cv_bridge/cv_bridge.h>
-#include <opencv2/opencv.hpp>
+
+#include <boost/thread.hpp>
 static KinectGrabber* thisGrabber;
 
 KinectGrabber::KinectGrabber(QObject *parent) :
@@ -13,11 +13,17 @@ KinectGrabber::KinectGrabber(QObject *parent) :
 
     shouldQuit = false;
 
-    frameCounter = 0;
+    frameCounterImage = 0;
+
+    frameCounterCloud = 0;
+
+    saveCloud = false;
+
+    saveImage = false;
 
     thisGrabber = this;
 
-
+    emitCloudFrame = false;
 
 
 }
@@ -36,6 +42,7 @@ sensor_msgs::PointCloud2ConstPtr cloud;
 
 void KinectGrabber::cb(const sensor_msgs::PointCloud2ConstPtr& input){
 
+  //  std::cout<<"2 "<<boost::this_thread::get_id()<<std::endl;
     //rosbag::Bag bag;
 
     //bag.open("irobot_bag",rosbag::bagmode::Write);
@@ -47,7 +54,9 @@ void KinectGrabber::cb(const sensor_msgs::PointCloud2ConstPtr& input){
     //cloud = input;
 
    // emitFrame();
-    emit frame(input);
+
+    if(this->emitCloudFrame)
+        emit frame(input);
 
    // emit thisGrabber->frame(input);
 
@@ -57,16 +66,17 @@ void KinectGrabber::cb(const sensor_msgs::PointCloud2ConstPtr& input){
 
         pcl::PointCloud<pcl::PointXYZRGB> cld;
 
-
         pcl::fromROSMsg(*input,cld);
 
         QString fileName = "cloud_";
 
-        fileName.append(QString::number(frameCounter));
+        fileName.append(QString::number(frameCounterCloud));
 
         fileName.append(".pcd");
 
         pcl::io::savePCDFileBinary(fileName.toStdString(),cld);
+
+        frameCounterCloud++;
 
         saveCloud = false;
     }
@@ -79,19 +89,24 @@ void KinectGrabber::cb(const sensor_msgs::PointCloud2ConstPtr& input){
  }
 void KinectGrabber::imagecb(const sensor_msgs::ImageConstPtr &input){
 
+   //  std::cout<<"1 "<<boost::this_thread::get_id()<<std::endl;
+
+    cv_bridge::CvImagePtr img = cv_bridge::toCvCopy(input);
+
+    emit imageFrame(img->image);
 
     if(saveImage)
     {
 
-        cv_bridge::CvImagePtr img = cv_bridge::toCvCopy(input);
-
         QString fileName = "rgbImage_";
 
-        fileName.append(QString::number(frameCounter));
+        fileName.append(QString::number(frameCounterImage));
 
         fileName.append(".jpg");
 
         cv::imwrite(fileName.toStdString(),img->image);
+
+        frameCounterImage++;
 
         saveImage = false;
 
@@ -164,5 +179,11 @@ void KinectGrabber::handleSaveRequest(){
 
     saveCloud = true;
     saveImage = true;
+
+}
+
+void KinectGrabber::setEmitCloudFrame(bool status){
+
+    emitCloudFrame = status;
 
 }

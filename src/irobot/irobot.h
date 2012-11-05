@@ -35,7 +35,7 @@ public:
 
     ros::NodeHandle n;
 
-    bool initIrobotConnection();
+    bool initIrobotConnection(QString robotPortName);
 
     QProcess* irobotSetSerialProcess;
 

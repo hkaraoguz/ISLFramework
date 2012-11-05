@@ -131,8 +131,9 @@ void PclDialog::initializeView(){
 
     ui->lEditOutputBubbleName->setText("bubble_");
 
-
     this->grabber = NULL;
+
+    ui->labelImageThumbnail->setScaledContents(true);
 
 }
 
@@ -602,13 +603,20 @@ void PclDialog::on_butKinectStart_clicked()
 
         qRegisterMetaType< sensor_msgs::PointCloud2ConstPtr >("sensor_msgs::PointCloud2ConstPtr");
 
+        qRegisterMetaType< cv::Mat >("cv::Mat");
+
+
         connect(grabber, SIGNAL(frame(const sensor_msgs::PointCloud2ConstPtr&)),this,SLOT(handleKinectFrame(const sensor_msgs::PointCloud2ConstPtr&)));
+
+        connect(grabber,SIGNAL(imageFrame(const cv::Mat&)),this,SLOT(handleKinectImageFrame(const cv::Mat&)));
 
         connect(grabber,SIGNAL(started()),this,SLOT(handleKinectStart()));
 
         connect(grabber,SIGNAL(error()),this,SLOT(handleKinectFailed()));
 
         connect(this,SIGNAL(kinectSave()),grabber,SLOT(handleSaveRequest()));
+
+
 
    // ui->qvtkwidget->set
 
@@ -644,5 +652,23 @@ void PclDialog::handleKinectStart(){
 void PclDialog::on_butKinectSave_clicked()
 {
     emit kinectSave();
+
+}
+
+void PclDialog::handleKinectImageFrame(const cv::Mat &frame){
+
+    cv::Mat RGBframe;
+
+    cv::cvtColor(frame,RGBframe,CV_BGR2RGB);
+
+    QImage* image = new QImage((uchar*)RGBframe.data,RGBframe.cols,RGBframe.rows,RGBframe.step, QImage::Format_RGB888);
+
+    ui->labelImageThumbnail->setPixmap(QPixmap::fromImage(*image));
+
+}
+
+void PclDialog::on_cBoxCloudVisualization_clicked(bool checked)
+{
+    this->grabber->setEmitCloudFrame(checked);
 
 }

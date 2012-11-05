@@ -16,7 +16,7 @@ IRobotDialog::IRobotDialog(QWidget *parent, Irobot *aRobot):QDialog(parent),ui(n
 
     robot = aRobot;
 
-
+    initView();
 }
 
 IRobotDialog::~IRobotDialog()
@@ -76,4 +76,9 @@ void IRobotDialog::initView(){
     ui->lEditRobotPort->setText("ttyUSB0");
 
     ui->lEditKinectPort->setText("ttyUSB1");
+}
+
+void IRobotDialog::on_butIRobotConnect_clicked()
+{
+    robot->initIrobotConnection(ui->lEditRobotPort->text());
 }

@@ -75,6 +75,8 @@ private slots:
 
     void handleKinectFrame(const sensor_msgs::PointCloud2ConstPtr& cloud);
 
+    void handleKinectImageFrame(const cv::Mat& frame);
+
     void handleKinectStart();
 
     void handleKinectFailed();
@@ -82,6 +84,8 @@ private slots:
     void on_butKinectStart_clicked();
 
     void on_butKinectSave_clicked();
+
+    void on_cBoxCloudVisualization_clicked(bool checked);
 
 private:
     Ui::PclDialog *ui;

@@ -127,7 +127,14 @@ void MainWindow::handleRosThreadStart(){
 
     robot = new Irobot(this);
 
-    if(robot->initIrobotConnection()){
+    if(!irobotDialog){
+
+        irobotDialog = new IRobotDialog(this,robot);
+    }
+
+    irobotDialog->show();
+
+  /*  if(robot->initIrobotConnection()){
 
         if(!irobotDialog){
 
@@ -137,7 +144,7 @@ void MainWindow::handleRosThreadStart(){
         irobotDialog->show();
 
 
-    }
+    }*/
 
 
      qDebug()<<"Ros thread has started";

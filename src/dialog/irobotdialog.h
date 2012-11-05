@@ -33,6 +33,8 @@ private slots:
 
     void on_butRobotStop_clicked();
 
+    void on_butIRobotConnect_clicked();
+
 private:
     Ui::IRobotDialog *ui;
 

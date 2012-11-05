@@ -73,11 +73,12 @@ void Irobot::saveData(QFile* file)
 
 }
 
-bool Irobot::initIrobotConnection()
+bool Irobot::initIrobotConnection(QString robotPortName)
 {
     connect(irobotRunProcess,SIGNAL(error(QProcess::ProcessError)),this,SLOT(handleRobotRunError(QProcess::ProcessError)));
 
-    QString launchCommand = "rosparam set /brown/irobot_create_2_1/port /dev/ttyUSB0";
+    QString launchCommand = "rosparam set /brown/irobot_create_2_1/port /dev/";
+    launchCommand.append(robotPortName);
 
     irobotSetSerialProcess->setProcessChannelMode(QProcess::MergedChannels);
     irobotSetSerialProcess->start(launchCommand);
