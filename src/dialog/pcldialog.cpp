@@ -645,6 +645,4 @@ void PclDialog::on_butKinectSave_clicked()
 {
     emit kinectSave();
 
-
-
 }

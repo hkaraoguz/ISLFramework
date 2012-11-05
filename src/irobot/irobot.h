@@ -2,9 +2,13 @@
 #define IROBOT_H
 
 #include <QObject>
+#include <QFile>
+#include <QTextStream>
+
+
+#include "kinectgrabber.h"
 
 #include <ros/ros.h>
-
 #include <std_msgs/String.h>
 #include <geometry_msgs/Twist.h>
 #include <sensor_msgs/Imu.h>
@@ -16,8 +20,7 @@
 #include <pcl-1.5/pcl/point_types.h>
 #include <pcl-1.5/pcl/io/pcd_io.h>
 #include <pcl-1.5/pcl/ros/conversions.h>
-#include <QFile>
-#include <QTextStream>
+
 
 #include <brown_drivers/irobot_create_2_1/msg_gen/cpp/include/irobot_create_2_1/SensorPacket.h>
 #include <QProcess>
@@ -70,6 +73,8 @@ private:
      bool saveInProgress;
 
      int frameCount;
+
+     KinectGrabber* kinect;
     
 signals:
     

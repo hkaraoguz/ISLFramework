@@ -32,15 +32,19 @@ void RosThread::run(){
 
      emit rosStarted();
 
-    ros::Rate loop(30);
+     ros::AsyncSpinner spinner(4);
+
+     spinner.start();
+
+   // ros::Rate loop(30);
 
     while(ros::ok() &&  !shutdown){
 
 
 
-                ros::spinOnce();
+             //   ros::spinOnce();
 
-                loop.sleep();
+             //   loop.sleep();
 
 
 
@@ -54,7 +58,7 @@ void RosThread::run(){
 void RosThread::shutdownROS()
 {
     ros::shutdown();
-    shutdown = true;
+   // shutdown = true;
 
 
 }

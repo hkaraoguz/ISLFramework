@@ -46,9 +46,6 @@ void Irobot::os5000CB(const sensor_msgs::Imu::ConstPtr &packet){
         currentOrientation = packet->orientation;
 
 
-
-
-
 }
 void Irobot::saveData(QFile* file)
 {

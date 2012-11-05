@@ -60,7 +60,13 @@ void KinectGrabber::cb(const sensor_msgs::PointCloud2ConstPtr& input){
 
         pcl::fromROSMsg(*input,cld);
 
-        pcl::io::savePCDFileBinary("lalala_1.pcd",cld);
+        QString fileName = "cloud_";
+
+        fileName.append(QString::number(frameCounter));
+
+        fileName.append(".pcd");
+
+        pcl::io::savePCDFileBinary(fileName.toStdString(),cld);
 
         saveCloud = false;
     }
@@ -77,12 +83,18 @@ void KinectGrabber::imagecb(const sensor_msgs::ImageConstPtr &input){
     if(saveImage)
     {
 
-        saveImage = false;
-
         cv_bridge::CvImagePtr img = cv_bridge::toCvCopy(input);
 
+        QString fileName = "rgbImage_";
 
-        cv::imwrite("lala.jpg",img->image);
+        fileName.append(QString::number(frameCounter));
+
+        fileName.append(".jpg");
+
+        cv::imwrite(fileName.toStdString(),img->image);
+
+        saveImage = false;
+
     }
 }
 

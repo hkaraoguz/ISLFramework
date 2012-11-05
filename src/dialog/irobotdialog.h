@@ -19,6 +19,8 @@ public:
     ~IRobotDialog();
 
     Irobot* robot;
+
+
     
 private slots:
     void on_butRobotForward_clicked();
@@ -33,6 +35,8 @@ private slots:
 
 private:
     Ui::IRobotDialog *ui;
+
+    void initView();
 };
 
 #endif // IROBOTDIALOG_H

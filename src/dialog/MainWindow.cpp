@@ -97,7 +97,7 @@ void MainWindow::on_openFileButton_clicked()
         pclDialog->raise();
         pclDialog->activateWindow();
 
-         connect(pclDialog,SIGNAL(kinectSave()),this,SLOT(handleRobotDataSaveRequest()));
+        connect(pclDialog,SIGNAL(kinectSave()),this,SLOT(handleRobotDataSaveRequest()));
 
 
     }

@@ -17,8 +17,6 @@ IRobotDialog::IRobotDialog(QWidget *parent, Irobot *aRobot):QDialog(parent),ui(n
     robot = aRobot;
 
 
-
-
 }
 
 IRobotDialog::~IRobotDialog()
@@ -29,26 +27,35 @@ IRobotDialog::~IRobotDialog()
 void IRobotDialog::on_butRobotForward_clicked()
 {
 
-    robot->setMotion(0.15,0);
+   double horSpeed = ui->lEditHorSpeed->text().toDouble();
+
+    robot->setMotion(horSpeed,0);
 
 }
 
 void IRobotDialog::on_butRobotRight_clicked()
 {
-     robot->setMotion(0,-0.3);
+
+    double angSpeed = ui->lEditAngularSpeed->text().toDouble();
+
+     robot->setMotion(0,-angSpeed);
 
 }
 
 void IRobotDialog::on_butRobotLeft_clicked()
 {
-    robot->setMotion(0,0.3);
+    double angSpeed = ui->lEditAngularSpeed->text().toDouble();
+
+    robot->setMotion(0,angSpeed);
 
 }
 
 void IRobotDialog::on_butRobotBack_clicked()
 {
 
-    robot->setMotion(-0.15,0);
+     double horSpeed = ui->lEditHorSpeed->text().toDouble();
+
+    robot->setMotion(-horSpeed,0);
 
 
 }
@@ -57,4 +64,16 @@ void IRobotDialog::on_butRobotStop_clicked()
 {
     robot->setMotion(0,0);
 
+}
+void IRobotDialog::initView(){
+
+    ui->lEditAngularSpeed->setText("0.3");
+
+    ui->lEditHorSpeed->setText("0.15");
+
+    ui->lEditCompassPort->setText("ttyUSB2");
+
+    ui->lEditRobotPort->setText("ttyUSB0");
+
+    ui->lEditKinectPort->setText("ttyUSB1");
 }

@@ -46,7 +46,7 @@ public:
 
     bool shouldQuit;
 
-    int frameCounter;
+
 
     ros::Subscriber sub;
 
@@ -55,6 +55,9 @@ private:
 
     bool saveImage;
     bool saveCloud;
+
+     int frameCounter;
+
     
 signals:
 
