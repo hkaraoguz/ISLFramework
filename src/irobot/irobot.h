@@ -75,6 +75,14 @@ private:
      int frameCount;
 
      KinectGrabber* kinect;
+
+     double totalTraveledDistanceX;
+
+     double totalTraveledDistanceY;
+
+     double prevDist ;
+
+     double totalAngularHeading;
     
 signals:
     

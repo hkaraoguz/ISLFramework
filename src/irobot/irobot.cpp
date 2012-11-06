@@ -12,6 +12,17 @@ Irobot::Irobot(QObject *parent) :
 
     saveInProgress = false;
 
+    totalTraveledDistanceX = 0;
+
+    totalTraveledDistanceY = 0;
+
+
+    totalAngularHeading = 0;
+
+    frameCount = 0;
+
+    prevDist = 0;
+
 }
 
 void Irobot::sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packet){
@@ -20,6 +31,10 @@ void Irobot::sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packet){
   //  qDebug()<<packet->batteryCharge/100;
 
     currentSensorPacket = packet;
+
+  //  totalTraveledDistance += currentSensorPacket->distance/10;
+
+  //  totalAngularHeading += currentSensorPacket->angle;
 
    // qDebug()<<"Traveled Distance in cms: "<<packet->distance/10;
 
@@ -53,19 +68,27 @@ void Irobot::saveData(QFile* file)
 
     QTextStream stream(file);
 
-    double x = (currentSensorPacket->distance/10)*cos((double)currentSensorPacket->angle*M_PI/180);
+   // qDebug()<<currentSensorPacket->distance/10;
 
-    double y = (currentSensorPacket->distance/10)*sin((double)currentSensorPacket->angle*M_PI/180);
+    double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos((double)currentSensorPacket->angle*M_PI/180);
+
+    totalTraveledDistanceX = x;
+
+    double y = totalTraveledDistanceY + (((double)currentSensorPacket->distance/10 - prevDist)*sin((double)currentSensorPacket->angle*M_PI/180));
+
+    totalTraveledDistanceY = y;
+
+    prevDist = (double)currentSensorPacket->distance/10;
 
     stream<<frameCount<<" "<<x<<" "<<y<<" "<<currentSensorPacket->angle<<" "<<currentOrientation.z<<"\n";
 
-    QString str = "kinectFrame_";
+  /*  QString str = "kinectFrame_";
 
     str.append(QString::number(frameCount));
 
     str.append(".pcd");
 
-  /*  pcl::io::savePCDFileBinary(str.toStdString(),currentCloud);*/
+    pcl::io::savePCDFileBinary(str.toStdString(),currentCloud);*/
 
     frameCount++;
 
