@@ -17,7 +17,7 @@ Irobot::Irobot(QObject *parent) :
 void Irobot::sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packet){
 
 
-    qDebug()<<packet->batteryCharge/100;
+  //  qDebug()<<packet->batteryCharge/100;
 
     currentSensorPacket = packet;
 
