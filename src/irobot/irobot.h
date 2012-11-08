@@ -55,6 +55,8 @@ private:
 
     void kinectCB(const sensor_msgs::PointCloud2::ConstPtr& packet);
 
+    void updateOdometry();
+
     pcl::PointCloud<pcl::PointXYZRGB> currentCloud;
 
     geometry_msgs::Quaternion currentOrientation;

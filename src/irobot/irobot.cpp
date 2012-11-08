@@ -23,6 +23,8 @@ Irobot::Irobot(QObject *parent) :
 
     prevDist = 0;
 
+    currentOrientation.z = 1111;
+
 }
 
 void Irobot::sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packet){
@@ -30,8 +32,10 @@ void Irobot::sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packet){
 
   //  qDebug()<<packet->batteryCharge/100;
 
-    currentSensorPacket = packet;
-
+    if(!saveInProgress){
+        currentSensorPacket = packet;
+        updateOdometry();
+}
   //  totalTraveledDistance += currentSensorPacket->distance/10;
 
   //  totalAngularHeading += currentSensorPacket->angle;
@@ -62,33 +66,81 @@ void Irobot::os5000CB(const sensor_msgs::Imu::ConstPtr &packet){
 
 
 }
+void Irobot::updateOdometry()
+{
+
+    // IF we don't receive compass updates
+    if(currentOrientation.z == 1111)
+    {
+
+        double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos((double)currentSensorPacket->angle*M_PI/180);
+
+        totalTraveledDistanceX = x;
+
+        double y = totalTraveledDistanceY + (((double)currentSensorPacket->distance/10 - prevDist)*sin((double)currentSensorPacket->angle*M_PI/180));
+
+        totalTraveledDistanceY = y;
+
+        prevDist = (double)currentSensorPacket->distance/10;
+
+
+    }
+    else
+    {
+
+        double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos((double)currentOrientation.z*M_PI/180);
+
+        totalTraveledDistanceX = x;
+
+        double y = totalTraveledDistanceY + (((double)currentSensorPacket->distance/10 - prevDist)*sin((double)currentOrientation.z*M_PI/180));
+
+        totalTraveledDistanceY = y;
+
+        prevDist = (double)currentSensorPacket->distance/10;
+    }
+
+
+}
 void Irobot::saveData(QFile* file)
 {
     saveInProgress = true;
 
     QTextStream stream(file);
 
-   // qDebug()<<currentSensorPacket->distance/10;
+    // qDebug()<<currentSensorPacket->distance/10;
 
-    double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos((double)currentSensorPacket->angle*M_PI/180);
+    // IF we don't receive compass updates
+    if(currentOrientation.z == 1111)
+    {
 
-    totalTraveledDistanceX = x;
+        double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos((double)currentSensorPacket->angle*M_PI/180);
 
-    double y = totalTraveledDistanceY + (((double)currentSensorPacket->distance/10 - prevDist)*sin((double)currentSensorPacket->angle*M_PI/180));
+        totalTraveledDistanceX = x;
 
-    totalTraveledDistanceY = y;
+        double y = totalTraveledDistanceY + (((double)currentSensorPacket->distance/10 - prevDist)*sin((double)currentSensorPacket->angle*M_PI/180));
 
-    prevDist = (double)currentSensorPacket->distance/10;
+        totalTraveledDistanceY = y;
 
-    stream<<frameCount<<" "<<x<<" "<<y<<" "<<currentSensorPacket->angle<<" "<<currentOrientation.z<<"\n";
+        prevDist = (double)currentSensorPacket->distance/10;
 
-  /*  QString str = "kinectFrame_";
+        stream<<frameCount<<" "<<x<<" "<<y<<" "<<currentSensorPacket->angle<<" "<<currentOrientation.z<<"\n";
+    }
+    else
+    {
 
-    str.append(QString::number(frameCount));
+        double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos((double)currentOrientation.z*M_PI/180);
 
-    str.append(".pcd");
+        totalTraveledDistanceX = x;
 
-    pcl::io::savePCDFileBinary(str.toStdString(),currentCloud);*/
+        double y = totalTraveledDistanceY + (((double)currentSensorPacket->distance/10 - prevDist)*sin((double)currentOrientation.z*M_PI/180));
+
+        totalTraveledDistanceY = y;
+
+        prevDist = (double)currentSensorPacket->distance/10;
+
+        stream<<frameCount<<" "<<x<<" "<<y<<" "<<currentSensorPacket->angle<<" "<<currentOrientation.z<<"\n";
+
+    }
 
     frameCount++;
 
