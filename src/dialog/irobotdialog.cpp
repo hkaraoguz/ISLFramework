@@ -16,6 +16,8 @@ IRobotDialog::IRobotDialog(QWidget *parent, Irobot *aRobot):QDialog(parent),ui(n
 
     robot = aRobot;
 
+    connect(this,SIGNAL(setFirstOrientation()), robot, SLOT(handleSetFirstOrientation()));
+
     initView();
 }
 
@@ -81,4 +83,13 @@ void IRobotDialog::initView(){
 void IRobotDialog::on_butIRobotConnect_clicked()
 {
     robot->initIrobotConnection(ui->lEditRobotPort->text());
+}
+
+void IRobotDialog::on_butIRobotSetFirstOrientation_clicked()
+{
+    emit setFirstOrientation();
+
+
+    ui->lEditFirstOrientation->setText(QString::number(robot->getFirstOrientation()));
+
 }

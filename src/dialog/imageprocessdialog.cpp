@@ -23,9 +23,9 @@ ImageProcessDialog::ImageProcessDialog(QWidget *parent) :
 
     this->setWindowTitle("Image Process Dialog");
 
-    ui->listViewBubbleNames->grabKeyboard();
+  //  ui->listViewBubbleNames->grabKeyboard();
 
-    this->setAttribute(Qt::WA_DeleteOnClose);
+  //  this->setAttribute(Qt::WA_DeleteOnClose);
 
    // QKeyEvent* event = new QKeyEvent(QEvent::KeyPress,Qt::Key_Delete,Qt::NoModifier);
 
@@ -495,6 +495,8 @@ void ImageProcessDialog::on_butAddtoBubbleFileList_clicked()
 
     ui->listViewBubbleNames->setModel(mod);
 
+
+
     //ui->listViewBubbleNames->model()->insertRow(1);
     //ui->listViewBubbleNames->model()->insertColumn(1);
 
@@ -502,13 +504,25 @@ void ImageProcessDialog::on_butAddtoBubbleFileList_clicked()
 
     //ui->listViewBubbleNames->model()->setData(ui->listViewBubbleNames->model()->index(0,0),m);
 
+/*
+    ui->listViewBubbleNames->model()->removeRow(ui->listViewBubbleNames->currentIndex().row());
 
+    QStringListModel* sss = (QStringListModel*)ui->listViewBubbleNames->model();
 
+   this->bubbleFileNames =  sss->stringList();
+
+   QAbstractItemModel* modd = new QStringListModel(bubbleFileNames);
+
+   ui->listViewBubbleNames->setModel(modd);
+   */
 
 }
 
 void ImageProcessDialog::on_butAddtoInputFileNames_clicked()
 {
+
+
+
     QString path = ImageProcess::getDataSetPath();
 
     if(path == NULL) return;
@@ -580,5 +594,25 @@ void ImageProcessDialog::on_butAddtoInvariantNames_clicked()
     QAbstractItemModel* mod = new QStringListModel(this->invariantFileNames);
 
     ui->listViewInvariantNames->setModel(mod);
+
+}
+
+void ImageProcessDialog::on_butRemoveInputFileNames_clicked()
+{
+
+}
+
+void ImageProcessDialog::on_butRemoveFilterNames_clicked()
+{
+
+}
+
+void ImageProcessDialog::on_butRemoveBubbleFileNames_clicked()
+{
+
+}
+
+void ImageProcessDialog::on_butRemoveInvariantFileNames_clicked()
+{
 
 }

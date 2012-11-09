@@ -47,6 +47,8 @@ public:
 
     void saveData(QFile* file);
 
+    double getFirstOrientation();
+
 private:
 
     void sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packet);
@@ -85,12 +87,16 @@ private:
      double prevDist ;
 
      double totalAngularHeading;
+
+     double firstOrientation;
     
 signals:
     
 public slots:
 
      void handleRobotRunError(QProcess::ProcessError);
+
+     void handleSetFirstOrientation();
 
 
     

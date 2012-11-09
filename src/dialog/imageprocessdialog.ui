@@ -347,9 +347,9 @@ border-color: rgb(0, 0, 0);
   <widget class="QListView" name="listViewBubbleNames">
    <property name="geometry">
     <rect>
-     <x>610</x>
+     <x>590</x>
      <y>300</y>
-     <width>161</width>
+     <width>171</width>
      <height>192</height>
     </rect>
    </property>
@@ -357,9 +357,9 @@ border-color: rgb(0, 0, 0);
   <widget class="QListView" name="listViewInvariantNames">
    <property name="geometry">
     <rect>
-     <x>800</x>
+     <x>790</x>
      <y>300</y>
-     <width>161</width>
+     <width>171</width>
      <height>192</height>
     </rect>
    </property>
@@ -367,7 +367,7 @@ border-color: rgb(0, 0, 0);
   <widget class="QLineEdit" name="lEditBubbleNameAdd">
    <property name="geometry">
     <rect>
-     <x>632</x>
+     <x>630</x>
      <y>500</y>
      <width>91</width>
      <height>27</height>
@@ -413,9 +413,9 @@ border-color: rgb(0, 0, 0);
   <widget class="QListView" name="listViewInputFileNames">
    <property name="geometry">
     <rect>
-     <x>610</x>
+     <x>590</x>
      <y>40</y>
-     <width>161</width>
+     <width>171</width>
      <height>192</height>
     </rect>
    </property>
@@ -436,9 +436,9 @@ border-color: rgb(0, 0, 0);
   <widget class="QListView" name="listViewVisFilterNames">
    <property name="geometry">
     <rect>
-     <x>800</x>
+     <x>790</x>
      <y>40</y>
-     <width>161</width>
+     <width>171</width>
      <height>192</height>
     </rect>
    </property>
@@ -446,9 +446,9 @@ border-color: rgb(0, 0, 0);
   <widget class="QLineEdit" name="lEditBubbleNameFilter_4">
    <property name="geometry">
     <rect>
-     <x>810</x>
+     <x>830</x>
      <y>240</y>
-     <width>113</width>
+     <width>91</width>
      <height>27</height>
     </rect>
    </property>
@@ -456,7 +456,7 @@ border-color: rgb(0, 0, 0);
   <widget class="QLineEdit" name="lEditBubbleNameAdd_2">
    <property name="geometry">
     <rect>
-     <x>632</x>
+     <x>630</x>
      <y>240</y>
      <width>91</width>
      <height>27</height>
@@ -479,7 +479,7 @@ border-color: rgb(0, 0, 0);
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
-     <x>610</x>
+     <x>590</x>
      <y>280</y>
      <width>101</width>
      <height>17</height>
@@ -492,7 +492,7 @@ border-color: rgb(0, 0, 0);
   <widget class="QLabel" name="label_7">
    <property name="geometry">
     <rect>
-     <x>800</x>
+     <x>790</x>
      <y>280</y>
      <width>111</width>
      <height>17</height>
@@ -505,7 +505,7 @@ border-color: rgb(0, 0, 0);
   <widget class="QLabel" name="label_8">
    <property name="geometry">
     <rect>
-     <x>610</x>
+     <x>590</x>
      <y>20</y>
      <width>101</width>
      <height>17</height>
@@ -518,7 +518,7 @@ border-color: rgb(0, 0, 0);
   <widget class="QLabel" name="label_9">
    <property name="geometry">
     <rect>
-     <x>800</x>
+     <x>790</x>
      <y>20</y>
      <width>111</width>
      <height>17</height>
@@ -526,6 +526,58 @@ border-color: rgb(0, 0, 0);
    </property>
    <property name="text">
     <string>Filter Names</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="butRemoveInputFileNames">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>240</y>
+     <width>31</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>-</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="butRemoveFilterNames">
+   <property name="geometry">
+    <rect>
+     <x>790</x>
+     <y>240</y>
+     <width>31</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>-</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="butRemoveBubbleFileNames">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>500</y>
+     <width>31</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>-</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="butRemoveInvariantFileNames">
+   <property name="geometry">
+    <rect>
+     <x>790</x>
+     <y>500</y>
+     <width>31</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>-</string>
    </property>
   </widget>
  </widget>

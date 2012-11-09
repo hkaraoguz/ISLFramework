@@ -61,6 +61,14 @@ private slots:
 
     void on_butAddtoInvariantNames_clicked();
 
+    void on_butRemoveInputFileNames_clicked();
+
+    void on_butRemoveFilterNames_clicked();
+
+    void on_butRemoveBubbleFileNames_clicked();
+
+    void on_butRemoveInvariantFileNames_clicked();
+
 private:
 
     Ui::ImageProcessDialog *ui;

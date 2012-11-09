@@ -64,6 +64,7 @@ private:
 
     IRobotDialog* irobotDialog;
     PclDialog* pclDialog;
+    ImageProcessDialog* impDialog;
 
     QString saveDataFileName;
 

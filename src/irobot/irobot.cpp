@@ -25,6 +25,15 @@ Irobot::Irobot(QObject *parent) :
 
     currentOrientation.z = 1111;
 
+    // Holds the first orientation that is measured at the beginning position of the robot
+    firstOrientation = 0;
+
+}
+void Irobot::handleSetFirstOrientation(){
+
+
+    firstOrientation = currentOrientation.z;
+
 }
 
 void Irobot::sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packet){
@@ -73,11 +82,11 @@ void Irobot::updateOdometry()
     if(currentOrientation.z == 1111)
     {
 
-        double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos((double)currentSensorPacket->angle*M_PI/180);
+        double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos(((double)currentSensorPacket->angle)*M_PI/180);
 
         totalTraveledDistanceX = x;
 
-        double y = totalTraveledDistanceY + (((double)currentSensorPacket->distance/10 - prevDist)*sin((double)currentSensorPacket->angle*M_PI/180));
+        double y = totalTraveledDistanceY + ((double)currentSensorPacket->distance/10 - prevDist)*sin((double)currentSensorPacket->angle*M_PI/180);
 
         totalTraveledDistanceY = y;
 
@@ -88,11 +97,11 @@ void Irobot::updateOdometry()
     else
     {
 
-        double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos((double)currentOrientation.z*M_PI/180);
+        double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos(((double)currentOrientation.z - firstOrientation)*M_PI/180);
 
         totalTraveledDistanceX = x;
 
-        double y = totalTraveledDistanceY + (((double)currentSensorPacket->distance/10 - prevDist)*sin((double)currentOrientation.z*M_PI/180));
+        double y = totalTraveledDistanceY + (((double)currentSensorPacket->distance/10 - prevDist)*sin(((double)currentOrientation.z - firstOrientation)*M_PI/180));
 
         totalTraveledDistanceY = y;
 
@@ -248,4 +257,10 @@ void Irobot::setMotion(double forward, double angular){
 void Irobot::handleRobotRunError(QProcess::ProcessError error){
 
     qDebug()<<error;
+}
+double Irobot::getFirstOrientation()
+{
+
+    return firstOrientation;
+
 }

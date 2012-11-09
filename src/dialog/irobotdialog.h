@@ -20,7 +20,8 @@ public:
 
     Irobot* robot;
 
-
+signals:
+    void setFirstOrientation();
     
 private slots:
     void on_butRobotForward_clicked();
@@ -34,6 +35,8 @@ private slots:
     void on_butRobotStop_clicked();
 
     void on_butIRobotConnect_clicked();
+
+    void on_butIRobotSetFirstOrientation_clicked();
 
 private:
     Ui::IRobotDialog *ui;

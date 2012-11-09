@@ -63,6 +63,7 @@ void MainWindow::initView(){
 
    pclDialog = 0;
    irobotDialog = 0;
+   impDialog = 0;
    robot = 0;
 
 
@@ -106,6 +107,25 @@ void MainWindow::on_openFileButton_clicked()
         pclDialog->show();
         pclDialog->raise();
         pclDialog->activateWindow();
+    }
+
+    if(!impDialog){
+
+        impDialog = new ImageProcessDialog(this);
+
+        impDialog->show();
+        impDialog->raise();
+        impDialog->activateWindow();
+
+    }
+    else
+    {
+
+        impDialog->show();
+        impDialog->raise();
+        impDialog->activateWindow();
+
+
     }
 
 }
