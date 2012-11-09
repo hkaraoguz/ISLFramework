@@ -504,17 +504,7 @@ void ImageProcessDialog::on_butAddtoBubbleFileList_clicked()
 
     //ui->listViewBubbleNames->model()->setData(ui->listViewBubbleNames->model()->index(0,0),m);
 
-/*
-    ui->listViewBubbleNames->model()->removeRow(ui->listViewBubbleNames->currentIndex().row());
 
-    QStringListModel* sss = (QStringListModel*)ui->listViewBubbleNames->model();
-
-   this->bubbleFileNames =  sss->stringList();
-
-   QAbstractItemModel* modd = new QStringListModel(bubbleFileNames);
-
-   ui->listViewBubbleNames->setModel(modd);
-   */
 
 }
 
@@ -600,19 +590,64 @@ void ImageProcessDialog::on_butAddtoInvariantNames_clicked()
 void ImageProcessDialog::on_butRemoveInputFileNames_clicked()
 {
 
+    if(ui->listViewInputFileNames->model())
+    {
+        ui->listViewInputFileNames->model()->removeRow(ui->listViewInputFileNames->currentIndex().row());
+
+        QStringListModel* sss = (QStringListModel*)ui->listViewInputFileNames->model();
+
+        this->imageFiles == sss->stringList();
+
+        qDebug()<<this->imageFiles;
+
+    }
+
 }
 
 void ImageProcessDialog::on_butRemoveFilterNames_clicked()
 {
+
+    if(ui->listViewVisFilterNames->model()){
+
+        ui->listViewVisFilterNames->model()->removeRow(ui->listViewVisFilterNames->currentIndex().row());
+
+        QStringListModel* sss = (QStringListModel*)ui->listViewVisFilterNames->model();
+
+        this->filters == sss->stringList();
+
+        qDebug()<<this->filters;
+
+    }
 
 }
 
 void ImageProcessDialog::on_butRemoveBubbleFileNames_clicked()
 {
 
+    if(ui->listViewBubbleNames->model()){
+
+        ui->listViewBubbleNames->model()->removeRow(ui->listViewBubbleNames->currentIndex().row());
+
+        QStringListModel* sss = (QStringListModel*)ui->listViewBubbleNames->model();
+
+        this->bubbleFileNames =  sss->stringList();
+
+        qDebug()<<this->bubbleFileNames;
+    }
+
 }
 
 void ImageProcessDialog::on_butRemoveInvariantFileNames_clicked()
 {
+    if(ui->listViewInvariantNames->model()){
+
+         ui->listViewInvariantNames->model()->removeRow(ui->listViewInvariantNames->currentIndex().row());
+
+        QStringListModel* sss = (QStringListModel*)ui->listViewInvariantNames->model();
+
+         this->invariantFileNames =  sss->stringList();
+
+        qDebug()<<this->invariantFileNames;
+    }
 
 }
