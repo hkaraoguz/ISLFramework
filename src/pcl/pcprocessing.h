@@ -52,7 +52,7 @@ public:
 
      void showPointCloud(pcl::PointCloud<pcl::PointXYZRGB> cloud);
 
-     void initializeViewer();
+     void initializeViewer(bool iscolor);
 
  private:
 

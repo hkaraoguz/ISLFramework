@@ -29,7 +29,7 @@ ImageProcessDialog::ImageProcessDialog(QWidget *parent) :
 
    // QKeyEvent* event = new QKeyEvent(QEvent::KeyPress,Qt::Key_Delete,Qt::NoModifier);
 
-
+    initView();
 
 }
 ImageProcessDialog::ImageProcessDialog(QWidget *parent, PCprocessing *pcprocess):QDialog(parent),ui(new Ui::ImageProcessDialog)
@@ -42,7 +42,19 @@ ImageProcessDialog::ImageProcessDialog(QWidget *parent, PCprocessing *pcprocess)
 
   //  ui->listViewBubbleNames->grabKeyboard();
 
-    this->setAttribute(Qt::WA_DeleteOnClose);
+  //  this->setAttribute(Qt::WA_DeleteOnClose);
+
+    initView();
+}
+void ImageProcessDialog::initView()
+{
+    ui->lEditInputBubbleName->setText("bubble_hue_");
+
+    ui->lEditInvariantName->setText("invariants_hue_");
+
+    ui->lEditNoHarmonicsInvariant->setText("10");
+
+
 
 }
 
@@ -447,7 +459,7 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
     dialog.setDirectory(dirPath);
     dialog.setFileMode(QFileDialog::ExistingFiles);
 
-    QString filt =  ui->lEditBubbleNameFilter->text();
+    QString filt =  ui->lEditInputBubbleName->text();
     filt.append("*");
     dialog.setNameFilter(filt);
     QStringList fileNames;

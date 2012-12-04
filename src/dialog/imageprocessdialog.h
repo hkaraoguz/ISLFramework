@@ -18,6 +18,8 @@ public:
 
     ImageProcessDialog(QWidget *parent, PCprocessing* pcprocess);
 
+    void initView();
+
     ~ImageProcessDialog();
     void setPCprocessing(PCprocessing* pcprocess);
 

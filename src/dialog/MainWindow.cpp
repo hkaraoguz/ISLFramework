@@ -92,7 +92,7 @@ void MainWindow::on_openFileButton_clicked()
         pclDialog = new PclDialog(this,&pcProcess);
 
         pcProcess.setViewer(pclDialog->viwer);
-        pcProcess.initializeViewer();
+        pcProcess.initializeViewer(true);
 
         pclDialog->show();
         pclDialog->raise();
@@ -178,9 +178,9 @@ void MainWindow::on_butBubbleProcessing_clicked()
 
 
 
-  //  BubbleProcessDialog* dlg = new BubbleProcessDialog(this);
+    BubbleProcessDialog* dlg = new BubbleProcessDialog(this);
 
- //   dlg->show();
+    dlg->show();
 
 }
 

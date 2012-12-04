@@ -42,6 +42,8 @@ PclDialog::PclDialog(QWidget *parent,PCprocessing* pcprocess) :QDialog(parent),u
 
     ui->setupUi(this);
 
+    this->setWindowTitle("PC Processing Dialog");
+
    // this->setAttribute(Qt::WA_DeleteOnClose);
 
     pcProcessing = pcprocess;
@@ -109,7 +111,7 @@ PclDialog::~PclDialog()
 }
 void PclDialog::initializeView(){
 
-    ui->lEditCloudFileName->setText("depth_");
+    ui->lEditInputCloudFileName->setText("depth_");
 
     ui->lEditRotationXDeg->setText("0");
 
@@ -135,6 +137,10 @@ void PclDialog::initializeView(){
 
     ui->labelImageThumbnail->setScaledContents(true);
 
+    ui->lEditOutputCloudFileName->setText("ncloud_");
+
+    ui->lEditNoInvariantHarmonics->setText("30");
+
 }
 
 void PclDialog::on_butSetDSetPath_clicked()
@@ -143,7 +149,7 @@ void PclDialog::on_butSetDSetPath_clicked()
 
     if(path != NULL){
 
-        fileNam = ui->lEditCloudFileName->text();
+        fileNam = ui->lEditInputCloudFileName->text();
 
         path.append("/");
 
@@ -169,7 +175,7 @@ void PclDialog::on_butSetDSetPath_clicked()
 
         /*  for(int i = 0; i < tempList.size(); i++){
 
-            QString mm = ui->lEditCloudFileName->text();//"depth_";
+            QString mm = ui->lEditInputCloudFileName->text();//"depth_";
 
             mm.append(QString::number(i));
 
@@ -356,9 +362,9 @@ void PclDialog::on_butSavePointCloud_clicked()
 
 
 
-void PclDialog::on_lEditCloudFileName_editingFinished()
+void PclDialog::on_lEditInputCloudFileName_editingFinished()
 {
-    fileNam = ui->lEditCloudFileName->text();
+    fileNam = ui->lEditInputCloudFileName->text();
 }
 
 void PclDialog::on_butApplyTransformationtoAll_clicked()
@@ -377,7 +383,7 @@ void PclDialog::on_butApplyTransformationtoAll_clicked()
             ui->butScalePointCloud->click();
             ui->butRotateCloud->click();
 
-            pcProcessing->savePointCloud(i,fileNam);
+            pcProcessing->savePointCloud(i,ui->lEditOutputCloudFileName->text());
         }
 
 

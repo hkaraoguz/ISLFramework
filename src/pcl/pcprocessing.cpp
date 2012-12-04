@@ -40,9 +40,13 @@ void PCprocessing::setDataSetPath(QString dir){
     dataSetPath = dir;
 
 }
-void PCprocessing::initializeViewer(){
+void PCprocessing::initializeViewer(bool iscolor)
+{
 
-    if(!viewer->removePointCloud("kinect cloud")){
+
+    if(!viewer->updatePointCloud(cloud,"kinect cloud"))
+    {
+
         viewer->removeAllPointClouds();
         qDebug()<<viewer;
 
@@ -93,6 +97,7 @@ void PCprocessing::initializeViewer(){
 
        // viewer->spinOnce();
     }
+    else viewer->addCoordinateSystem(1.0);
 }
 QString PCprocessing::getDataSetPath(){
 
@@ -181,7 +186,7 @@ bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::Point
 
             qDebug()<<"r is"<<pt.r;
             viewer->removeCoordinateSystem();
-            this->initializeViewer();
+            this->initializeViewer(true);
             viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud");
 
         }
@@ -576,11 +581,11 @@ bool PCprocessing::savePointCloud(int itemNumber, QString fileName){
 
     if(dataSetPath==NULL) return false;
 
-    if(dataSetItems.size() == 0) return false;
+   // if(dataSetItems.size() == 0) return false;
 
     QString itemPath = dataSetPath;
 
-    itemPath.append("n");
+    //itemPath.append("n");
 
     itemPath.append(fileName);
 
