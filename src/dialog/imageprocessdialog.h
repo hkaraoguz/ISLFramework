@@ -71,6 +71,10 @@ private slots:
 
     void on_butRemoveInvariantFileNames_clicked();
 
+    void on_butGenerateHueHistograms_clicked();
+
+    void on_butGenerateHueHistBubble_clicked();
+
 private:
 
     Ui::ImageProcessDialog *ui;

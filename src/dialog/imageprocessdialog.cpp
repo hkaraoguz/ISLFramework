@@ -13,7 +13,7 @@
 #include <QStringListModel>
 #include <QKeyEvent>
 
- QString filterpath ;
+QString filterpath ;
 
 ImageProcessDialog::ImageProcessDialog(QWidget *parent) :
     QDialog(parent),
@@ -23,11 +23,11 @@ ImageProcessDialog::ImageProcessDialog(QWidget *parent) :
 
     this->setWindowTitle("Image Process Dialog");
 
-  //  ui->listViewBubbleNames->grabKeyboard();
+    //  ui->listViewBubbleNames->grabKeyboard();
 
-  //  this->setAttribute(Qt::WA_DeleteOnClose);
+    //  this->setAttribute(Qt::WA_DeleteOnClose);
 
-   // QKeyEvent* event = new QKeyEvent(QEvent::KeyPress,Qt::Key_Delete,Qt::NoModifier);
+    // QKeyEvent* event = new QKeyEvent(QEvent::KeyPress,Qt::Key_Delete,Qt::NoModifier);
 
     initView();
 
@@ -40,9 +40,9 @@ ImageProcessDialog::ImageProcessDialog(QWidget *parent, PCprocessing *pcprocess)
 
     this->setWindowTitle("Image Process Dialog");
 
-  //  ui->listViewBubbleNames->grabKeyboard();
+    //  ui->listViewBubbleNames->grabKeyboard();
 
-  //  this->setAttribute(Qt::WA_DeleteOnClose);
+    //  this->setAttribute(Qt::WA_DeleteOnClose);
 
     initView();
 }
@@ -237,14 +237,14 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
     }
 
-   // int start = ui->lEditDatasetStart->text().toInt();
+    // int start = ui->lEditDatasetStart->text().toInt();
 
-   // int end = ui->lEditDatasetEnd->text().toInt();
-
-
+    // int end = ui->lEditDatasetEnd->text().toInt();
 
 
-  /*  for(unsigned int i = 1; i <= fileNames.size(); i++)
+
+
+    /*  for(unsigned int i = 1; i <= fileNames.size(); i++)
     {
 
         QString tempPath = fileNames[i-1];
@@ -381,7 +381,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         cv::split(hsvimg,channels);
 
-       /* cvNamedWindow("hue");
+        /* cvNamedWindow("hue");
 
         imshow("hue",channels[0]);
 
@@ -445,7 +445,7 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
 
 
 
-   // QString fileName = ui->lEditCloudFileName->text();
+    // QString fileName = ui->lEditCloudFileName->text();
 
     QDir dirPath(path);
 
@@ -475,7 +475,7 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
 
         QString outputFileName = ui->lEditInvariantName->text();
 
-       // path.append(ui->lEditInvariantName->text());
+        // path.append(ui->lEditInvariantName->text());
 
         QFile file(tempPath);
 
@@ -512,7 +512,7 @@ void ImageProcessDialog::on_butAddtoBubbleFileList_clicked()
     //ui->listViewBubbleNames->model()->insertRow(1);
     //ui->listViewBubbleNames->model()->insertColumn(1);
 
-   // QVariant m = QVariant(ui->lEditBubbleNameAdd->text());
+    // QVariant m = QVariant(ui->lEditBubbleNameAdd->text());
 
     //ui->listViewBubbleNames->model()->setData(ui->listViewBubbleNames->model()->index(0,0),m);
 
@@ -554,7 +554,7 @@ void ImageProcessDialog::on_butAddtoInputFileNames_clicked()
 
 
 
-   // ui->listViewInputFileNames->setSelectionMode(QAbstractItemView::se)
+    // ui->listViewInputFileNames->setSelectionMode(QAbstractItemView::se)
 }
 
 void ImageProcessDialog::on_butAddtoFilterNames_clicked()
@@ -653,13 +653,210 @@ void ImageProcessDialog::on_butRemoveInvariantFileNames_clicked()
 {
     if(ui->listViewInvariantNames->model()){
 
-         ui->listViewInvariantNames->model()->removeRow(ui->listViewInvariantNames->currentIndex().row());
+        ui->listViewInvariantNames->model()->removeRow(ui->listViewInvariantNames->currentIndex().row());
 
         QStringListModel* sss = (QStringListModel*)ui->listViewInvariantNames->model();
 
-         this->invariantFileNames =  sss->stringList();
+        this->invariantFileNames =  sss->stringList();
 
         qDebug()<<this->invariantFileNames;
     }
+
+}
+
+void ImageProcessDialog::on_butGenerateHueHistograms_clicked()
+{
+    QString path = ImageProcess::getDataSetPath();
+
+    if(path == NULL) return;
+
+
+    QString fileName = ui->lEditCloudFileName->text();
+
+    QDir dirPath(path);
+
+    dirPath.setFilter(QDir::NoDotAndDotDot | QDir::Files);
+
+    //dirPath.setNameFilters();
+
+    QFileDialog dialog(this);
+    dialog.setDirectory(dirPath);
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+    dialog.setNameFilter("All image files (*.png *.jpeg *.jpg)");
+    QStringList fileNames;
+
+    if (dialog.exec())
+        fileNames = dialog.selectedFiles();
+
+
+    for(unsigned int i = 1; i <= fileNames.size(); i++)
+    {
+
+        QString tempPath = fileNames[i-1];
+
+        qDebug()<<"Temp path: "<<tempPath;
+
+        Mat img = ImageProcess::loadImage(tempPath,false);
+
+        cv::cvtColor(img,img,CV_BGR2HSV);
+
+        std::vector<cv::Mat> channels ;
+
+        cv::split(img,channels);
+
+        long hsvHist[180];
+
+        for(int j = 0; j< 180; j++){
+            hsvHist[j] = 0;
+        }
+
+        for(int k = 0; k < img.rows; k++){
+            for(int j = 0; j < img.cols; j++){
+
+                // Saturation is between the range
+                if(channels[2].at<uchar>(k,j) > 30 && channels[2].at<uchar>(k,j) < 225){
+
+                    uchar val = channels[0].at<uchar>(k,j);
+                    hsvHist[val] +=1;
+
+                }
+
+
+            }
+        }
+        QString fileName = path;
+
+        QString number;
+
+        number.setNum(i);
+
+        fileName.append("huehist_");
+
+        fileName.append(number);
+
+        fileName.append(".txt");
+
+        QFile output(fileName);
+
+        if(output.open(QIODevice::WriteOnly))
+        {
+
+            qDebug()<<"Output path: "<<fileName;
+
+            QTextStream stream(&output);
+
+            for(int k = 0; k < 180; k++){
+
+                stream<<hsvHist[k]<<"\n";
+             }
+
+            output.close();
+        }
+
+    }
+
+}
+
+void ImageProcessDialog::on_butGenerateHueHistBubble_clicked()
+{
+    QString path = ImageProcess::getDataSetPath();
+
+    if(path == NULL) return;
+
+
+    QString fileName = ui->lEditCloudFileName->text();
+
+    QDir dirPath(path);
+
+    dirPath.setFilter(QDir::NoDotAndDotDot | QDir::Files);
+
+    //dirPath.setNameFilters();
+
+    QFileDialog dialog(this);
+    dialog.setDirectory(dirPath);
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+    dialog.setNameFilter("All hist files (*.txt)");
+    QStringList fileNames;
+
+    if (dialog.exec())
+        fileNames = dialog.selectedFiles();
+
+    for(unsigned int i = 1; i <= fileNames.size(); i++)
+    {
+
+
+        QString tempPath = fileNames[i-1];
+
+        qDebug()<<"Temp path: "<<tempPath;
+
+        QFile file(tempPath);
+
+        if(file.open(QFile::ReadOnly))
+        {
+            QTextStream stream(&file);
+
+            QString fileName = path;
+
+            QString number;
+
+            number.setNum(i);
+
+            fileName.append("huehistbubble_");
+
+            fileName.append(number);
+
+            fileName.append(".m");
+
+            QFile output(fileName);
+
+            qDebug()<<"Output path: "<<fileName;
+
+            if(output.open(QIODevice::WriteOnly))
+            {
+
+                QTextStream stream2(&output);
+
+                int count = 0;
+
+                while(1){
+
+                    QString aLine = stream.readLine();
+
+                    if(aLine == NULL) break;
+
+                    double val = aLine.toDouble()/20000;
+
+                    if(val >1) val = 1;
+
+                    stream2<<count<<" "<<0<<" "<<val<<"\n";
+
+                    count++;
+
+                }
+
+                output.close();
+
+                file.close();
+            }
+
+
+        }
+
+
+
+    }
+
+       /* Mat img = ImageProcess::loadImage(tempPath,false);
+
+        cv::cvtColor(img,img,CV_BGR2HSV);
+
+        std::vector<cv::Mat> channels ;
+
+        cv::split(img,channels);*/
+
+
+
+
+
 
 }

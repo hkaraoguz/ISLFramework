@@ -580,6 +580,32 @@ border-color: rgb(0, 0, 0);
     <string>Apply All</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="butGenerateHueHistograms">
+   <property name="geometry">
+    <rect>
+     <x>76</x>
+     <y>270</y>
+     <width>181</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Generate Hue Histograms</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="butGenerateHueHistBubble">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>350</y>
+     <width>241</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Generate Hue Histogram Bubbles</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
