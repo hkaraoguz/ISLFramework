@@ -3,6 +3,12 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QString>
+
+
+Mat orgImg;
+
+vector<Mat> channels;
+
 Mat filter;
 
 Mat filterOrg;
@@ -22,7 +28,11 @@ QString ImageProcess::getDataSetPath(){
 
     return datasetPath;
 }
+void ImageProcess::setImage(Mat image)
+{
+    orgImg = image;
 
+}
 void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize, bool transpose, bool save, bool show)
 {
 
@@ -130,6 +140,12 @@ Mat ImageProcess::loadImage(QString fileName, bool show)
 
         destroyWindow("img");
     }
+    if(!result.empty())
+    {
+
+        orgImg = result;
+
+    }
     return result;
 
 }
@@ -157,5 +173,100 @@ Mat ImageProcess::applyFilter(Mat singleChannelImage)
 
     return result;
 
+
+}
+Mat ImageProcess::generateHueImage(Mat image, int satLower, int satUpper, int valLower, int valUpper)
+{
+    Mat hsvimage;
+    cv::cvtColor(image,hsvimage,CV_BGR2HSV);
+
+    // channel_0 hue channel_1 saturation channel_2 value
+  //  std::vector<Mat> channels;
+
+    Mat result;
+
+    result = Mat::zeros(image.rows,image.cols,CV_8UC1);
+
+    cv::split(hsvimage,channels);
+
+    for(int i = 0; i < image.rows; i++)
+    {
+
+        for(int j = 0; j < image.cols; j++)
+        {
+
+            uchar hueval = channels[0].at<uchar>(i,j);
+
+            uchar satval = channels[1].at<uchar>(i,j);
+
+            uchar valval = channels[2].at<uchar>(i,j);
+
+            if(valval > valLower && valval < valUpper)
+            {
+
+                if(satval > satLower && satval < satUpper)
+                {
+                    if(hueval < 15 ) hueval = 180;
+
+                    result.at<uchar>(i,j) = hueval;
+
+                }
+
+            }
+
+        }
+    }
+
+    return result;
+
+}
+Mat ImageProcess::generateHueImage(int satLower, int satUpper, int valLower, int valUpper)
+{
+
+    Mat result;
+
+    if(!orgImg.empty())
+    {
+
+        Mat hsvimage;
+        cv::cvtColor(orgImg,hsvimage,CV_BGR2HSV);
+
+        // channel_0 hue channel_1 saturation channel_2 value
+        //  std::vector<Mat> channels;
+
+
+        result = Mat::zeros(orgImg.rows,orgImg.cols,CV_8UC1);
+
+        cv::split(hsvimage,channels);
+
+        for(int i = 0; i < orgImg.rows; i++)
+        {
+
+            for(int j = 0; j < orgImg.cols; j++)
+            {
+
+                uchar hueval = channels[0].at<uchar>(i,j);
+
+                uchar satval = channels[1].at<uchar>(i,j);
+
+                uchar valval = channels[2].at<uchar>(i,j);
+
+                if(valval > valLower && valval < valUpper)
+                {
+
+                    if(satval > satLower && satval < satUpper)
+                    {
+                        if(hueval < 15 ) hueval = 180;
+
+                        result.at<uchar>(i,j) = hueval;
+
+                    }
+
+                }
+
+            }
+        }
+    }
+    return result;
 
 }

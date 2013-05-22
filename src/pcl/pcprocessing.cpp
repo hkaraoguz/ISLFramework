@@ -7,6 +7,7 @@
 #include <pcl-1.5/pcl/common/transforms.h>
 #include <pcl-1.5/pcl/visualization/pcl_visualizer.h>
 #include <pcl-1.5/pcl/impl/point_types.hpp>
+#include <pcl-1.5/pcl/point_types_conversion.h>
 #include <Eigen/Geometry>
 #include <Eigen/Eigen>
 #include <Eigen/Core>
@@ -31,7 +32,7 @@ PCprocessing::PCprocessing()
 
     cloud = pcl::PointCloud<pcl::PointXYZRGB>::Ptr(new pcl::PointCloud<pcl::PointXYZRGB>());
 
-   // this->initializeViewer();
+    // this->initializeViewer();
 }
 
 void PCprocessing::setDataSetPath(QString dir){
@@ -43,12 +44,12 @@ void PCprocessing::setDataSetPath(QString dir){
 void PCprocessing::initializeViewer(bool iscolor)
 {
 
-
+    // If we don't have a kinect cloud inside the viewer, add it
     if(!viewer->updatePointCloud(cloud,"kinect cloud"))
     {
 
         viewer->removeAllPointClouds();
-        qDebug()<<viewer;
+        //  qDebug()<<viewer;
 
         cloud->height = 1;
         cloud->width =1;
@@ -72,30 +73,30 @@ void PCprocessing::initializeViewer(bool iscolor)
 
         //viewer->addPointCloud<pcl::PointXYZRGB>(cloud, rgb, "kinect cloud");
 
-          viewer->setBackgroundColor(0, 0, 0);
+        viewer->setBackgroundColor(0, 0, 0);
 
-          qDebug()<<"I am here 2....";
+        qDebug()<<"I am here 2....";
 
-          viewer->addPointCloud<pcl::PointXYZRGB>(cloud,rgb,"kinect cloud");
+        viewer->addPointCloud<pcl::PointXYZRGB>(cloud,rgb,"kinect cloud");
 
-          qDebug()<<"I am here 3....";
+        //  qDebug()<<"I am here 3....";
 
 
         viewer->setPointCloudRenderingProperties
                 (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3,"kinect cloud");
 
-        qDebug()<<"I am here 4....";
+        //   qDebug()<<"I am here 4....";
 
         viewer->addCoordinateSystem(1.0);
 
-        qDebug()<<"I am here 5....";
+        //  qDebug()<<"I am here 5....";
 
 
-          viewer->initCameraParameters();
+        viewer->initCameraParameters();
 
-          qDebug()<<"I am here 6....";
+        //      qDebug()<<"I am here 6....";
 
-       // viewer->spinOnce();
+        // viewer->spinOnce();
     }
     else viewer->addCoordinateSystem(1.0);
 }
@@ -129,36 +130,28 @@ int PCprocessing::getNumofItems()
 
 }
 void PCprocessing::setViewer(boost::shared_ptr<pcl::visualization::PCLVisualizer> viwer){
-   // if(viewer.use_count()>0)
-   // viewer.reset();
+    // if(viewer.use_count()>0)
+    // viewer.reset();
 
 
     viewer = viwer;
 
-  //  initializeViewer();
+    //  initializeViewer();
 
 }
 bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::PointCloud2::Ptr cloud)
 {
-   // qDebug()<<"datasetitems:: "<<dataSetItems;
-
-
-
-   // Eigen::Affine3f rot;
-
-  //  Eigen::Affine3f rotMat = Eigen::AngleAxisf(ss);
-
-  //  rot.matrix() = ss;
+    // qDebug()<<"datasetitems:: "<<dataSetItems;
 
     if(dataSetPath==NULL) return false;
-
-  //  if(dataSetItems.size() == 0) return false;
 
     QString itemPath = dataSetPath;
 
     itemPath.append(fileName);
 
-    if(itemNumber >=0){
+    if(itemNumber >=0)
+    {
+
         QString ss;
 
         ss.setNum(itemNumber);
@@ -168,59 +161,69 @@ bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::Point
 
     itemPath.append(".pcd");
 
-   // itemPath.append(dataSetItems.at(itemNumber));
+    // itemPath.append(dataSetItems.at(itemNumber));
 
-    if( pcl::io::loadPCDFile(itemPath.toStdString(),*cloud) < 0)return false;
+    if( pcl::io::loadPCDFile(itemPath.toStdString(),*cloud) < 0) return false;
 
     qDebug()<<"Loaded item path: "<<itemPath;
 
-    pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
+    std::vector<sensor_msgs::PointField> fields = cloud->fields;
 
-    pcl::fromROSMsg(*cloud,tempCloud);
+    if(fields.at(3).name == "rgba")
+    {
+
+        pcl::PointCloud<pcl::PointXYZRGBA> tempCloud;
+
+        pcl::fromROSMsg(*cloud,tempCloud);
 
 
-    pcl::PointXYZRGB pt = tempCloud.points.at(0);
+        pcl::PointXYZRGBA pt = tempCloud.points.at(0);
 
-    if(pt.r == pt.r ){
-        if(pt.r != 0 || pt.b != 0 || pt.g != 0){
+        if(pt.r == pt.r )
+        {
 
-            qDebug()<<"r is"<<pt.r;
-            viewer->removeCoordinateSystem();
-            this->initializeViewer(true);
-            viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud");
+            if(pt.r != 0 || pt.b != 0 || pt.g != 0)
+            {
 
+                qDebug()<<"r is"<<pt.r;
+
+                viewer->removeCoordinateSystem();
+
+                this->initializeViewer(true);
+
+                viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud");
+
+            }
+            else
+            {
+
+                viewer->removeAllPointClouds();
+
+                viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
+
+            }
         }
-        else{
+        else
+        {
 
             viewer->removeAllPointClouds();
 
             // viewer->ad
 
-            viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+            viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
+
 
         }
     }
-    else
-    {
+    //    pcl::toROSMsg(tempCloud,*cloud);
 
-          viewer->removeAllPointClouds();
+    //  viewer->removeAllPointClouds();
 
-          // viewer->ad
+    // viewer->removeCoordinateSystem();
 
-          viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+    //  viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
 
-
-    }
-
-//    pcl::toROSMsg(tempCloud,*cloud);
-
-  //  viewer->removeAllPointClouds();
-
-   // viewer->removeCoordinateSystem();
-
-  //  viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
-
-  //  viewer->addCoordinateSystem (1.0);
+    //  viewer->addCoordinateSystem (1.0);
 
     viewer->resetCamera();
 
@@ -249,20 +252,20 @@ void PCprocessing::showPointCloud(sensor_msgs::PointCloud2::Ptr cloud)
 void PCprocessing::showPointCloud(pcl::PointCloud<pcl::PointXYZRGB> cloud)
 {
 
-  //  viewer->removeAllPointClouds();
+    //  viewer->removeAllPointClouds();
 
     viewer->updatePointCloud(cloud.makeShared(),"kinect cloud");
 
-   // pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud.makeShared());
+    // pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud.makeShared());
 
-  //  viewer->addPointCloud<pcl::PointXYZRGB>(cloud.makeShared(),rgb,"sample cloud");
+    //  viewer->addPointCloud<pcl::PointXYZRGB>(cloud.makeShared(),rgb,"sample cloud");
 
-  //  viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
+    //  viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
 
-  //  viewer->addCoordinateSystem (1.0);
+    //  viewer->addCoordinateSystem (1.0);
 
 
-   // viewer->resetCamera();
+    // viewer->resetCamera();
 
 
 }
@@ -284,36 +287,63 @@ void PCprocessing::rotatePointCloud(sensor_msgs::PointCloud2::Ptr input, int rot
 
     Eigen::Matrix4f xx;
 
-        xx<<1, 0, 0, 0,
-               0, cos(xRad), -sin(xRad), 0,
-               0, sin(xRad), cos(xRad), 0,
-               0, 0, 0, 1;
+    xx<<1, 0, 0, 0,
+            0, cos(xRad), -sin(xRad), 0,
+            0, sin(xRad), cos(xRad), 0,
+            0, 0, 0, 1;
 
 
-     Eigen::Matrix4f zz;
+    Eigen::Matrix4f zz;
 
-     zz<<cos(zRad),-sin(zRad), 0, 0,
-             sin(zRad), cos(zRad), 0, 0,
-                   0, 0, 1, 0,
-                   0, 0, 0, 1;
-
-
-
-        pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
-
-        pcl::fromROSMsg(*input,tempCloud);
+    zz<<cos(zRad),-sin(zRad), 0, 0,
+            sin(zRad), cos(zRad), 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1;
 
 
-        pcl::transformPointCloud(tempCloud,tempCloud,xx*yy*zz);
 
-        pcl::toROSMsg(tempCloud,*currentCloud);
+    pcl::PointCloud<pcl::PointXYZRGBA> tempCloud;
+
+    pcl::fromROSMsg(*input,tempCloud);
+
+    pcl::transformPointCloud(tempCloud,tempCloud,xx*yy*zz);
+
+    pcl::toROSMsg(tempCloud,*currentCloud);
+
+    pcl::PointXYZRGBA pt = tempCloud.points.at(0);
+
+        if(pt.r == pt.r )
+        {
+
+            if(pt.r != 0 || pt.b != 0 || pt.g != 0)
+            {
+
+                qDebug()<<"r is"<<pt.r;
+
+                viewer->removeCoordinateSystem();
+
+                this->initializeViewer(true);
+
+                viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud");
+
+            }
+            else
+            {
+
+                viewer->removeAllPointClouds();
+
+                viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
+
+            }
+        }
 
 
-        viewer->removeAllPointClouds();
-        viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+   // viewer->removeAllPointClouds();
+
+   // viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
 
 
-        viewer->resetCamera();
+    viewer->resetCamera();
 
 }
 void PCprocessing::scalePointCloud(sensor_msgs::PointCloud2::Ptr input, double scale)
@@ -337,14 +367,14 @@ void PCprocessing::scalePointCloud(sensor_msgs::PointCloud2::Ptr input, double s
 
     }
 
-       pcl::toROSMsg(tempCloud,*input);
+    pcl::toROSMsg(tempCloud,*input);
 
 
-       viewer->removeAllPointClouds();
-       viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+    viewer->removeAllPointClouds();
+    viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
 
 
-       viewer->resetCamera();
+    viewer->resetCamera();
 
 
 
@@ -358,45 +388,72 @@ sensor_msgs::PointCloud2::Ptr PCprocessing::getCurrentCloud()
 
 
 }
- pcl::PointCloud<pcl::Normal>::Ptr PCprocessing::getCurrentCloudNormals(){
+pcl::PointCloud<pcl::Normal>::Ptr PCprocessing::getCurrentCloudNormals(){
 
 
-     return this->currentCloudNormals;
+    return this->currentCloudNormals;
 
- }
+}
 
 void PCprocessing::applyVoxelGridFilter(sensor_msgs::PointCloud2::Ptr input)
 {
 
-     qDebug()<<"PointCloud before filtering: "<< input->width * input->height<< " data points (" << QString::fromStdString( pcl::getFieldsList (*input) )<< ").";;
+    qDebug()<<"PointCloud before filtering: "<< input->width * input->height<< " data points (" << QString::fromStdString( pcl::getFieldsList (*input) )<< ").";;
 
-     sensor_msgs::PointCloud2::Ptr filtered_cloud(new sensor_msgs::PointCloud2 ());
+    sensor_msgs::PointCloud2::Ptr filtered_cloud(new sensor_msgs::PointCloud2 ());
 
-     // Create the filtering object
-     pcl::VoxelGrid<sensor_msgs::PointCloud2> sor;
-     sor.setInputCloud(input);
-     sor.setLeafSize (0.01f, 0.01f, 0.01f);
-     sor.filter (*filtered_cloud);
+    // Create the filtering object
+    pcl::VoxelGrid<sensor_msgs::PointCloud2> sor;
+    sor.setInputCloud(input);
+    sor.setLeafSize (0.01f, 0.01f, 0.01f);
+    sor.filter (*filtered_cloud);
 
-     qDebug()<< "PointCloud after filtering: " << filtered_cloud->width * filtered_cloud->height;//<< " data points (" << QString::fromStdString( pcl::getFieldsList (*filtered_cloud) )<< ").";
+    qDebug()<< "PointCloud after filtering: " << filtered_cloud->width * filtered_cloud->height;//<< " data points (" << QString::fromStdString( pcl::getFieldsList (*filtered_cloud) )<< ").";
 
-     currentCloud.reset();
+    currentCloud.reset();
 
-     currentCloud = filtered_cloud;
+    currentCloud = filtered_cloud;
 
-     filtered_cloud.reset();
+    filtered_cloud.reset();
 
-     qDebug()<<"Current cloud use count: "<<currentCloud.use_count();
+    //qDebug()<<"Current cloud use count: "<<currentCloud.use_count();
 
-     pcl::PointCloud<pcl::PointXYZ> tempCloud;
+    pcl::PointCloud<pcl::PointXYZRGBA> tempCloud;
 
-     pcl::fromROSMsg(*currentCloud,tempCloud);
+    pcl::fromROSMsg(*currentCloud,tempCloud);
 
-     viewer->removeAllPointClouds();
-     viewer->addPointCloud<pcl::PointXYZ>(tempCloud.makeShared());
+    pcl::PointXYZRGBA pt = tempCloud.points.at(0);
+
+        if(pt.r == pt.r )
+        {
+
+            if(pt.r != 0 || pt.b != 0 || pt.g != 0)
+            {
+
+                qDebug()<<"r is"<<pt.r;
+
+                viewer->removeCoordinateSystem();
+
+                this->initializeViewer(true);
+
+                viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud");
+
+            }
+            else
+            {
+
+                viewer->removeAllPointClouds();
+
+                viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
+
+            }
+        }
+
+   /* viewer->removeAllPointClouds();
+    viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());*/
 
 
-     viewer->resetCamera();
+    viewer->resetCamera();
 
 
 }
@@ -405,9 +462,9 @@ void PCprocessing::calculateNormals(sensor_msgs::PointCloud2::Ptr input)
 
 
     // Create the normal estimation class, and pass the input dataset to it
-    pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> ne;
+    pcl::NormalEstimation<pcl::PointXYZRGBA, pcl::Normal> ne;
 
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr tempCloud (new pcl::PointCloud<pcl::PointXYZRGB>());
+    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr tempCloud (new pcl::PointCloud<pcl::PointXYZRGBA>());
 
     pcl::fromROSMsg(*input,*tempCloud);
 
@@ -415,7 +472,7 @@ void PCprocessing::calculateNormals(sensor_msgs::PointCloud2::Ptr input)
 
     // Create an empty kdtree representation, and pass it to the normal estimation object.
     // Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
-    pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB> ());
+    pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA> ());
     ne.setSearchMethod (tree);
 
     // Output datasets
@@ -427,21 +484,21 @@ void PCprocessing::calculateNormals(sensor_msgs::PointCloud2::Ptr input)
 
     //currentCloudNormals = cloud_normals;
 
-    // Use all neighbors in a sphere of radius 3cm
-    ne.setRadiusSearch (0.03);
+    // Use all neighbors in a sphere of radius 10cm
+    ne.setRadiusSearch (0.1);
 
     // Compute the features
     ne.compute (*currentCloudNormals);
 
-   // pcl::Normal pt = cloud_normals->points.at(0);
+    // pcl::Normal pt = cloud_normals->points.at(0);
 
-  //  qDebug()<<"normal x :"<<pt.normal_x;
+    //  qDebug()<<"normal x :"<<pt.normal_x;
 
-   /* for(unsigned long i = 0; i < currentCloudNormals->points.size(); i++){
+    /* for(unsigned long i = 0; i < currentCloudNormals->points.size(); i++){
 
         pcl::Normal pt = currentCloudNormals->points.at(i);
 
-	// Just to see the normals towards me
+    // Just to see the normals towards me
         if(fabs(pt.normal_x) < 0.9 )
         {
             pt.normal_x = 0;
@@ -458,11 +515,10 @@ void PCprocessing::calculateNormals(sensor_msgs::PointCloud2::Ptr input)
 
     }*/
 
-   // currentCloudNormals->height = currentCloudNormals->size();
-   // currentCloudNormals->width = 1;
+    // currentCloudNormals->height = currentCloudNormals->size();
+    // currentCloudNormals->width = 1;
 
-    viewer->addPointCloudNormals<pcl::PointXYZRGB, pcl::Normal> (tempCloud, currentCloudNormals, 10, 0.05, "normals");
-
+    viewer->addPointCloudNormals<pcl::PointXYZRGBA, pcl::Normal> (tempCloud, currentCloudNormals, 50, 0.05, "normals");
 
     viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_COLOR, 1.0, 0.0, 0.0, "normals");
     viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_LINE_WIDTH, 3, "normals");
@@ -475,11 +531,11 @@ bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr no
 {
     if(dataSetPath==NULL) return false;
 
-   // if(dataSetItems.size() == 0) return false;
+    // if(dataSetItems.size() == 0) return false;
 
     QString itemPath = dataSetPath;
 
-  //  itemPath.append("n");
+    //  itemPath.append("n");
 
     itemPath.append("normalAngleHistBubble_");
 
@@ -491,7 +547,7 @@ bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr no
 
     itemPath.append(".m");
 
-   // itemPath.append(dataSetItems.at(itemNumber));
+    // itemPath.append(dataSetItems.at(itemNumber));
 
     qDebug()<<"Save normal histogram bubble: "<<itemPath;
 
@@ -537,7 +593,7 @@ bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr no
         if(tilt < 0) tilt += 360;
         else if(tilt > 359) tilt -=360;
 
-      //  qDebug()<<"pan: "<<pan<<"tilt: "<<tilt;
+        //  qDebug()<<"pan: "<<pan<<"tilt: "<<tilt;
 
         // This is for checking NAN situationss
         if(pan == pan && tilt == tilt)
@@ -555,9 +611,9 @@ bool PCprocessing::saveNormalAngleHistogram(pcl::PointCloud<pcl::Normal>::Ptr no
             double val = (double)angles[i][j]/50;
 
             if(val > 1) val = 0.99;
-          //  if(angles[i][j]!=0)
+            //  if(angles[i][j]!=0)
 
-                stream<<i<<" "<<j<<" "<<val<<"\n";
+            stream<<i<<" "<<j<<" "<<val<<"\n";
 
         }
 
@@ -581,7 +637,7 @@ bool PCprocessing::savePointCloud(int itemNumber, QString fileName){
 
     if(dataSetPath==NULL) return false;
 
-   // if(dataSetItems.size() == 0) return false;
+    // if(dataSetItems.size() == 0) return false;
 
     QString itemPath = dataSetPath;
 
@@ -597,7 +653,7 @@ bool PCprocessing::savePointCloud(int itemNumber, QString fileName){
 
     itemPath.append(".pcd");
 
-   // itemPath.append(dataSetItems.at(itemNumber));
+    // itemPath.append(dataSetItems.at(itemNumber));
 
     qDebug()<<itemPath;
 

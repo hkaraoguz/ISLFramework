@@ -118,7 +118,9 @@ void bubbleProcess::calculateDFCoefficients(std::vector<bubblePoint> bubble, QSt
         }
        // file_in.close();
         ends = clock();
-        qDebug() << "One bubble Running Time (100 fixes): " << (double) (ends - start)*1000 / CLOCKS_PER_SEC << " ms\n";
+
+        qDebug() << "One bubble Running Time coefficients (100 fixes): " << (double) (ends - start)*1000 / CLOCKS_PER_SEC << " ms\n";
+
         qDebug()<<"writing to file coeffs...\n";
 
         QString fullPath = path;

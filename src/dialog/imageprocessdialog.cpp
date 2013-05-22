@@ -12,6 +12,8 @@
 #include <QAbstractItemModel>
 #include <QStringListModel>
 #include <QKeyEvent>
+#include <ctime>
+
 
 QString filterpath ;
 
@@ -54,6 +56,23 @@ void ImageProcessDialog::initView()
 
     ui->lEditNoHarmonicsInvariant->setText("10");
 
+    bubbleProcess::calculateImagePanAngles(525,640,480);
+
+    bubbleProcess::calculateImageTiltAngles(525,640,480);
+
+    ui->labelOrgImage->setScaledContents(true);
+
+    ui->labelProcessedImage->setScaledContents(true);
+
+    ui->lEditSatLower->setText(QString::number(ui->horsliderSatLower->value()));
+
+    ui->lEditSatUpper->setText(QString::number(ui->horsliderSatUpper->value())) ;
+
+    ui->lEditValLower->setText(QString::number(ui->horsliderValLower->value()));
+
+    ui->lEditValUpper->setText(QString::number(ui->horsliderValUpper->value()));
+
+
 
 
 }
@@ -78,23 +97,20 @@ void ImageProcessDialog::on_but_LoadImage_clicked()
     if(path != NULL)
     {
 
-        //char pathChar[300];
+        QImage* image = new QImage(path);
+
+        if(image != NULL)
+        {
+            ui->labelOrgImage->setPixmap(QPixmap::fromImage(*image));
+
+            Mat img = cv::imread(path.toStdString(),1);
+
+            ImageProcess::setImage(img);
+        }
 
 
-        QByteArray ba = path.toLocal8Bit();
-        char* pathChar = ba.data();
 
-        KinectUtility::convertDepthText2Cloud(pathChar,pcProcess->getCurrentCloud());
-
-
-        // Mat img = ImageProcess::loadImage(path);
-
-        // KinectUtility::convertDepthImage2Cloud(img,pcProcess->getCurrentCloud());
-
-        pcProcess->showPointCloud(pcProcess->getCurrentCloud());
-
-
-        Mat sss;
+      //  ui->l
 
     }
 
@@ -167,7 +183,7 @@ void ImageProcessDialog::on_butApplyAll_clicked()
     if(this->filters.size() != this->bubbleFileNames.size()) return;
 
 
-
+    clock_t start,ends;
     // Her bir filtre icin
     for(int i = 0; i < filters.size(); i++){
 
@@ -178,6 +194,8 @@ void ImageProcessDialog::on_butApplyAll_clicked()
             QString tempPath = imageFiles.at(j-1);
 
             qDebug()<<"Temp path: "<<tempPath;
+
+            start = clock();
 
             Mat img = ImageProcess::loadImage(tempPath,false);
 
@@ -217,7 +235,9 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
                 resred = bubbleProcess::reduceBubble(resultt);
 
-                qDebug()<<resred.size();
+                 ends = clock();
+
+                 qDebug()<<"Filter + bubble + generation time"<<((float)(ends-start)*1000/CLOCKS_PER_SEC);
 
                 bubbleProcess::saveBubble(&file,resred);
 
@@ -231,6 +251,12 @@ void ImageProcessDialog::on_butApplyAll_clicked()
             bubbleProcess::calculateInvariants(resred,ImageProcess::getDataSetPath(),this->invariantFileNames.at(i),j,noHarmonics,noHarmonics);
 
 
+
+
+
+
+
+            qDebug()<<resred.size();
 
 
         }
@@ -343,7 +369,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
     if(path == NULL) return;
 
 
-    QString fileName = ui->lEditCloudFileName->text();
+  //  QString fileName = ui->lEditCloudFileName->text();
 
     QDir dirPath(path);
 
@@ -363,6 +389,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
     for(unsigned int i = 1; i <= fileNames.size(); i++)
     {
+        clock_t start,ends;
 
         QString tempPath = fileNames[i-1];
 
@@ -372,30 +399,35 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         // qDebug()<<img.channels();
 
-        Mat hsvimg;
+     //   Mat hsvimg;
 
+      //  cv::cvtColor(img,hsvimg,CV_BGR2HSV);
 
-        cv::cvtColor(img,hsvimg,CV_BGR2HSV);
+        Mat hueChannel= ImageProcess::generateHueImage(img,30,230,30,230);
 
-        std::vector<Mat> channels;
+    //    vector<Mat>channels;
 
-        cv::split(hsvimg,channels);
+       // cv::split(hsvimg,channels);
 
-        /* cvNamedWindow("hue");
+        //hueChannel = NULL;
 
-        imshow("hue",channels[0]);
+      //  hueChannel = channels[2];
 
-        waitKey();
+        QImage* image = new QImage(hueChannel.data,hueChannel.cols,hueChannel.rows,hueChannel.step,QImage::Format_Mono);
 
-        destroyWindow("hue");*/
+        ui->labelProcessedImage->setPixmap(QPixmap::fromImage(*image));
 
-        vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(channels[0],525,180);
+        start = clock();
 
-
+        vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(hueChannel,525,180);
 
         qDebug()<<resultt.size();
 
         vector<bubblePoint> resred = bubbleProcess::reduceBubble(resultt);
+
+        ends = clock();
+
+        qDebug()<<"Hue bubble generation time"<<((float)(ends-start)*1000/CLOCKS_PER_SEC);
 
         qDebug()<<resred.size();
 
@@ -418,7 +450,8 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         QFile file(saveBubbleName);
 
-        if(file.open(QFile::WriteOnly)){
+        if(file.open(QFile::WriteOnly))
+        {
 
             bubbleProcess::saveBubble(&file,resred);
 
@@ -442,8 +475,6 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
     QString path = ImageProcess::getDataSetPath();
 
     if(path == NULL) return;
-
-
 
     // QString fileName = ui->lEditCloudFileName->text();
 
@@ -480,15 +511,19 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
         QFile file(tempPath);
 
         qDebug()<<"Bubble path is: "<<tempPath;
-
+        clock_t start,ends;
         if(file.open(QFile::ReadOnly))
         {
-
+            start = clock();
             vector<bubblePoint> bubble =  bubbleProcess::readBubble(&file);
 
             bubbleProcess::calculateDFCoefficients(bubble,ImageProcess::getDataSetPath(),"",i,noHarmonics,noHarmonics);
 
             bubbleProcess::calculateInvariants(bubble,ImageProcess::getDataSetPath(),outputFileName,i,noHarmonics,noHarmonics);
+
+            ends = clock();
+
+            qDebug()<<"Invariants + coefficients generation time"<<((float)(ends-start)*1000/CLOCKS_PER_SEC);
 
             file.close();
         }
@@ -853,6 +888,100 @@ void ImageProcessDialog::on_butGenerateHueHistBubble_clicked()
         std::vector<cv::Mat> channels ;
 
         cv::split(img,channels);*/
+
+
+
+
+
+
+}
+
+void ImageProcessDialog::on_horsliderSatUpper_valueChanged(int value)
+{
+     ui->lEditSatUpper->setText(QString::number(value)) ;
+
+    int satlower = ui->horsliderSatLower->value();
+
+    int vallower = ui->horsliderValLower->value();
+
+    int valupper =ui->horsliderValUpper->value();
+
+    Mat hueChannel = ImageProcess::generateHueImage(satlower,value,vallower,valupper);
+
+    QImage* image = new QImage(hueChannel.data,hueChannel.cols,hueChannel.rows,hueChannel.step,QImage::Format_Indexed8);
+
+    ui->labelProcessedImage->setPixmap(QPixmap::fromImage(*image));
+
+}
+
+void ImageProcessDialog::on_horsliderSatLower_valueChanged(int value)
+{
+
+     ui->lEditSatLower->setText(QString::number(value));
+
+    int satlower = value ;
+
+    int satupper = ui->horsliderSatUpper->value();
+
+    int vallower = ui->horsliderValLower->value();
+
+    int valupper =ui->horsliderValUpper->value();
+
+    Mat hueChannel = ImageProcess::generateHueImage(satlower,satupper,vallower,valupper);
+
+    QImage* image = new QImage(hueChannel.data,hueChannel.cols,hueChannel.rows,hueChannel.step,QImage::Format_Indexed8);
+
+    ui->labelProcessedImage->setPixmap(QPixmap::fromImage(*image));
+
+}
+
+void ImageProcessDialog::on_horsliderValUpper_valueChanged(int value)
+{
+    ui->lEditValUpper->setText(QString::number(value));
+
+    int satlower = ui->horsliderSatLower->value();
+
+    int satupper = ui->horsliderSatUpper->value();
+
+    int vallower = ui->horsliderValLower->value();
+
+    int valupper = value;
+
+    Mat hueChannel = ImageProcess::generateHueImage(satlower,satupper,vallower,valupper);
+
+    QImage* image = new QImage(hueChannel.data,hueChannel.cols,hueChannel.rows,hueChannel.step,QImage::Format_Indexed8);
+
+    ui->labelProcessedImage->setPixmap(QPixmap::fromImage(*image));
+
+}
+
+void ImageProcessDialog::on_horsliderValLower_valueChanged(int value)
+{
+
+    ui->lEditValLower->setText(QString::number(value));
+
+    int satlower = ui->horsliderSatLower->value();
+
+    int satupper = ui->horsliderSatUpper->value();
+
+    int vallower = value;
+
+    int valupper =ui->horsliderValUpper->value();
+
+    Mat hueChannel = ImageProcess::generateHueImage(satlower,satupper,vallower,valupper);
+
+    QImage* image = new QImage(hueChannel.data,hueChannel.cols,hueChannel.rows,hueChannel.step,QImage::Format_Indexed8);
+
+    ui->labelProcessedImage->setPixmap(QPixmap::fromImage(*image));
+
+}
+
+void ImageProcessDialog::on_butApplyFilter_clicked()
+{
+
+
+
+
 
 
 

@@ -9,6 +9,7 @@
 #include <QtAlgorithms>
 #include <QThread>
 #include <pcl-1.5/pcl/common/transforms.h>
+#include <ctime>
 
 QString fileNam;
 
@@ -397,6 +398,9 @@ void PclDialog::on_butApplyTransformationtoAll_clicked()
 
 void PclDialog::on_butGeneratePointCloudBubble_clicked()
 {
+
+    clock_t start, end;
+
     std::vector<bubblePointXYZ> bubble;
 
     sensor_msgs::PointCloud2::Ptr cloud = pcProcessing->getCurrentCloud();
@@ -404,6 +408,8 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
     pcl::PointCloud<pcl::PointXYZRGB> normalCloud;
 
     pcl::fromROSMsg(*cloud,normalCloud);
+
+    start = clock();
 
     for(unsigned int i = 0; i < normalCloud.points.size(); i++){
 
@@ -422,6 +428,10 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
     vector<bubblePoint> sphBubble = bubbleProcess::convertBubXYZ2BubSpherical(bubble,maxRangeMeters);
 
     vector<bubblePoint> sphRedBubble = bubbleProcess::reduceBubble(sphBubble);
+
+    end = clock();
+
+    qDebug()<<"Depth + bubble + generation time"<<((float)(end-start)*1000/CLOCKS_PER_SEC);
 
     QString pathh = pcProcessing->getDataSetPath();
 
@@ -446,14 +456,14 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
 
     qDebug()<<"Item no: "<<itemNo<<"\n";
 
-    bubbleProcess::calculateDFCoefficients(sphRedBubble,pcProcessing->getDataSetPath(),"",itemNo,30,30);
+    bubbleProcess::calculateDFCoefficients(sphRedBubble,pcProcessing->getDataSetPath(),"",itemNo,10,10);
 
 
   //  QString inputBubbleName = ui->lEditInputBubbleName->text();
 
     QString outputFileName =  ui->lEditOutputInvName->text();
 
-    bubbleProcess::calculateInvariants(sphRedBubble,pcProcessing->getDataSetPath(),outputFileName,itemNo,30,30);
+    bubbleProcess::calculateInvariants(sphRedBubble,pcProcessing->getDataSetPath(),outputFileName,itemNo,10,10);
 
 }
 

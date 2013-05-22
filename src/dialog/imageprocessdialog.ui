@@ -16,11 +16,16 @@
   <widget class="QGroupBox" name="gBoxLDSet">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>390</y>
+     <x>30</x>
+     <y>610</y>
      <width>411</width>
      <height>201</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QGroupBox{border: 1px solid #000;}
+border-color: rgb(0, 0, 0);
+</string>
    </property>
    <property name="title">
     <string>Load Dataset</string>
@@ -123,52 +128,6 @@
      <string>Save</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lEditDatasetStart">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>160</y>
-      <width>51</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="lEditDatasetEnd">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>160</y>
-      <width>51</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>19</x>
-      <y>140</y>
-      <width>41</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Start</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>92</x>
-      <y>140</y>
-      <width>31</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>End</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="but_LoadImage">
     <property name="geometry">
      <rect>
@@ -186,11 +145,16 @@
   <widget class="QPushButton" name="butGenerateHueBubble">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>310</y>
-     <width>171</width>
+     <x>20</x>
+     <y>550</y>
+     <width>151</width>
      <height>27</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Generate Hue Bubbles</string>
@@ -199,9 +163,9 @@
   <widget class="QGroupBox" name="gboxFilterTools">
    <property name="geometry">
     <rect>
-     <x>660</x>
+     <x>590</x>
      <y>590</y>
-     <width>271</width>
+     <width>371</width>
      <height>231</height>
     </rect>
    </property>
@@ -235,8 +199,8 @@ border-color: rgb(0, 0, 0);
    <widget class="QCheckBox" name="cBoxTransposeFilter">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>30</y>
+      <x>230</x>
+      <y>34</y>
       <width>141</width>
       <height>22</height>
      </rect>
@@ -328,6 +292,19 @@ border-color: rgb(0, 0, 0);
     </property>
     <property name="text">
      <string>Harmonic No:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="butApplyFilter">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>30</y>
+      <width>97</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Apply Filter</string>
     </property>
    </widget>
   </widget>
@@ -583,11 +560,16 @@ border-color: rgb(0, 0, 0);
   <widget class="QPushButton" name="butGenerateHueHistograms">
    <property name="geometry">
     <rect>
-     <x>76</x>
-     <y>270</y>
-     <width>181</width>
+     <x>180</x>
+     <y>550</y>
+     <width>171</width>
      <height>27</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Generate Hue Histograms</string>
@@ -596,14 +578,245 @@ border-color: rgb(0, 0, 0);
   <widget class="QPushButton" name="butGenerateHueHistBubble">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>350</y>
-     <width>241</width>
+     <x>360</x>
+     <y>550</y>
+     <width>211</width>
      <height>27</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
    <property name="text">
     <string>Generate Hue Histogram Bubbles</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelOrgImage">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>50</y>
+     <width>260</width>
+     <height>180</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelProcessedImage">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>50</y>
+     <width>260</width>
+     <height>180</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_12">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>20</y>
+     <width>101</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Original Image</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_13">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>20</y>
+     <width>121</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Processed Image</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="horsliderSatUpper">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>280</y>
+     <width>251</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="maximum">
+    <number>255</number>
+   </property>
+   <property name="sliderPosition">
+    <number>230</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QSlider" name="horsliderSatLower">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>320</y>
+     <width>251</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="maximum">
+    <number>255</number>
+   </property>
+   <property name="sliderPosition">
+    <number>30</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>270</y>
+     <width>67</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Sat Upper</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>310</y>
+     <width>67</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Sat Lower</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_10">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>310</y>
+     <width>67</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Val Lower</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="horsliderValLower">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>320</y>
+     <width>251</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="maximum">
+    <number>255</number>
+   </property>
+   <property name="sliderPosition">
+    <number>30</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_11">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>270</y>
+     <width>67</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Val Upper</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="horsliderValUpper">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>280</y>
+     <width>251</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="maximum">
+    <number>255</number>
+   </property>
+   <property name="sliderPosition">
+    <number>230</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lEditSatUpper">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>268</y>
+     <width>51</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lEditSatLower">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>309</y>
+     <width>51</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lEditValUpper">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>269</y>
+     <width>51</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lEditValLower">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>309</y>
+     <width>51</width>
+     <height>21</height>
+    </rect>
    </property>
   </widget>
  </widget>

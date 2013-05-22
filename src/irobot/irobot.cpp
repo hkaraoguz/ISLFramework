@@ -223,7 +223,7 @@ Irobot::~Irobot(){
 
     n.shutdown();
 
-    createSubscriber.shutdown();
+   // createSubscriber.shutdown();
 
     if(irobotSetSerialProcess->isOpen()){
 

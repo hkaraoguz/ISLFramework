@@ -22,6 +22,10 @@ vector< vector<bubblePoint> > staticBubbles;
 
 vector <positionData> robotPoses;
 
+static vector<vector<int> > imagePanAngles;
+
+static vector<vector<int> > imageTiltAngles;
+
 
 bubbleProcess::bubbleProcess()
 {
@@ -35,10 +39,120 @@ QString bubbleProcess::getBubblesRootDirectory(){
 	return bubblesRootDirectory;
 
 }
+vector<vector<int> > bubbleProcess::calculateImagePanAngles(int focalLengthPixels, int imageWidth, int imageHeight)
+{
+    vector<vector<int> > result(imageHeight, std::vector<int>(imageWidth));
+
+
+    for(int i = 0; i < imageHeight; i++){
+
+        for(int j = 0; j < imageWidth; j++ )
+        {
+
+            int deltax = imageWidth/2 - j;
+
+
+            float pan = atan2((double)deltax,(double)focalLengthPixels);
+
+
+            int panInt = (pan*180)/M_PI;
+
+
+            if(panInt < 0)panInt += 360;
+            else if(panInt > 359) panInt -=360;
+
+
+            result[i][j] = panInt;
+
+        }
+
+    }
+
+    if(imagePanAngles.size() > 0){
+
+        for(int i = 0; i < imagePanAngles.size(); i++){
+            imagePanAngles[i].clear();
+        }
+
+        imagePanAngles.clear();
+
+      //  qDebug()<<imagePanAngles[0].size();
+      //  qDebug()<<imagePanAngles.size();
+
+
+    }
+
+    imagePanAngles.resize(imageHeight,std::vector<int> (imageWidth));
+
+    imagePanAngles = result;
+
+
+   // qDebug()<<"Image pan angles row size: "<<imagePanAngles[0].size();
+
+   // qDebug()<<"Image pan angles total size: "<<imagePanAngles.size();
+
+    return result;
+
+}
+vector<vector<int> > bubbleProcess::calculateImageTiltAngles(int focalLengthPixels, int imageWidth, int imageHeight)
+{
+    vector<vector<int> > result(imageHeight, std::vector<int>(imageWidth));
+
+
+    for(int i = 0; i < imageHeight; i++){
+
+        for(int j = 0; j < imageWidth; j++ )
+        {
+
+            int deltay = imageHeight/2 - i;
+
+            float tilt = atan2((double)deltay,(double)focalLengthPixels);
+
+
+            int tiltInt = (tilt*180)/M_PI;
+
+            if(tiltInt < 0)tiltInt += 360;
+            else if(tiltInt > 359) tiltInt -=360;
+
+            result[i][j] = tiltInt;
+
+            //result.at(i).at(j).pushback()
+
+        }
+
+    }
+
+    if(imageTiltAngles.size() > 0){
+
+        for(int i = 0; i < imageTiltAngles.size(); i++){
+            imageTiltAngles[i].clear();
+        }
+
+        imageTiltAngles.clear();
+
+      //  qDebug()<<imageTiltAngles[0].size();
+       // qDebug()<<imageTiltAngles.size();
+
+
+    }
+
+    imageTiltAngles.resize(imageHeight,std::vector<int>(imageWidth));
+
+    imageTiltAngles = result;
+
+
+
+    return result;
+
+}
 vector<bubblePoint> bubbleProcess::convertGrayImage2Bub(cv::Mat grayImage, int focalLengthPixels, int maxval)
 {
 
     vector<bubblePoint> result;
+
+   // if(imagePanAngles[12][12] == 0) calculateImagePanAngles(focalLengthPixels,grayImage.cols,grayImage.rows);
+
+   // if(imageTiltAngles.size() == 0) calculateImageTiltAngles(focalLengthPixels,grayImage.cols,grayImage.rows);
 
 
     int centerx = grayImage.cols/2;
@@ -49,15 +163,13 @@ vector<bubblePoint> bubbleProcess::convertGrayImage2Bub(cv::Mat grayImage, int f
     {
         for(int j = 0; j < grayImage.cols; j++)
         {
-            int deltax = centerx - j;
+        /*    int deltax = centerx - j;
 
             int deltay = centery - i;
 
             float pan = atan2((double)deltax,(double)focalLengthPixels);
 
-
-
-            float tilt = atan2((double)deltay,(double)focalLengthPixels);
+            float tilt = atan2((double)deltay,(double)focalLengthPixels);*/
 
             float val = (float)grayImage.at<uchar>(i,j)/(float)maxval;
 
@@ -66,7 +178,11 @@ vector<bubblePoint> bubbleProcess::convertGrayImage2Bub(cv::Mat grayImage, int f
 
                 bubblePoint pt;
 
-                pt.panAng = pan*180/M_PI;
+                pt.panAng = imagePanAngles[i][j];
+
+                pt.tiltAng = imageTiltAngles[i][j];
+
+             /*   pt.panAng = pan*180/M_PI;
 
                 if(pt.panAng < 0)pt.panAng += 360;
                 else if(pt.panAng > 359) pt.panAng -=360;
@@ -74,7 +190,7 @@ vector<bubblePoint> bubbleProcess::convertGrayImage2Bub(cv::Mat grayImage, int f
                 pt.tiltAng = tilt*180/M_PI;
 
                 if(pt.tiltAng < 0)pt.tiltAng += 360;
-                else if(pt.tiltAng > 359) pt.tiltAng -=360;
+                else if(pt.tiltAng > 359) pt.tiltAng -=360;*/
 
                 pt.val = val;
 
@@ -354,6 +470,20 @@ vector<bubblePoint> bubbleProcess::reduceBubble(std::vector<bubblePoint> bubble)
 	
 	vector<bubblePoint> result;
 
+    double vals[360][360];
+
+    double counts[360][360];
+
+    for(int i = 0; i < 360; i++){
+
+        for(int j = 0; j< 360; j++){
+
+            vals[i][j] = 0;
+            counts[i][j] = 0;
+
+        }
+    }
+
 	for(long i = 0; i < bubble.size(); i++){
 
 		bubblePoint pt;
@@ -361,11 +491,14 @@ vector<bubblePoint> bubbleProcess::reduceBubble(std::vector<bubblePoint> bubble)
 		int simCount = 1;
 
 		if(bubble[i].val < 1){	
+            pt = bubble[i];
+            //double sum = bubble[i].val;
+        //	pt.panAng = bubble[i].panAng;
+        //	pt.tiltAng = bubble[i].tiltAng;
 
-			double sum = bubble[i].val;
-			pt.panAng = bubble[i].panAng;
-			pt.tiltAng = bubble[i].tiltAng;
-
+            vals[pt.panAng][pt.tiltAng] += pt.val;
+            counts[pt.panAng][pt.tiltAng] += 1;
+/*
 			for(long j = 0; j < bubble.size(); j++){
 
 				if(bubble[j].val < 1 && bubble[i].panAng == bubble[j].panAng && bubble[i].tiltAng == bubble[j].tiltAng && i != j){
@@ -379,22 +512,41 @@ vector<bubblePoint> bubbleProcess::reduceBubble(std::vector<bubblePoint> bubble)
 
 				} // end if
 
-			} // end for
+            } // end for*/
 
-			pt.val = sum/simCount;
+        //	pt.val = sum/simCount;
 
-			result.push_back(pt);
+        //	result.push_back(pt);
 
-			bubble[i].val = 1.1; // remove the pt from scanning
+        //	bubble[i].val = 1.1; // remove the pt from scanning
 
-
-
-			
 
 
 		}
 
 	}
+
+    for(int i = 0; i < 360; i++){
+
+        for(int j = 0; j< 360; j++){
+
+            if(vals[i][j] != 0)  {
+                bubblePoint pt;
+
+                pt.panAng = i;
+
+                 pt.tiltAng = j;
+
+                if(counts[i][j] > 1){
+
+                 pt.val = vals[i][j]/counts[i][j];
+                }
+
+                result.push_back(pt);
+           // counts[i][j] = 0;
+            }
+        }
+    }
 
 	
 	return result;

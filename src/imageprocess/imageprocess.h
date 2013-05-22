@@ -11,7 +11,7 @@ public:
 
     ImageProcess();
 
-    Mat img;
+   // Mat img;
 
     //Mat filter;
 
@@ -24,6 +24,13 @@ public:
     static void setDataSetPath(QString path);
 
     static QString getDataSetPath();
+
+    static Mat generateHueImage(Mat image, int satLower, int satUpper, int valLower, int valUpper);
+
+     static Mat generateHueImage(int satLower, int satUpper, int valLower, int valUpper);
+
+    static void setImage(Mat image);
+
 };
 
 #endif // IMAGEPROCESS_H

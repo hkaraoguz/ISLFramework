@@ -75,6 +75,16 @@ private slots:
 
     void on_butGenerateHueHistBubble_clicked();
 
+    void on_horsliderSatUpper_valueChanged(int value);
+
+    void on_horsliderSatLower_valueChanged(int value);
+
+    void on_horsliderValUpper_valueChanged(int value);
+
+    void on_horsliderValLower_valueChanged(int value);
+
+    void on_butApplyFilter_clicked();
+
 private:
 
     Ui::ImageProcessDialog *ui;
