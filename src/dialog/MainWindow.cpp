@@ -29,6 +29,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
     rosThread.start();
 
+    dbmanager = new DatabaseManager(this);
+
+    if(dbmanager->openDB())
+    {
+
+        qDebug()<<"DB successfully opened";
+
+     /*   dbmanager->insertRowtoBubble(0,1,110,20,0.85);
+
+        dbmanager->insertRowtoBubble(0,1,111,22,0.84);
+
+        dbmanager->insertRowtoBubble(0,1,111,22,0.80);
+
+        dbmanager->insertRowtoBubble(0,2,111,22,0.80);*/
+
+        dbmanager->readBubble(0,1);
+    }
+
   //   boost::shared_ptr<pcl::visualization::PCLVisualizer> viwer(new pcl::visualization::PCLVisualizer ("3D Viewer",false));
 
 
@@ -39,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
      //    // Give a linear velocity of 0.1 m/s in x direction(forward)
-     twist.linear.x = 0.1;
+  //   twist.linear.x = 0.1;
 
 
 }

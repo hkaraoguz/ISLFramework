@@ -18,6 +18,7 @@ rosbuild_init()
 FIND_PACKAGE(Qt4 REQUIRED)
 set( QT_USE_QTGUI TRUE )
 SET(QT_USE_QTOPENGL TRUE)
+SET(QT_USE_SQL TRUE)
 
 FIND_PACKAGE( OpenCV REQUIRED )
 
@@ -33,13 +34,13 @@ ENDIF(OPENGL_FOUND)
 INCLUDE(${QT_USE_FILE})
 ADD_DEFINITIONS(${QT_DEFINITIONS})
 
-SET(beginner_tutorials_HEADERS src/dialog/MainWindow.h src/threads/rosThread.h src/dialog/pcldialog.h src/dialog/bubbleprocessdialog.h src/dialog/glbubbleviewer.h src/dialog/imageprocessdialog.h src/kinect/kinectgrabber.h src/dialog/irobotdialog.h src/irobot/irobot.h)
+SET(beginner_tutorials_HEADERS src/dialog/MainWindow.h src/threads/rosThread.h src/dialog/pcldialog.h src/dialog/bubbleprocessdialog.h src/dialog/glbubbleviewer.h src/dialog/imageprocessdialog.h src/kinect/kinectgrabber.h src/dialog/irobotdialog.h src/irobot/irobot.h src/database/databasemanager.h)
 
 SET(beginner_tutorials_NHEADERS  src/pcl/pcprocessing.h src/bubble/bubbleprocess.h src/bubble/bubbletransformer.h src/imageprocess/imageprocess.h src/kinect/kinecttransformer.h src/kinect/kinectutility.h) #src/pclViwer.h
 
 SET(beginner_tutorials_SOURCES src/dialog/MainWindow.cpp src/threads/rosThread.cpp src/dialog/pcldialog.cpp src/pcl/pcprocessing.cpp src/dialog/bubbleprocessdialog.cpp src/dialog/glbubbleviewer.cpp src/bubble/bubbleprocess.cpp src/bubble/bubbletransformer.cpp
 src/bubble/dfc.cpp src/bubble/invariants.cpp src/dialog/imageprocessdialog.cpp src/imageprocess/imageprocess.cpp src/kinect/kinecttransformer.cpp src/kinect/kinectutility.cpp
-src/kinect/kinectgrabber.cpp src/dialog/irobotdialog.cpp src/irobot/irobot.cpp) #src/pclViwer.cpp src/pcprocessing.cpp)
+src/kinect/kinectgrabber.cpp src/dialog/irobotdialog.cpp src/irobot/irobot.cpp src/database/databasemanager.cpp) #src/pclViwer.cpp src/pcprocessing.cpp)
 
 SET(beginner_tutorials_FORMS src/dialog/MainWindow.ui src/dialog/pcldialog.ui src/dialog/bubbleprocessdialog.ui src/dialog/imageprocessdialog.ui src/dialog/irobotdialog.ui)
 
@@ -65,6 +66,7 @@ include_directories(./src/imageprocess)
 include_directories(./src/kinect)
 include_directories(./src/irobot)
 include_directories(./Qt-Build)
+include_directories(./src/database)
 
 #uncomment if you have defined messages
 #rosbuild_genmsg()
