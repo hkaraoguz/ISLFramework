@@ -13,6 +13,7 @@
 #include <QStringListModel>
 #include <QKeyEvent>
 #include <ctime>
+#include "databasemanager.h"
 
 
 QString filterpath ;
@@ -106,6 +107,20 @@ void ImageProcessDialog::on_but_LoadImage_clicked()
             Mat img = cv::imread(path.toStdString(),1);
 
             ImageProcess::setImage(img);
+
+          /*  int satlower = ui->horsliderSatLower->value();
+
+            int satupper = ui->horsliderSatUpper->value();
+
+            int vallower = ui->horsliderValLower->value();
+
+            int valupper = ui->horsliderValUpper->value();
+
+            Mat hueChannel = ImageProcess::generateHueImage(satlower,satupper,vallower,valupper);
+
+            QImage* image = new QImage(hueChannel.data,hueChannel.cols,hueChannel.rows,hueChannel.step,QImage::Format_Indexed8);
+
+            ui->labelProcessedImage->setPixmap(QPixmap::fromImage(*image));*/
         }
 
 
@@ -227,7 +242,11 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             vector<bubblePoint> resred ;
 
-            QFile file(saveBubbleName);
+            resred = bubbleProcess::reduceBubble(resultt);
+
+            DatabaseManager::insertBubble(1,j,resred);
+
+           /* QFile file(saveBubbleName);
 
             if(file.open(QFile::WriteOnly)){
 
@@ -243,18 +262,12 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
                 file.close();
 
-            }
+            }*/
             int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
 
             bubbleProcess::calculateDFCoefficients(resred,ImageProcess::getDataSetPath(),"",j,noHarmonics,noHarmonics);
 
             bubbleProcess::calculateInvariants(resred,ImageProcess::getDataSetPath(),this->invariantFileNames.at(i),j,noHarmonics,noHarmonics);
-
-
-
-
-
-
 
             qDebug()<<resred.size();
 
@@ -395,15 +408,57 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         qDebug()<<"Temp path: "<<tempPath;
 
+
+        int frameNumber = -1;
+
+        QString name =tempPath;
+
+        name.remove(path);
+
+        int j = name.size();
+        int k = 0;
+        while(k < j)
+        {
+            QChar character = name.at(k);
+
+            if(!character.isNumber())
+            {
+                name.remove(character);
+                k = 0;
+                j = name.size();
+            }
+            else
+                k++;
+
+        }
+
+        qDebug()<<"The number of the current frame is "<<name;
+        if(name.size()>0)
+            frameNumber = name.toInt();
+
+        if(frameNumber == -1){
+
+            qDebug()<<"Error!! Frame number could not be determined, returning...";
+            return;
+        }
+
+
         Mat img = ImageProcess::loadImage(tempPath,false);
 
-        // qDebug()<<img.channels();
+        if(img.empty())
+        {
+            qDebug()<<"Error!! Image could not be loaded, returning...";
+        }
 
-     //   Mat hsvimg;
+        int satLower =  ui->horsliderSatLower->value();
 
-      //  cv::cvtColor(img,hsvimg,CV_BGR2HSV);
+        int satUpper =  ui->horsliderSatUpper->value();
 
-        Mat hueChannel= ImageProcess::generateHueImage(img,30,230,30,230);
+        int valLower =  ui->horsliderValLower->value();
+
+        int valUpper = ui->horsliderValUpper->value();
+
+        Mat hueChannel= ImageProcess::generateHueImage(img,satLower,satUpper,valLower,valUpper);
 
     //    vector<Mat>channels;
 
@@ -427,11 +482,13 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         ends = clock();
 
-        qDebug()<<"Hue bubble generation time"<<((float)(ends-start)*1000/CLOCKS_PER_SEC);
+        qDebug()<<"Hue bubble generation time"<<((float)(ends-start)*1000/CLOCKS_PER_SEC)<<" ms";
 
         qDebug()<<resred.size();
 
-        QString saveBubbleName = path;
+        DatabaseManager::insertBubble(1,frameNumber,resred);
+
+     /*   QString saveBubbleName = path;
 
         saveBubbleName.append("bubble_");
 
@@ -459,7 +516,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         }
 
-
+*/
 
 
 

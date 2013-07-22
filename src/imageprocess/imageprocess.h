@@ -27,7 +27,7 @@ public:
 
     static Mat generateHueImage(Mat image, int satLower, int satUpper, int valLower, int valUpper);
 
-     static Mat generateHueImage(int satLower, int satUpper, int valLower, int valUpper);
+    static Mat generateHueImage(int satLower, int satUpper, int valLower, int valUpper);
 
     static void setImage(Mat image);
 

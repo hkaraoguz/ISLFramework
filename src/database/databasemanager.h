@@ -1,6 +1,7 @@
 #ifndef DATABASEMANAGER_H
 #define DATABASEMANAGER_H
 
+#include "bubbleprocess.h"
 #include <QObject>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlError>
@@ -12,21 +13,26 @@ class DatabaseManager : public QObject
     Q_OBJECT
 public:
     explicit DatabaseManager(QObject *parent = 0);
-    ~DatabaseManager();
+  //  ~DatabaseManager();
 
-    bool openDB();
+    static bool openDB(QString filePath);
 
-    bool deleteDB();
+    static void closeDB();
+
+    static bool deleteDB();
 
     // Type = 0:Lazer, 1:Hue, XX:Filter_Number, Number: the current bubble number-> obtained from frame number
-    void insertRowtoBubble(int type, int number, double pan, double tilt, double val);
+    static bool insertRowtoBubble(int type, int number, bubblePoint row);
+    static bool insertRowtoBubble(int type, int number, int pan, int tilt, double val);
 
-    void readBubble(int type, int number);
+    static bool insertBubble(int type,int number, std::vector<bubblePoint> bubble);
+
+    static std::vector<bubblePoint> readBubble(int type, int number);
 
     QSqlError lastError();
 
 private:
-      QSqlDatabase db;
+
     
 signals:
     
