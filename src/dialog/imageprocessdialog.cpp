@@ -200,9 +200,9 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
     clock_t start,ends;
 
-    DatabaseManager* bubbleDBManager = new DatabaseManager(this);
+    DatabaseManager* dbManager = new DatabaseManager(this);
 
-    if(!bubbleDBManager->openDB(BUBBLE_DB_PATH))
+    if(!dbManager->openDB(DB_PATH))
     {
 
         qDebug()<<"Database could not be opened!! returning...";
@@ -280,7 +280,7 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             resred = bubbleProcess::reduceBubble(imgBubble);
 
-            bubbleDBManager->insertBubble(filterNumber,frameNumber,resred);
+            dbManager->insertBubble(filterNumber,frameNumber,resred);
 
            /* QFile file(saveBubbleName);
 
@@ -303,16 +303,18 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             bubbleProcess::calculateDFCoefficients(resred,ImageProcess::getDataSetPath(),"",j,noHarmonics,noHarmonics);
 
-           std::vector< std::vector< double > > invariants =  bubbleProcess::calculateInvariants(resred,ImageProcess::getDataSetPath(),this->invariantFileNames.at(i),j,noHarmonics,noHarmonics);
+            std::vector< std::vector< double > > invariants =  bubbleProcess::calculateInvariants(resred,ImageProcess::getDataSetPath(),this->invariantFileNames.at(i),j,noHarmonics,noHarmonics);
 
-           qDebug()<<resred.size()<<"invariants 0-0 "<<invariants[0][0];
+            qDebug()<<resred.size()<<"invariants 0-0 "<<invariants[0][0];
+
+            dbManager->insertInvariants(filterNumber,frameNumber,invariants);
 
 
         } // END FOR
 
     } // END FOR
 
-    bubbleDBManager->closeDB();
+    dbManager->closeDB();
 
     // int start = ui->lEditDatasetStart->text().toInt();
 
@@ -441,7 +443,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
     DatabaseManager* dbmanager= new DatabaseManager(this);
 
-    if(!dbmanager->openDB(BUBBLE_DB_PATH))
+    if(!dbmanager->openDB(DB_PATH))
     {
         qDebug()<<"Bubble Database Could not be opened!! returning...";
 

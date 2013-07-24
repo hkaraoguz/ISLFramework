@@ -8,8 +8,8 @@
 #include <QFile>
 #include <QDir>
 
-#define BUBBLE_DB_PATH "/home/hakan/Development/ISL/Datasets/ImageClef2012/bubble.db"
-#define INVARIANTS_DB_PATH "/home/hakan/Development/ISL/Datasets/ImageClef2012/invariants.db"
+#define DB_PATH "/home/hakan/Development/ISL/Datasets/ImageClef2012/training3.db"
+//#define INVARIANTS_DB_PATH "/home/hakan/Development/ISL/Datasets/ImageClef2012/invariants.db"
 
 
 class DatabaseManager : public QObject
@@ -31,7 +31,7 @@ public:
 
    bool insertBubble(int type,int number, std::vector<bubblePoint> bubble);
 
-   bool insertInvariants(int type,int number, std::vector< std::vector<int> > invariants);
+   bool insertInvariants(int type,int number, std::vector< std::vector<double> > invariants);
 
    std::vector<bubblePoint> readBubble(int type, int number);
 

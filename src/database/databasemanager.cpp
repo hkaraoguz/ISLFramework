@@ -226,3 +226,62 @@ bool DatabaseManager::insertBubble(int type, int number, std::vector<bubblePoint
     }
 
 }
+bool DatabaseManager::insertInvariants(int type, int number, std::vector< std::vector<double> > invariants)
+{
+
+    bool ret = false;
+
+    if (db.isOpen())
+    {
+
+        QSqlQuery query;
+
+        // First check, if a bubble has already entered to the table
+        bool exists = query.exec(QString("select * from invariant where type = %1 and number = %2").arg(type).arg(number));
+
+        // If query is successfully executed
+        if(exists)
+        {
+            // if there are elements received from the table, then there exists a bubble, we should delete those entries
+            if(query.next())
+            {
+                ret = query.exec(QString("delete from invariant where type = %1 and number = %2").arg(type).arg(number));
+
+                // If deletion is not successfuly executed return false
+                if(!ret)
+
+                    return false;
+
+            }
+
+            //else return false;
+
+            // Speed up the multiple-row insertion by using transactions
+            query.exec(QString("BEGIN TRANSACTION"));
+
+            // Insert new bubble
+            for(int i = 0; i <invariants.size(); i++)
+            {
+                for(int j = 0; j < invariants[i].size();j++){
+
+
+                    double val = invariants[i][j];
+
+                    query.exec(QString("insert into invariant values('%1', '%2', '%3')").arg(type).arg(number).arg(val));
+
+
+                }
+            }
+            query.exec(QString("END TRANSACTION"));
+
+            return true;
+
+        }
+
+
+
+    }
+
+    return false;
+
+}

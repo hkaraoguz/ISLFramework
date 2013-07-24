@@ -92,7 +92,7 @@ std::vector< std::vector< double > > bubbleProcess::calculateInvariants(vector<b
                 file_in>>m>>n>>a[m][n]>>b[m][n]>>c[m][n]>>d[m][n];
         file_in.close();
 
-        fstream file_Invariant(invariantDosya,ios::out);
+      //  fstream file_Invariant(invariantDosya,ios::out);
 
         for (int m=0;m<M;m++)
 
@@ -103,11 +103,11 @@ std::vector< std::vector< double > > bubbleProcess::calculateInvariants(vector<b
                     I[m][n]=a[m][n]*a[m][n]+c[m][n]*c[m][n];
                 else
                     I[m][n]=a[m][n]*a[m][n]+b[m][n]*b[m][n]+c[m][n]*c[m][n]+d[m][n]*d[m][n];
-                file_Invariant<<m<<" "<<n<<" "<<I[m][n]<<endl;
+             //   file_Invariant<<m<<" "<<n<<" "<<I[m][n]<<endl;
 
                 result[m][n] = I[m][n];
             }
-        file_Invariant.close();
+        //file_Invariant.close();
     }
 
    return result;
