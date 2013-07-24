@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   //  dbmanager = new DatabaseManager(this);
 
-    QString path(QDir::home().path());
+   /* QString path(QDir::home().path());
 
     path.append("/Development/ISL/Datasets/ImageClef2012/bubble.db");
 
@@ -46,10 +46,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
         dbmanager->insertRowtoBubble(0,1,111,22,0.80);
 
-        dbmanager->insertRowtoBubble(0,2,111,22,0.80);*/
+        dbmanager->insertRowtoBubble(0,2,111,22,0.80);
 
       //  dbmanager->readBubble(0,1);
-    }
+    }*/
 
   //   boost::shared_ptr<pcl::visualization::PCLVisualizer> viwer(new pcl::visualization::PCLVisualizer ("3D Viewer",false));
 
@@ -70,7 +70,7 @@ MainWindow::~MainWindow()
 {
     this->rosThread.shutdownROS();
     while(rosThread.isRunning());
-    DatabaseManager::closeDB();
+    //DatabaseManager::closeDB();
     //delete viv;
     delete ui;
 }

@@ -199,16 +199,52 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
 
     clock_t start,ends;
+
+    DatabaseManager* bubbleDBManager = new DatabaseManager(this);
+
+    if(!bubbleDBManager->openDB(BUBBLE_DB_PATH))
+    {
+
+        qDebug()<<"Database could not be opened!! returning...";
+
+        return;
+    }
+
+
+
     // Her bir filtre icin
-    for(int i = 0; i < filters.size(); i++){
+    for(int i = 0; i < filters.size(); i++)
+    {
 
         ImageProcess::readFilter(filters.at(i),18,29,false,false,false);
 
-        for(int j = 1; j <= this->imageFiles.size(); j++){
+        for(int j = 1; j <= this->imageFiles.size(); j++)
+        {
 
             QString tempPath = imageFiles.at(j-1);
 
             qDebug()<<"Temp path: "<<tempPath;
+
+            QString fullFilePath =tempPath;
+
+            int frameNumber = ImageProcess::getFrameNumber(fullFilePath);
+
+            if(frameNumber == -1){
+
+                qDebug()<<"Error!! Frame number could not be determined, returning...";
+                return;
+            }
+
+            int filterNumber = ImageProcess::getFrameNumber(filters.at(i));
+
+            if(filterNumber == -1)
+            {
+
+                qDebug()<<"Error!! Filter number could not be determined, returning...";
+                return;
+
+
+            }
 
             start = clock();
 
@@ -216,17 +252,17 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             // qDebug()<<img.channels();
 
-            Mat ressg;
+            Mat resg;
 
-            cv::cvtColor(img,ressg,CV_BGR2GRAY);
+            cv::cvtColor(img,resg,CV_BGR2GRAY);
 
-            Mat sonuc = ImageProcess::applyFilter(ressg);
+            Mat sonuc = ImageProcess::applyFilter(resg);
 
             //  vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(channels[0],525,180);
 
-            vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
+            vector<bubblePoint> imgBubble = bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
 
-            QString saveBubbleName = ImageProcess::getDataSetPath();
+         /*   QString saveBubbleName = ImageProcess::getDataSetPath();
 
             saveBubbleName.append(this->bubbleFileNames.at(i));
 
@@ -238,13 +274,13 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             saveBubbleName.append(".m");
 
-            qDebug()<<saveBubbleName;
+            qDebug()<<saveBubbleName;*/
 
             vector<bubblePoint> resred ;
 
-            resred = bubbleProcess::reduceBubble(resultt);
+            resred = bubbleProcess::reduceBubble(imgBubble);
 
-            DatabaseManager::insertBubble(1,j,resred);
+            bubbleDBManager->insertBubble(filterNumber,frameNumber,resred);
 
            /* QFile file(saveBubbleName);
 
@@ -267,14 +303,16 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             bubbleProcess::calculateDFCoefficients(resred,ImageProcess::getDataSetPath(),"",j,noHarmonics,noHarmonics);
 
-            bubbleProcess::calculateInvariants(resred,ImageProcess::getDataSetPath(),this->invariantFileNames.at(i),j,noHarmonics,noHarmonics);
+           std::vector< std::vector< double > > invariants =  bubbleProcess::calculateInvariants(resred,ImageProcess::getDataSetPath(),this->invariantFileNames.at(i),j,noHarmonics,noHarmonics);
 
-            qDebug()<<resred.size();
+           qDebug()<<resred.size()<<"invariants 0-0 "<<invariants[0][0];
 
 
-        }
+        } // END FOR
 
-    }
+    } // END FOR
+
+    bubbleDBManager->closeDB();
 
     // int start = ui->lEditDatasetStart->text().toInt();
 
@@ -399,51 +437,35 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
     if (dialog.exec())
         fileNames = dialog.selectedFiles();
 
+    if(fileNames.size() == 0) return;
+
+    DatabaseManager* dbmanager= new DatabaseManager(this);
+
+    if(!dbmanager->openDB(BUBBLE_DB_PATH))
+    {
+        qDebug()<<"Bubble Database Could not be opened!! returning...";
+
+        return;
+    }
 
     for(unsigned int i = 1; i <= fileNames.size(); i++)
     {
         clock_t start,ends;
 
-        QString tempPath = fileNames[i-1];
+        QString fullPath = fileNames[i-1];
 
-        qDebug()<<"Temp path: "<<tempPath;
+        qDebug()<<"Full Path: "<<fullPath;
 
-
-        int frameNumber = -1;
-
-        QString name =tempPath;
-
-        name.remove(path);
-
-        int j = name.size();
-        int k = 0;
-        while(k < j)
-        {
-            QChar character = name.at(k);
-
-            if(!character.isNumber())
-            {
-                name.remove(character);
-                k = 0;
-                j = name.size();
-            }
-            else
-                k++;
-
-        }
-
-        qDebug()<<"The number of the current frame is "<<name;
-        if(name.size()>0)
-            frameNumber = name.toInt();
+        int frameNumber = ImageProcess::getFrameNumber(fullPath);
 
         if(frameNumber == -1){
 
+            dbmanager->closeDB();
             qDebug()<<"Error!! Frame number could not be determined, returning...";
             return;
         }
 
-
-        Mat img = ImageProcess::loadImage(tempPath,false);
+        Mat img = ImageProcess::loadImage(fullPath,false);
 
         if(img.empty())
         {
@@ -459,14 +481,6 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
         int valUpper = ui->horsliderValUpper->value();
 
         Mat hueChannel= ImageProcess::generateHueImage(img,satLower,satUpper,valLower,valUpper);
-
-    //    vector<Mat>channels;
-
-       // cv::split(hsvimg,channels);
-
-        //hueChannel = NULL;
-
-      //  hueChannel = channels[2];
 
         QImage* image = new QImage(hueChannel.data,hueChannel.cols,hueChannel.rows,hueChannel.step,QImage::Format_Mono);
 
@@ -486,7 +500,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         qDebug()<<resred.size();
 
-        DatabaseManager::insertBubble(1,frameNumber,resred);
+        dbmanager->insertBubble(1,frameNumber,resred);
 
      /*   QString saveBubbleName = path;
 
@@ -519,10 +533,9 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 */
 
 
-
-
-
     }
+
+    dbmanager->closeDB();
 
 
 }
@@ -592,6 +605,7 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
 void ImageProcessDialog::on_butAddtoBubbleFileList_clicked()
 {
 
+   if(ui->lEditBubbleNameAdd->text().isEmpty()) return;
 
     this->bubbleFileNames<<ui->lEditBubbleNameAdd->text();
 
@@ -620,7 +634,6 @@ void ImageProcessDialog::on_butAddtoInputFileNames_clicked()
     QString path = ImageProcess::getDataSetPath();
 
     if(path == NULL) return;
-
 
     QString fileName = ui->lEditCloudFileName->text();
 
@@ -682,6 +695,7 @@ void ImageProcessDialog::on_butAddtoFilterNames_clicked()
 void ImageProcessDialog::on_butAddtoInvariantNames_clicked()
 {
 
+    if(ui->lEditInvariantNameAdd->text().isEmpty()) return;
 
     this->invariantFileNames<<ui->lEditInvariantNameAdd->text();
 
@@ -700,7 +714,9 @@ void ImageProcessDialog::on_butRemoveInputFileNames_clicked()
 
         QStringListModel* sss = (QStringListModel*)ui->listViewInputFileNames->model();
 
-        this->imageFiles == sss->stringList();
+        this->imageFiles.clear();
+
+        this->imageFiles = sss->stringList();
 
         qDebug()<<this->imageFiles;
 
@@ -717,7 +733,9 @@ void ImageProcessDialog::on_butRemoveFilterNames_clicked()
 
         QStringListModel* sss = (QStringListModel*)ui->listViewVisFilterNames->model();
 
-        this->filters == sss->stringList();
+        this->filters.clear();
+
+        this->filters = sss->stringList();
 
         qDebug()<<this->filters;
 
@@ -734,6 +752,8 @@ void ImageProcessDialog::on_butRemoveBubbleFileNames_clicked()
 
         QStringListModel* sss = (QStringListModel*)ui->listViewBubbleNames->model();
 
+        this->bubbleFileNames.clear();
+
         this->bubbleFileNames =  sss->stringList();
 
         qDebug()<<this->bubbleFileNames;
@@ -748,6 +768,8 @@ void ImageProcessDialog::on_butRemoveInvariantFileNames_clicked()
         ui->listViewInvariantNames->model()->removeRow(ui->listViewInvariantNames->currentIndex().row());
 
         QStringListModel* sss = (QStringListModel*)ui->listViewInvariantNames->model();
+
+        this->invariantFileNames.clear();
 
         this->invariantFileNames =  sss->stringList();
 

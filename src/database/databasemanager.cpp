@@ -3,7 +3,12 @@
 #include <QVariant>
 #include <QDebug>
 
-static QSqlDatabase db;
+
+
+//static QSqlDatabase bubbledb;
+//static QSqlDatabase invariantdb;
+
+//static QSqlDatabase db;
 
 DatabaseManager::DatabaseManager(QObject *parent) :
     QObject(parent)
@@ -16,16 +21,16 @@ bool DatabaseManager::openDB(QString filePath)
 
 #ifdef Q_OS_LINUX
     // NOTE: We have to store database file into user home folder in Linux
-    QString path(QDir::home().path());
+    //QString path(QDir::home().path());
 
-    //path.append(QDir::separator()).append("Development").append(QDir::separator()).append("ISL").append(QDir::separator()).append("Datasets").append(QDir::separator()).append("ImageClef2012").append(QDir::separator()).append("bubble.db");
-    path = QDir::toNativeSeparators(filePath);
+    //path.append(QDir::separator()).append("Development").append(QDir::separator()).append("ISL").append(QDir::separator()).append("Datasets").append(QDir::separator()).append("ImageClef2012").append(QDir::separator()).append("bubble.bubbledb");
+    QString path = QDir::toNativeSeparators(filePath);
 
     db.setDatabaseName(path);
     //Development/ISL/Datasets/ImageClef2012
 #else
     // NOTE: File exists in the application private folder, in Symbian Qt implementation
-    //  db.setDatabaseName("my.db.sqlite");
+    //  bubbledb.setDatabaseName("my.bubbledb.sqlite");
 #endif
 
     // Open databasee
@@ -34,7 +39,7 @@ bool DatabaseManager::openDB(QString filePath)
 /*DatabaseManager::~DatabaseManager()
 {
 
-    if(db.isOpen()) db.close();
+    if(bubbledb.isOpen()) bubbledb.close();
 }*/
 
 QSqlError DatabaseManager::lastError()
@@ -57,13 +62,13 @@ bool DatabaseManager::deleteDB()
 #ifdef Q_OS_LINUX
     // NOTE: We have to store database file into user home folder in Linux
     QString path(QDir::home().path());
-    path.append(QDir::separator()).append("my.db.sqlite");
+    path.append(QDir::separator()).append("my.bubbledb.sqlite");
     path = QDir::toNativeSeparators(path);
     return QFile::remove(path);
 #else
 
     // Remove created database binary file
-    return QFile::remove("my.db.sqlite");
+    return QFile::remove("my.bubbledb.sqlite");
 #endif
 
 }

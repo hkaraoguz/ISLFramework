@@ -70,7 +70,7 @@ public:
 
     static void calculateDFCoefficients(std::vector <bubblePoint> bubble, QString path, QString fileName, int itemNo,int harmonic1, int harmonic2);
 
-    static void calculateInvariants(std::vector <bubblePoint> bubble, QString path, QString fileName, int itemNo, int harmonic1, int harmonic2);
+    static std::vector< std::vector< double > > calculateInvariants(std::vector <bubblePoint> bubble, QString path, QString fileName, int itemNo, int harmonic1, int harmonic2);
 
     static std::vector<double> calculateEuclideanDiff(vector <bubblePoint> bubble1, vector <bubblePoint> bubble2);
 

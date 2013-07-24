@@ -31,6 +31,8 @@ public:
 
     static void setImage(Mat image);
 
+    static int getFrameNumber(QString fullFilePath);
+
 };
 
 #endif // IMAGEPROCESS_H

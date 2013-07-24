@@ -3,7 +3,7 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QString>
-
+#include <QStringList>
 
 Mat orgImg;
 
@@ -68,7 +68,7 @@ void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize, b
     while(line != NULL)
     {
 
-        filterOrg.at<float>(count2,count) = line.toFloat();
+        filterOrg.at<float>(count,count2) = line.toFloat();
 
         count++;
 
@@ -269,4 +269,53 @@ Mat ImageProcess::generateHueImage(int satLower, int satUpper, int valLower, int
     }
     return result;
 
+}
+int ImageProcess::getFrameNumber(QString fullFilePath)
+{
+    int frameNumber = -1;
+
+    /******** Try to find the name of the frame *****************/
+           //QString name = filePathwithName;
+           QString path = fullFilePath;
+
+           QStringList list = path.split("/");
+
+           QString name = list[list.size()-1];
+          // int lastindex = path.lastIndexOf("/",0,Qt::CaseInsensitive);
+
+        //   QString name = path.right(lastindex+1);
+
+           //name = name.remove(filePath);
+
+           int j = name.size();
+           int k = 0;
+
+           while(k < j)
+           {
+               QChar character = name.at(k);
+
+               if(!character.isNumber())
+               {
+                   name.remove(character);
+                   k = 0;
+                   j = name.size();
+               }
+               else
+                   k++;
+
+           }
+   /***********************************************************************/
+
+           qDebug()<<"The number of the current frame is "<<name;
+
+           if(name.size()>0)
+               frameNumber = name.toInt();
+
+           if(frameNumber == -1){
+
+               qDebug()<<"Error!! Frame number could not be determined, returning...";
+               return -1;
+           }
+
+           return frameNumber;
 }

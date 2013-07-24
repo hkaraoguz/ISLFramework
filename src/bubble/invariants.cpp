@@ -23,8 +23,18 @@ using namespace std;
 
 using namespace std;
 
-void bubbleProcess::calculateInvariants(vector<bubblePoint> bubble, QString path, QString fileName , int itemNo, int harmonic1, int harmonic2)
+std::vector< std::vector< double > > bubbleProcess::calculateInvariants(vector<bubblePoint> bubble, QString path, QString fileName , int itemNo, int harmonic1, int harmonic2)
 {
+
+    std::vector< std::vector<double> > result;
+
+    result.resize(harmonic1);
+
+    for(int i = 0; i < harmonic1;i++)
+    {
+        result[i].resize(harmonic2);
+    }
+
     int M = harmonic1;
 
     int N = harmonic2;
@@ -85,15 +95,21 @@ void bubbleProcess::calculateInvariants(vector<bubblePoint> bubble, QString path
         fstream file_Invariant(invariantDosya,ios::out);
 
         for (int m=0;m<M;m++)
-            for (int n=0;n<N;n++) {
+
+            for (int n=0;n<N;n++)
+            {
+
                 if (m==0)
                     I[m][n]=a[m][n]*a[m][n]+c[m][n]*c[m][n];
                 else
                     I[m][n]=a[m][n]*a[m][n]+b[m][n]*b[m][n]+c[m][n]*c[m][n]+d[m][n]*d[m][n];
                 file_Invariant<<m<<" "<<n<<" "<<I[m][n]<<endl;
+
+                result[m][n] = I[m][n];
             }
         file_Invariant.close();
     }
 
+   return result;
 
 }
