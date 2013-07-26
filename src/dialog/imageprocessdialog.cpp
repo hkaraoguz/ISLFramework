@@ -460,7 +460,8 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         int frameNumber = ImageProcess::getFrameNumber(fullPath);
 
-        if(frameNumber == -1){
+        if(frameNumber == -1)
+        {
 
             dbmanager->closeDB();
             qDebug()<<"Error!! Frame number could not be determined, returning...";
@@ -502,7 +503,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         qDebug()<<resred.size();
 
-        dbmanager->insertBubble(1,frameNumber,resred);
+        dbmanager->insertBubble(HUE_TYPE,frameNumber,resred);
 
      /*   QString saveBubbleName = path;
 
@@ -544,7 +545,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
 void ImageProcessDialog::on_butGenerateInvariants_clicked()
 {
-    QString path = ImageProcess::getDataSetPath();
+   /* QString path = ImageProcess::getDataSetPath();
 
     if(path == NULL) return;
 
@@ -552,13 +553,41 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
 
     QDir dirPath(path);
 
-    dirPath.setFilter(QDir::NoDotAndDotDot | QDir::Files);
+    dirPath.setFilter(QDir::NoDotAndDotDot | QDir::Files);*/
 
     int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
 
+    int bubbleType = ui->lEditInputBubbleName->text().toInt();
+
+    int rangeMin = ui->lEditMinBubbleNum->text().toInt();
+
+    int rangeMax = ui->lEditMaxBubbleNum->text().toInt();
+
+    DatabaseManager* dbmanager = new DatabaseManager(this);
+
+    if(!dbmanager->openDB(DB_PATH))
+    {
+
+        qDebug()<<"Failed to open database!! returning...";
+    }
+
+    for(int i = rangeMin; i < rangeMax; i++)
+    {
+        std::vector<bubblePoint>  bubble  = dbmanager->readBubble(bubbleType,i);
+
+        DFCoefficients dfcoeff = bubbleProcess::calculateDFCoefficients(bubble,noHarmonics,noHarmonics);
+
+        std::vector< std::vector<double> > invariants = bubbleProcess::calculateInvariants(bubble, dfcoeff,noHarmonics, noHarmonics);
+
+        dbmanager->insertInvariants(bubbleType,i,invariants);
+    }
+
+    dbmanager->closeDB();
+    //int
+
     //dirPath.setNameFilters();
 
-    QFileDialog dialog(this);
+  /*  QFileDialog dialog(this);
     dialog.setDirectory(dirPath);
     dialog.setFileMode(QFileDialog::ExistingFiles);
 
@@ -568,10 +597,10 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
     QStringList fileNames;
 
     if (dialog.exec())
-        fileNames = dialog.selectedFiles();
+        fileNames = dialog.selectedFiles(); */
 
 
-    for(unsigned int i = 1; i <= fileNames.size(); i++)
+  /*  for(unsigned int i = 1; i <= fileNames.size(); i++)
     {
 
         QString tempPath = fileNames[i-1];
@@ -601,7 +630,7 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
         }
 
 
-    }
+    }*/
 }
 
 void ImageProcessDialog::on_butAddtoBubbleFileList_clicked()

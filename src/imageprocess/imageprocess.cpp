@@ -206,7 +206,7 @@ Mat ImageProcess::generateHueImage(Mat image, int satLower, int satUpper, int va
 
                 if(satval > satLower && satval < satUpper)
                 {
-                    if(hueval < 15 ) hueval = 180;
+                 //   if(hueval < 15 ) hueval = 180;
 
                     result.at<uchar>(i,j) = hueval;
 

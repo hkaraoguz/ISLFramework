@@ -55,7 +55,14 @@ struct positionData{
 
 
 };
+struct DFCoefficients
+{
+    std::vector< std::vector<float> > a;
+    std::vector< std::vector<float> > b;
+    std::vector< std::vector<float> > c;
+    std::vector< std::vector<float> > d;
 
+};
 
 //struct bubblePointXYZ;
 //struct bubblePoint;
@@ -70,7 +77,11 @@ public:
 
     static void calculateDFCoefficients(std::vector <bubblePoint> bubble, QString path, QString fileName, int itemNo,int harmonic1, int harmonic2);
 
+    static DFCoefficients calculateDFCoefficients(std::vector <bubblePoint> bubble, int harmonic1, int harmonic2);
+
     static std::vector< std::vector< double > > calculateInvariants(std::vector <bubblePoint> bubble, QString path, QString fileName, int itemNo, int harmonic1, int harmonic2);
+
+    static std::vector< std::vector< double > > calculateInvariants(std::vector <bubblePoint> bubble, DFCoefficients coeff, int harmonic1, int harmonic2);
 
     static std::vector<double> calculateEuclideanDiff(vector <bubblePoint> bubble1, vector <bubblePoint> bubble2);
 

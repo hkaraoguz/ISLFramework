@@ -11,6 +11,8 @@
 #define DB_PATH "/home/hakan/Development/ISL/Datasets/ImageClef2012/training3.db"
 //#define INVARIANTS_DB_PATH "/home/hakan/Development/ISL/Datasets/ImageClef2012/invariants.db"
 
+#define LASER_TYPE 55
+#define HUE_TYPE 56
 
 class DatabaseManager : public QObject
 {
