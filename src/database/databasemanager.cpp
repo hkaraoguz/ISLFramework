@@ -160,7 +160,6 @@ bool DatabaseManager::insertBubble(int type, int number, std::vector<bubblePoint
     {
 
         QSqlQuery query;
-        QSqlQuery updateQuery;
 
         // First check, if a bubble has already entered to the table
      /*   bool exists = query.exec(QString("select val from bubble where type = %1 and number = %2 LIMIT 2").arg(type).arg(number));
@@ -272,7 +271,7 @@ bool DatabaseManager::insertBubble(int type, int number, std::vector<bubblePoint
 bool DatabaseManager::insertInvariants(int type, int number, std::vector< std::vector<double> > invariants)
 {
 
-    bool ret = false;
+    //bool ret = false;
 
     if (db.isOpen())
     {
@@ -300,7 +299,17 @@ bool DatabaseManager::insertInvariants(int type, int number, std::vector< std::v
             //else return false;
 
             // Speed up the multiple-row insertion by using transactions
-            query.exec(QString("BEGIN TRANSACTION"));
+            //query.exec(QString("BEGIN TRANSACTION"));
+
+            query.prepare(QString("replace into invariant values( ?, ?, ?, ?)"));
+
+            QVariantList typee;
+            QVariantList numberr;
+            QVariantList placeLabel;
+            QVariantList val;
+
+
+            db.transaction();
 
             // Insert new bubble
             for(int i = 0; i <invariants.size(); i++)
@@ -308,14 +317,28 @@ bool DatabaseManager::insertInvariants(int type, int number, std::vector< std::v
                 for(int j = 0; j < invariants[i].size();j++){
 
 
-                    double val = invariants[i][j];
+                    val<< invariants[i][j];
+                    typee<<type;
+                    numberr<<number;
+                    placeLabel<<-1;
 
-                    query.exec(QString("replace into invariant values('%1', '%2', '%3')").arg(type).arg(number).arg(val));
+
+                    //query.exec(QString("replace into invariant values('%1', '%2', '%3')").arg(type).arg(number).arg(val));
 
 
                 }
             }
-            query.exec(QString("COMMIT TRANSACTION"));
+
+            query.addBindValue(typee);
+            query.addBindValue(numberr);
+            query.addBindValue(placeLabel);
+            query.addBindValue(val);
+
+           // query.exec(QString("COMMIT TRANSACTION"));
+
+            if (!query.execBatch())
+                 qDebug() << query.lastError();
+            db.commit();
 
             return true;
 
@@ -327,4 +350,56 @@ bool DatabaseManager::insertInvariants(int type, int number, std::vector< std::v
 
     return false;
 
+}
+void DatabaseManager::determinePlaceLabels(QString filePath)
+{
+     QStringList list;
+
+     QFile file(filePath);
+
+     if(!file.open(QFile::ReadOnly))
+     {
+
+        return;
+     }
+     QTextStream* stream = new QTextStream(&file);
+
+     QString st = stream->readLine();
+
+     QStringList mainList;
+
+     while(st != NULL)
+     {
+         list =  st.split(":",QString::SkipEmptyParts);
+
+         mainList.push_back(list.at(1));
+
+         st = stream->readLine();
+     }
+
+     file.close();
+
+
+    QMap<QString, int> valueMap;
+
+    QList<QString> keys;
+
+    int counter = 0;
+    foreach (QString str, mainList)
+    {
+       // QStringList line = str.split(";",QString::SkipEmptyParts);
+      //  QString key = line.at(1);
+
+        QString key = str;
+       // int val = line.at(0).toInt();
+        if(!keys.contains(key))
+        {
+          valueMap.insert(key,counter);
+        }
+
+        counter++;
+
+    }
+
+    qDebug()<<valueMap;
 }

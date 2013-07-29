@@ -27,16 +27,18 @@ public:
 
    static bool deleteDB();
 
-    // Type = 0:Lazer, 1:Hue, XX:Filter_Number, Number: the current bubble number-> obtained from frame number
+    // Type = 55:Lazer, 56:Hue, XX:Filter_Number, Number: the current bubble number-> obtained from frame number
    static bool insertRowtoBubble(int type, int number, bubblePoint row);
 
    static bool insertRowtoBubble(int type, int number, int pan, int tilt, double val);
 
-   static   bool insertBubble(int type,int number, std::vector<bubblePoint> bubble);
+   static bool insertBubble(int type,int number, std::vector<bubblePoint> bubble);
 
    static bool insertInvariants(int type,int number, std::vector< std::vector<double> > invariants);
 
    static std::vector<bubblePoint> readBubble(int type, int number);
+
+   static void determinePlaceLabels(QString filePath);
 
    QSqlError lastError();
 

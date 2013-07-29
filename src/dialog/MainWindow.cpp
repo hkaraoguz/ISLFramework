@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     rosThread.start();
 
+    DatabaseManager::determinePlaceLabels("/home/hakan/Development/ISL/Datasets/ImageClef2012/rgb.txt");
+
   //  dbmanager = new DatabaseManager(this);
 
    /* QString path(QDir::home().path());
