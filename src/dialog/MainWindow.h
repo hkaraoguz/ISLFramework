@@ -30,7 +30,7 @@
 
 #include"irobot.h"
 #include "irobotdialog.h"
-//#include "databasemanager.h"
+#include "databasemanager.h"
 
 namespace Ui {
 class MainWindow;

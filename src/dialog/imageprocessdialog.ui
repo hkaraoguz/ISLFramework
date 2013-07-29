@@ -199,14 +199,14 @@ border-color: rgb(0, 0, 0);
    <widget class="QCheckBox" name="cBoxTransposeFilter">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>34</y>
-      <width>141</width>
+      <x>120</x>
+      <y>10</y>
+      <width>101</width>
       <height>22</height>
      </rect>
     </property>
     <property name="text">
-     <string>Transpose Filter</string>
+     <string>Transpose </string>
     </property>
    </widget>
    <widget class="QLineEdit" name="lEditInputBubbleName">
@@ -214,7 +214,7 @@ border-color: rgb(0, 0, 0);
      <rect>
       <x>140</x>
       <y>67</y>
-      <width>113</width>
+      <width>71</width>
       <height>27</height>
      </rect>
     </property>
@@ -250,7 +250,7 @@ border-color: rgb(0, 0, 0);
      <rect>
       <x>140</x>
       <y>110</y>
-      <width>113</width>
+      <width>71</width>
       <height>27</height>
      </rect>
     </property>
@@ -273,7 +273,7 @@ border-color: rgb(0, 0, 0);
      <rect>
       <x>140</x>
       <y>150</y>
-      <width>113</width>
+      <width>41</width>
       <height>27</height>
      </rect>
     </property>
@@ -343,14 +343,40 @@ border-color: rgb(0, 0, 0);
    <widget class="QLabel" name="label_15">
     <property name="geometry">
      <rect>
-      <x>327</x>
-      <y>95</y>
+      <x>326</x>
+      <y>94</y>
       <width>31</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
      <string>Max</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lEditInputBubbleType">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>66</y>
+      <width>41</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_16">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>70</y>
+      <width>91</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Bubble Type:</string>
     </property>
    </widget>
   </widget>

@@ -21,26 +21,27 @@ public:
     explicit DatabaseManager(QObject *parent = 0);
   //  ~DatabaseManager();
 
-   bool openDB(QString filePath);
+   static bool openDB(QString filePath);
 
-   void closeDB();
+   static void closeDB();
 
-   bool deleteDB();
+   static bool deleteDB();
 
     // Type = 0:Lazer, 1:Hue, XX:Filter_Number, Number: the current bubble number-> obtained from frame number
-   bool insertRowtoBubble(int type, int number, bubblePoint row);
-   bool insertRowtoBubble(int type, int number, int pan, int tilt, double val);
+   static bool insertRowtoBubble(int type, int number, bubblePoint row);
 
-   bool insertBubble(int type,int number, std::vector<bubblePoint> bubble);
+   static bool insertRowtoBubble(int type, int number, int pan, int tilt, double val);
 
-   bool insertInvariants(int type,int number, std::vector< std::vector<double> > invariants);
+   static   bool insertBubble(int type,int number, std::vector<bubblePoint> bubble);
 
-   std::vector<bubblePoint> readBubble(int type, int number);
+   static bool insertInvariants(int type,int number, std::vector< std::vector<double> > invariants);
+
+   static std::vector<bubblePoint> readBubble(int type, int number);
 
    QSqlError lastError();
 
 private:
-   QSqlDatabase db;
+ //  QSqlDatabase db;
 
     
 signals:

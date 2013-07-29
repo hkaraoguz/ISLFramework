@@ -70,7 +70,7 @@ MainWindow::~MainWindow()
 {
     this->rosThread.shutdownROS();
     while(rosThread.isRunning());
-    //DatabaseManager::closeDB();
+    DatabaseManager::closeDB();
     //delete viv;
     delete ui;
 }

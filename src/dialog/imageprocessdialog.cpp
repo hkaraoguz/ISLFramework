@@ -200,7 +200,7 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
     clock_t start,ends;
 
-    DatabaseManager* dbManager = new DatabaseManager(this);
+  /*  DatabaseManager* dbManager = new DatabaseManager(this);
 
     if(!dbManager->openDB(DB_PATH))
     {
@@ -208,13 +208,31 @@ void ImageProcessDialog::on_butApplyAll_clicked()
         qDebug()<<"Database could not be opened!! returning...";
 
         return;
+    }*/
+
+
+    if(!DatabaseManager::openDB(DB_PATH))
+    {
+
+        qDebug()<<"Database could not be opened!! returning...";
+
+        return;
     }
-
-
 
     // Her bir filtre icin
     for(int i = 0; i < filters.size(); i++)
     {
+
+        int filterNumber = ImageProcess::getFrameNumber(filters.at(i));
+
+        if(filterNumber == -1)
+        {
+
+            qDebug()<<"Error!! Filter number could not be determined, returning...";
+            return;
+
+
+        }
 
         ImageProcess::readFilter(filters.at(i),18,29,false,false,false);
 
@@ -235,16 +253,6 @@ void ImageProcessDialog::on_butApplyAll_clicked()
                 return;
             }
 
-            int filterNumber = ImageProcess::getFrameNumber(filters.at(i));
-
-            if(filterNumber == -1)
-            {
-
-                qDebug()<<"Error!! Filter number could not be determined, returning...";
-                return;
-
-
-            }
 
             start = clock();
 
@@ -280,7 +288,7 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             resred = bubbleProcess::reduceBubble(imgBubble);
 
-            dbManager->insertBubble(filterNumber,frameNumber,resred);
+            DatabaseManager::insertBubble(filterNumber,frameNumber,resred);
 
            /* QFile file(saveBubbleName);
 
@@ -307,14 +315,14 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             qDebug()<<resred.size()<<"invariants 0-0 "<<invariants[0][0];
 
-            dbManager->insertInvariants(filterNumber,frameNumber,invariants);
+            DatabaseManager::insertInvariants(filterNumber,frameNumber,invariants);
 
 
         } // END FOR
 
     } // END FOR
 
-    dbManager->closeDB();
+ //   dbManager->closeDB();
 
     // int start = ui->lEditDatasetStart->text().toInt();
 
@@ -441,15 +449,23 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
     if(fileNames.size() == 0) return;
 
-    DatabaseManager* dbmanager= new DatabaseManager(this);
+   // DatabaseManager* dbmanager= new DatabaseManager(this);
 
-    if(!dbmanager->openDB(DB_PATH))
+   /* if(!dbmanager->openDB(DB_PATH))
     {
         qDebug()<<"Bubble Database Could not be opened!! returning...";
 
         return;
-    }
+    }*/
 
+    if(!DatabaseManager::openDB(DB_PATH))
+    {
+
+        qDebug()<<"Bubble Database Could not be opened!! returning...";
+
+        return;
+
+    }
     for(unsigned int i = 1; i <= fileNames.size(); i++)
     {
         clock_t start,ends;
@@ -463,7 +479,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
         if(frameNumber == -1)
         {
 
-            dbmanager->closeDB();
+          //  dbmanager->closeDB();
             qDebug()<<"Error!! Frame number could not be determined, returning...";
             return;
         }
@@ -503,7 +519,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         qDebug()<<resred.size();
 
-        dbmanager->insertBubble(HUE_TYPE,frameNumber,resred);
+        DatabaseManager::insertBubble(HUE_TYPE,frameNumber,resred);
 
      /*   QString saveBubbleName = path;
 
@@ -538,7 +554,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
     }
 
-    dbmanager->closeDB();
+  //  dbmanager->closeDB();
 
 
 }
@@ -557,32 +573,54 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
 
     int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
 
-    int bubbleType = ui->lEditInputBubbleName->text().toInt();
+    int bubbleType = ui->lEditInputBubbleType->text().toInt();
 
     int rangeMin = ui->lEditMinBubbleNum->text().toInt();
 
     int rangeMax = ui->lEditMaxBubbleNum->text().toInt();
 
-    DatabaseManager* dbmanager = new DatabaseManager(this);
+    if(rangeMin >= rangeMax)
+    {
 
-    if(!dbmanager->openDB(DB_PATH))
+        qDebug()<<"Invalid Range Values!! returning....";
+
+           return;
+}
+  //  DatabaseManager* dbmanager = new DatabaseManager(this);
+
+   /* if(!dbmanager->openDB(DB_PATH))
     {
 
         qDebug()<<"Failed to open database!! returning...";
+
+        return;
+    }*/
+
+    if(!DatabaseManager::openDB(DB_PATH))
+    {
+
+        qDebug()<<"Failed to open database!! returning...";
+
+        return;
+
     }
 
     for(int i = rangeMin; i < rangeMax; i++)
     {
-        std::vector<bubblePoint>  bubble  = dbmanager->readBubble(bubbleType,i);
+        std::vector<bubblePoint>  bubble  = DatabaseManager::readBubble(bubbleType,i);
 
-        DFCoefficients dfcoeff = bubbleProcess::calculateDFCoefficients(bubble,noHarmonics,noHarmonics);
+        if(bubble.size() > 0)
+        {
 
-        std::vector< std::vector<double> > invariants = bubbleProcess::calculateInvariants(bubble, dfcoeff,noHarmonics, noHarmonics);
+            DFCoefficients dfcoeff = bubbleProcess::calculateDFCoefficients(bubble,noHarmonics,noHarmonics);
 
-        dbmanager->insertInvariants(bubbleType,i,invariants);
+            std::vector< std::vector<double> > invariants = bubbleProcess::calculateInvariants(bubble, dfcoeff,noHarmonics, noHarmonics);
+
+            DatabaseManager::insertInvariants(bubbleType,i,invariants);
+        }
     }
 
-    dbmanager->closeDB();
+   // dbmanager->closeDB();
     //int
 
     //dirPath.setNameFilters();
