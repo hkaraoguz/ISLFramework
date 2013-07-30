@@ -8,7 +8,7 @@
 #include <QFile>
 #include <QDir>
 
-#define DB_PATH "/home/hakan/Development/ISL/Datasets/ImageClef2012/training3.db"
+#define DB_PATH "/home/hakan/Development/ISL/Datasets/ImageClef2012/training3v2.db"
 //#define INVARIANTS_DB_PATH "/home/hakan/Development/ISL/Datasets/ImageClef2012/invariants.db"
 
 #define LASER_TYPE 55
@@ -34,7 +34,7 @@ public:
 
    static bool insertBubble(int type,int number, std::vector<bubblePoint> bubble);
 
-   static bool insertInvariants(int type,int number, std::vector< std::vector<double> > invariants);
+   static bool insertInvariants(int type,int number, std::vector< std::vector<float> > invariants);
 
    static std::vector<bubblePoint> readBubble(int type, int number);
 

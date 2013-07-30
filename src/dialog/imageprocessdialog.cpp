@@ -311,9 +311,9 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             bubbleProcess::calculateDFCoefficients(resred,ImageProcess::getDataSetPath(),"",j,noHarmonics,noHarmonics);
 
-            std::vector< std::vector< double > > invariants =  bubbleProcess::calculateInvariants(resred,ImageProcess::getDataSetPath(),this->invariantFileNames.at(i),j,noHarmonics,noHarmonics);
+            std::vector< std::vector< float > > invariants =  bubbleProcess::calculateInvariants(resred,ImageProcess::getDataSetPath(),this->invariantFileNames.at(i),j,noHarmonics,noHarmonics);
 
-            qDebug()<<resred.size()<<"invariants 0-0 "<<invariants[0][0];
+            //qDebug()<<resred.size()<<"invariants 0-0 "<<invariants[0][0];
 
             DatabaseManager::insertInvariants(filterNumber,frameNumber,invariants);
 
@@ -517,9 +517,17 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         qDebug()<<"Hue bubble generation time"<<((float)(ends-start)*1000/CLOCKS_PER_SEC)<<" ms";
 
-        qDebug()<<resred.size();
+        int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
 
-        DatabaseManager::insertBubble(HUE_TYPE,frameNumber,resred);
+        DFCoefficients dfcoeff = bubbleProcess::calculateDFCoefficients(resred,noHarmonics,noHarmonics);
+
+        std::vector< std::vector<float> > invariants = bubbleProcess::calculateInvariants(resred, dfcoeff,noHarmonics, noHarmonics);
+
+        DatabaseManager::insertInvariants(HUE_TYPE,frameNumber,invariants);
+
+     //   qDebug()<<resred.size();
+
+       // DatabaseManager::insertBubble(HUE_TYPE,frameNumber,resred);
 
      /*   QString saveBubbleName = path;
 
@@ -614,7 +622,7 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
 
             DFCoefficients dfcoeff = bubbleProcess::calculateDFCoefficients(bubble,noHarmonics,noHarmonics);
 
-            std::vector< std::vector<double> > invariants = bubbleProcess::calculateInvariants(bubble, dfcoeff,noHarmonics, noHarmonics);
+            std::vector< std::vector<float> > invariants = bubbleProcess::calculateInvariants(bubble, dfcoeff,noHarmonics, noHarmonics);
 
             DatabaseManager::insertInvariants(bubbleType,i,invariants);
         }

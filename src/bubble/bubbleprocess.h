@@ -79,9 +79,9 @@ public:
 
     static DFCoefficients calculateDFCoefficients(std::vector <bubblePoint> bubble, int harmonic1, int harmonic2);
 
-    static std::vector< std::vector< double > > calculateInvariants(std::vector <bubblePoint> bubble, QString path, QString fileName, int itemNo, int harmonic1, int harmonic2);
+    static std::vector< std::vector< float > > calculateInvariants(std::vector <bubblePoint> bubble, QString path, QString fileName, int itemNo, int harmonic1, int harmonic2);
 
-    static std::vector< std::vector< double > > calculateInvariants(std::vector <bubblePoint> bubble, DFCoefficients coeff, int harmonic1, int harmonic2);
+    static std::vector< std::vector< float > > calculateInvariants(std::vector <bubblePoint> bubble, DFCoefficients coeff, int harmonic1, int harmonic2);
 
     static std::vector<double> calculateEuclideanDiff(vector <bubblePoint> bubble1, vector <bubblePoint> bubble2);
 

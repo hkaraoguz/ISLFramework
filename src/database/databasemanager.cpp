@@ -2,13 +2,14 @@
 #include <QtSql/QSqlQuery>
 #include <QVariant>
 #include <QDebug>
-
+#include <QVector>
 
 
 //static QSqlDatabase bubbledb;
 //static QSqlDatabase invariantdb;
 
 static QSqlDatabase db;
+static QVector<int> placeLabels;
 
 DatabaseManager::DatabaseManager(QObject *parent) :
     QObject(parent)
@@ -268,7 +269,7 @@ bool DatabaseManager::insertBubble(int type, int number, std::vector<bubblePoint
   //  }
 
 }
-bool DatabaseManager::insertInvariants(int type, int number, std::vector< std::vector<double> > invariants)
+bool DatabaseManager::insertInvariants(int type, int number, std::vector< std::vector<float> > invariants)
 {
 
     //bool ret = false;
@@ -301,7 +302,7 @@ bool DatabaseManager::insertInvariants(int type, int number, std::vector< std::v
             // Speed up the multiple-row insertion by using transactions
             //query.exec(QString("BEGIN TRANSACTION"));
 
-            query.prepare(QString("replace into invariant values( ?, ?, ?, ?)"));
+            query.prepare(QString("replace into invariant values(?, ?, ?, ?)"));
 
             QVariantList typee;
             QVariantList numberr;
@@ -320,7 +321,14 @@ bool DatabaseManager::insertInvariants(int type, int number, std::vector< std::v
                     val<< invariants[i][j];
                     typee<<type;
                     numberr<<number;
-                    placeLabel<<-1;
+
+                    if(placeLabels.size() >= number)
+                    {
+                        placeLabel<<placeLabels.at(number-1);
+                    }
+
+                    else
+                        placeLabel<<-1;
 
 
                     //query.exec(QString("replace into invariant values('%1', '%2', '%3')").arg(type).arg(number).arg(val));
@@ -379,12 +387,12 @@ void DatabaseManager::determinePlaceLabels(QString filePath)
 
      file.close();
 
-
     QMap<QString, int> valueMap;
 
     QList<QString> keys;
 
-    int counter = 0;
+    int frameCounter = 0;
+    int labelCounter = -1;
     foreach (QString str, mainList)
     {
        // QStringList line = str.split(";",QString::SkipEmptyParts);
@@ -392,14 +400,37 @@ void DatabaseManager::determinePlaceLabels(QString filePath)
 
         QString key = str;
        // int val = line.at(0).toInt();
-        if(!keys.contains(key))
+        if(!valueMap.contains(key))
         {
-          valueMap.insert(key,counter);
+          labelCounter++;
+          valueMap.insert(key,labelCounter);
+        }
+        else
+        {
+           //valueMap.insert(frameCounter,labelCounter);
         }
 
-        counter++;
+      //  counter++;
 
     }
 
+    int counter = 0;
+
+   // QVector<int> labels;
+
+    if(placeLabels.size() > 0)placeLabels.clear();
+
+    placeLabels.resize(mainList.size());
+
+    int count = 0;
+    foreach (QString kkey, mainList)
+    {
+        int val = valueMap.value(kkey);
+
+        placeLabels[count] = val;
+        count++;
+    }
+
     qDebug()<<valueMap;
+    qDebug()<<placeLabels.at(990);
 }

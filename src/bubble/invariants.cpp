@@ -23,10 +23,10 @@ using namespace std;
 
 using namespace std;
 
-std::vector< std::vector< double > > bubbleProcess::calculateInvariants(vector<bubblePoint> bubble, QString path, QString fileName , int itemNo, int harmonic1, int harmonic2)
+std::vector< std::vector< float > > bubbleProcess::calculateInvariants(vector<bubblePoint> bubble, QString path, QString fileName , int itemNo, int harmonic1, int harmonic2)
 {
 
-    std::vector< std::vector<double> > result;
+    std::vector< std::vector<float> > result;
 
     result.resize(harmonic1);
 
@@ -113,10 +113,10 @@ std::vector< std::vector< double > > bubbleProcess::calculateInvariants(vector<b
    return result;
 
 }
-std::vector< std::vector< double > > bubbleProcess::calculateInvariants(std::vector <bubblePoint> bubble, DFCoefficients coeff, int harmonic1, int harmonic2)
+std::vector< std::vector< float > > bubbleProcess::calculateInvariants(std::vector <bubblePoint> bubble, DFCoefficients coeff, int harmonic1, int harmonic2)
 {
 
-    std::vector< std::vector<double> > result;
+    std::vector< std::vector<float> > result;
 
     result.resize(harmonic1);
 

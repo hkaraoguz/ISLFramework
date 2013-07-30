@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     rosThread.start();
 
-    DatabaseManager::determinePlaceLabels("/home/hakan/Development/ISL/Datasets/ImageClef2012/rgb.txt");
+    DatabaseManager::determinePlaceLabels("/home/hakan/Development/ISL/Datasets/ImageClef2012/training3/locations/rgb.txt");
 
   //  dbmanager = new DatabaseManager(this);
 
