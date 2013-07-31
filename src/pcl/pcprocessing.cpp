@@ -28,9 +28,10 @@ PCprocessing::PCprocessing()
 {
     currentCloud = sensor_msgs::PointCloud2::Ptr(new sensor_msgs::PointCloud2 ());
 
-    currentCloudNormals = pcl::PointCloud<pcl::Normal>::Ptr(new pcl::PointCloud<pcl::Normal>());
+    currentCloudNormals = boost::shared_ptr< pcl::PointCloud<pcl::Normal> >(new pcl::PointCloud<pcl::Normal>());
 
-    cloud = pcl::PointCloud<pcl::PointXYZRGB>::Ptr(new pcl::PointCloud<pcl::PointXYZRGB>());
+   // cloud = pcl::PointCloud<pcl::PointXYZRGB>::Ptr(new pcl::PointCloud<pcl::PointXYZRGB>());
+    cloud = boost::shared_ptr< pcl::PointCloud<pcl::PointXYZRGB> >(new pcl::PointCloud<pcl::PointXYZRGB>());
 
     // this->initializeViewer();
 }

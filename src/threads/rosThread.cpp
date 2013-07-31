@@ -32,7 +32,7 @@ void RosThread::run(){
 
      emit rosStarted();
 
-     ros::AsyncSpinner spinner(4);
+     ros::AsyncSpinner spinner(2);
 
      spinner.start();
 

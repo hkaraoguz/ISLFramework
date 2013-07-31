@@ -55,6 +55,10 @@ QSqlError DatabaseManager::lastError()
     return db.lastError();
 
 }
+bool DatabaseManager::isOpen()
+{
+    return db.isOpen();
+}
 void DatabaseManager::closeDB()
 {
     if(db.isOpen()) db.close();

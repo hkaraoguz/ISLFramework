@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>586</width>
+    <height>372</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,8 +40,56 @@
      <string>Open Bubble Processing</string>
     </property>
    </widget>
+   <widget class="QLineEdit" name="lEditDBFilePath">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>51</y>
+      <width>411</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="butChooseDBFile">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>121</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Database File</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lEditPlaceLabelsFilePath">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>91</y>
+      <width>411</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="butPlaceLabelsFile">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>90</y>
+      <width>121</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Place Labels File</string>
+    </property>
+   </widget>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

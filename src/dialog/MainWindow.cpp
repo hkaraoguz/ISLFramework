@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     rosThread.start();
 
-    DatabaseManager::determinePlaceLabels("/home/hakan/Development/ISL/Datasets/ImageClef2012/training3/locations/rgb.txt");
+
 
   //  dbmanager = new DatabaseManager(this);
 
@@ -264,6 +264,38 @@ void MainWindow::handleRobotDataSaveRequest()
         }
 
 
+    }
+
+}
+
+void MainWindow::on_butChooseDBFile_clicked()
+{
+    // Get the root directory
+    QString path =   QFileDialog::getOpenFileName(this,"Open DB File","/home/hakan/Development/ISL/Datasets",tr("*.db"));
+
+    if(path != NULL)
+    {
+        ui->lEditDBFilePath->setText(path);
+
+        if(DatabaseManager::openDB(path))
+        {
+            qDebug()<<"Database opened Successfully!!";
+        }
+    }
+}
+
+void MainWindow::on_butPlaceLabelsFile_clicked()
+{
+    // Get the root directory
+    QString path =   QFileDialog::getOpenFileName(this,"Open Place Labels File","/home/hakan/Development/ISL/Datasets",tr("*.txt"));
+
+    if(path != NULL)
+    {
+        ui->lEditPlaceLabelsFilePath->setText(path);
+
+        DatabaseManager::determinePlaceLabels(path);
+
+        //ui->lEditDBFilePath
     }
 
 }

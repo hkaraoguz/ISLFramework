@@ -211,7 +211,7 @@ void ImageProcessDialog::on_butApplyAll_clicked()
     }*/
 
 
-    if(!DatabaseManager::openDB(DB_PATH))
+    if(!DatabaseManager::isOpen())
     {
 
         qDebug()<<"Database could not be opened!! returning...";
@@ -288,7 +288,7 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             resred = bubbleProcess::reduceBubble(imgBubble);
 
-            DatabaseManager::insertBubble(filterNumber,frameNumber,resred);
+           // DatabaseManager::insertBubble(filterNumber,frameNumber,resred);
 
            /* QFile file(saveBubbleName);
 
@@ -309,9 +309,9 @@ void ImageProcessDialog::on_butApplyAll_clicked()
             }*/
             int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
 
-            bubbleProcess::calculateDFCoefficients(resred,ImageProcess::getDataSetPath(),"",j,noHarmonics,noHarmonics);
+           DFCoefficients dfcoeff =  bubbleProcess::calculateDFCoefficients(resred,noHarmonics,noHarmonics);
 
-            std::vector< std::vector< float > > invariants =  bubbleProcess::calculateInvariants(resred,ImageProcess::getDataSetPath(),this->invariantFileNames.at(i),j,noHarmonics,noHarmonics);
+            std::vector< std::vector< float > > invariants =  bubbleProcess::calculateInvariants(resred,dfcoeff,noHarmonics,noHarmonics);
 
             //qDebug()<<resred.size()<<"invariants 0-0 "<<invariants[0][0];
 
@@ -458,7 +458,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
         return;
     }*/
 
-    if(!DatabaseManager::openDB(DB_PATH))
+    if(!DatabaseManager::isOpen())
     {
 
         qDebug()<<"Bubble Database Could not be opened!! returning...";
@@ -604,7 +604,7 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
         return;
     }*/
 
-    if(!DatabaseManager::openDB(DB_PATH))
+    if(!DatabaseManager::isOpen())
     {
 
         qDebug()<<"Failed to open database!! returning...";
@@ -1134,14 +1134,6 @@ void ImageProcessDialog::on_horsliderValLower_valueChanged(int value)
 
 void ImageProcessDialog::on_butApplyFilter_clicked()
 {
-
-
-
-
-
-
-
-
 
 
 }

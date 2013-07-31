@@ -7,9 +7,6 @@ BubbleTransformer::BubbleTransformer()
 {
     translationVector  =  cv::Mat::zeros(3,1,CV_32FC1);
 
-
-
-
     rotationMatrix = Mat::zeros(3,3,CV_32FC1);
 
     rotationMatrix.at<float>(0,0) = 9.9984628826577793e-01;

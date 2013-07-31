@@ -55,6 +55,10 @@ private slots:
 
     void handleRobotDataSaveRequest();
 
+    void on_butChooseDBFile_clicked();
+
+    void on_butPlaceLabelsFile_clicked();
+
 private:
     Ui::MainWindow *ui;
     RosThread rosThread;

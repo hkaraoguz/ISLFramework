@@ -8,7 +8,7 @@
 #include <QFile>
 #include <QDir>
 
-#define DB_PATH "/home/hakan/Development/ISL/Datasets/ImageClef2012/training3v2.db"
+//#define DB_PATH "/home/hakan/Development/ISL/Datasets/ImageClef2012/training3v2.db"
 //#define INVARIANTS_DB_PATH "/home/hakan/Development/ISL/Datasets/ImageClef2012/invariants.db"
 
 #define LASER_TYPE 55
@@ -26,6 +26,8 @@ public:
    static void closeDB();
 
    static bool deleteDB();
+
+   static bool isOpen();
 
     // Type = 55:Lazer, 56:Hue, XX:Filter_Number, Number: the current bubble number-> obtained from frame number
    static bool insertRowtoBubble(int type, int number, bubblePoint row);
