@@ -10,7 +10,8 @@
 #include <QThread>
 #include <pcl-1.5/pcl/common/transforms.h>
 #include <ctime>
-
+#include "databasemanager.h"
+#include "imageprocess.h"
 QString fileNam;
 
 bool compareNames(const QString& s1,const QString& s2)
@@ -467,7 +468,9 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
 
 }
 
-void PclDialog::on_butGeneratePointCloudBubbles_clicked()
+/******************* ORIJINAL FONKSIYON **************/
+
+/*void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 {
     //  double maxRangeMeters = ui->lEditCloudMaxRange->text().toDouble();
 
@@ -476,7 +479,8 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 
     int endd = ui->lEditDatasetEnd->text().toInt();
 
-    for(int i = start; i < endd; i++){
+    for(int i = start; i < endd; i++)
+    {
 
         if(pcProcessing->loadItem(i, fileNam, pcProcessing->getCurrentCloud()))
         {
@@ -535,8 +539,112 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 
         }
     }
-}
+}*/
+void PclDialog::on_butGeneratePointCloudBubbles_clicked()
+{
+    //  double maxRangeMeters = ui->lEditCloudMaxRange->text().toDouble();
 
+    if(PCprocessing::getDataSetPath() == NULL) return;
+
+    QFileDialog dialog(this);
+
+    dialog.setDirectory(pcProcessing->getDataSetPath());
+
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+
+    dialog.setNameFilter("PCD Files (*.pcd)");
+
+    QStringList fileNames;
+
+    if (dialog.exec())
+        fileNames = dialog.selectedFiles();
+
+    if(fileNames.size() == 0) return;
+
+    //int start = ui->lEditDatasetStart->text().toInt();
+
+   // int endd = ui->lEditDatasetEnd->text().toInt();
+
+    for(int i = 0; i < fileNames.size(); i++)
+    {
+
+        if(pcProcessing->loadItem(fileNames.at(i), pcProcessing->getCurrentCloud()))
+        {
+
+            int frameNumber = ImageProcess::getFrameNumber(fileNames.at(i));
+
+            if(frameNumber == -1)
+            {
+
+              //  dbmanager->closeDB();
+                qDebug()<<"Error!! Frame number could not be determined, returning...";
+                return;
+            }
+
+
+
+            std::vector<bubblePointXYZ> bubble;
+
+            sensor_msgs::PointCloud2::Ptr cloud = pcProcessing->getCurrentCloud();
+
+            pcl::PointCloud<pcl::PointXYZRGB> normalCloud;
+
+            pcl::fromROSMsg(*cloud,normalCloud);
+
+            for(unsigned int i = 0; i < normalCloud.points.size(); i++){
+
+                bubblePointXYZ pt;
+
+                pt.x = normalCloud.points.at(i).x;
+                pt.y = normalCloud.points.at(i).y;
+                pt.z = normalCloud.points.at(i).z;
+
+                bubble.push_back(pt);
+
+            }
+
+            double maxRangeMeters = ui->lEditCloudMaxRange->text().toDouble();
+
+            vector<bubblePoint> sphBubble = bubbleProcess::convertBubXYZ2BubSpherical(bubble,maxRangeMeters);
+
+            vector<bubblePoint> sphRedBubble = bubbleProcess::reduceBubble(sphBubble);
+
+            DFCoefficients dfcoeff = bubbleProcess::calculateDFCoefficients(sphRedBubble,10,10);
+
+            std::vector< std::vector<float> > invariants = bubbleProcess::calculateInvariants(sphRedBubble, dfcoeff,10, 10);
+
+            DatabaseManager::insertInvariants(LASER_TYPE,frameNumber,invariants);
+
+           // DatabaseManager::
+
+           /* QString pathh = pcProcessing->getDataSetPath();
+
+            pathh.append("bubble_");
+
+            QString ss;
+
+            ss.setNum(i);
+
+            pathh.append(ss);
+            pathh.append(".m");
+
+            QFile file(pathh);
+
+            qDebug()<<"Bubble path is: "<<pathh;
+
+            if(file.open(QFile::WriteOnly))
+            {
+
+                bubbleProcess::saveBubble(&file,sphRedBubble);
+
+                file.close();
+
+            }*/
+
+        }
+    }
+
+}
 void PclDialog::on_butCalculateBubbleInvariants_clicked()
 {
     int start = ui->lEditDatasetStart->text().toInt();

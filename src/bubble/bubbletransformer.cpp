@@ -1,4 +1,4 @@
-#include "bubbletransformer.h".h"
+#include "bubbletransformer.h"
 #include <QDebug>
 
 using namespace cv;

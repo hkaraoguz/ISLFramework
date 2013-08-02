@@ -140,33 +140,11 @@ void PCprocessing::setViewer(boost::shared_ptr<pcl::visualization::PCLVisualizer
     //  initializeViewer();
 
 }
-bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::PointCloud2::Ptr cloud)
+bool PCprocessing::loadItem(QString filePath, sensor_msgs::PointCloud2::Ptr cloud)
 {
-    // qDebug()<<"datasetitems:: "<<dataSetItems;
+    if( pcl::io::loadPCDFile(filePath.toStdString(),*cloud) < 0) return false;
 
-    if(dataSetPath==NULL) return false;
-
-    QString itemPath = dataSetPath;
-
-    itemPath.append(fileName);
-
-    if(itemNumber >=0)
-    {
-
-        QString ss;
-
-        ss.setNum(itemNumber);
-
-        itemPath.append(ss);
-    }
-
-    itemPath.append(".pcd");
-
-    // itemPath.append(dataSetItems.at(itemNumber));
-
-    if( pcl::io::loadPCDFile(itemPath.toStdString(),*cloud) < 0) return false;
-
-    qDebug()<<"Loaded item path: "<<itemPath;
+    qDebug()<<"Loaded item path: "<<filePath;
 
     std::vector<sensor_msgs::PointField> fields = cloud->fields;
 
@@ -215,6 +193,157 @@ bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::Point
 
 
         }
+    }
+    //    pcl::toROSMsg(tempCloud,*cloud);
+
+    //  viewer->removeAllPointClouds();
+
+    // viewer->removeCoordinateSystem();
+
+    //  viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+
+    //  viewer->addCoordinateSystem (1.0);
+
+    viewer->resetCamera();
+
+
+    return true;
+
+
+}
+bool PCprocessing::loadItem(int itemNumber, QString fileName, sensor_msgs::PointCloud2::Ptr cloud)
+{
+    // qDebug()<<"datasetitems:: "<<dataSetItems;
+
+    if(dataSetPath==NULL) return false;
+
+    QString itemPath = dataSetPath;
+
+    itemPath.append(fileName);
+
+    if(itemNumber >=0)
+    {
+
+        QString ss;
+
+        ss.setNum(itemNumber);
+
+        itemPath.append(ss);
+    }
+
+    itemPath.append(".pcd");
+
+    // itemPath.append(dataSetItems.at(itemNumber));
+
+    if( pcl::io::loadPCDFile(itemPath.toStdString(),*cloud) < 0) return false;
+
+    qDebug()<<"Loaded item path: "<<itemPath;
+
+    std::vector<sensor_msgs::PointField> fields = cloud->fields;
+
+    if(fields.at(3).name == "rgba")
+    {
+
+        pcl::PointCloud<pcl::PointXYZRGBA> tempCloud;
+
+        pcl::fromROSMsg(*cloud,tempCloud);
+
+
+        pcl::PointXYZRGBA pt = tempCloud.points.at(0);
+
+        if(pt.r == pt.r )
+        {
+
+            if(pt.r != 0 || pt.b != 0 || pt.g != 0)
+            {
+
+
+                qDebug()<<"r is"<<pt.r;
+
+                viewer->removeCoordinateSystem();
+
+                this->initializeViewer(true);
+
+                if(!viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud"))
+                {
+                    qDebug()<<"We don't have a kinect cloud";
+
+                }
+
+            }
+            else
+            {
+
+                viewer->removeAllPointClouds();
+
+                viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
+
+            }
+        }
+        else
+        {
+
+            viewer->removeAllPointClouds();
+
+            // viewer->ad
+
+            viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
+
+
+        }
+    }
+    else if(fields.at(3).name == "rgb")
+    {
+
+        pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
+
+        pcl::fromROSMsg(*cloud,tempCloud);
+
+
+        pcl::PointXYZRGB pt = tempCloud.points.at(0);
+
+        if(pt.r == pt.r )
+        {
+
+            if(pt.r != 0 || pt.b != 0 || pt.g != 0)
+            {
+
+
+                qDebug()<<"r is"<<pt.r;
+
+                viewer->removeCoordinateSystem();
+
+                this->initializeViewer(true);
+
+                if(!viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud"))
+                {
+                    qDebug()<<"We don't have a kinect cloud";
+
+                }
+
+            }
+            else
+            {
+
+                viewer->removeAllPointClouds();
+
+                viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+
+            }
+        }
+        else
+        {
+
+            viewer->removeAllPointClouds();
+
+            // viewer->ad
+
+            viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+
+
+        }
+
+
     }
     //    pcl::toROSMsg(tempCloud,*cloud);
 

@@ -30,6 +30,8 @@ public:
 
      bool loadItem(int itemNumber, QString fileName, sensor_msgs::PointCloud2::Ptr cloud);
 
+     bool loadItem(QString filePath, sensor_msgs::PointCloud2::Ptr cloud);
+
      void applyVoxelGridFilter(sensor_msgs::PointCloud2::Ptr input);
 
      void calculateNormals(sensor_msgs::PointCloud2::Ptr input);

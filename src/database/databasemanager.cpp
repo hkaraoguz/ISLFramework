@@ -417,7 +417,16 @@ void DatabaseManager::determinePlaceLabels(QString filePath)
       //  counter++;
 
     }
+    QStringList listt = valueMap.keys();
 
+    qSort(listt.begin(), listt.end());
+
+    qDebug()<<listt;
+
+    for(int i = 0; i<listt.size();i++)
+    {
+        valueMap.insert(listt.at(i),i);
+    }
     int counter = 0;
 
    // QVector<int> labels;
