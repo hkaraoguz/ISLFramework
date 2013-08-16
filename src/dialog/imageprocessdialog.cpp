@@ -1134,6 +1134,29 @@ void ImageProcessDialog::on_horsliderValLower_valueChanged(int value)
 
 void ImageProcessDialog::on_butApplyFilter_clicked()
 {
+      Mat orgImg= ImageProcess::getImage();
 
+      Mat loadedFilter = ImageProcess::getFilter();
 
+      if(loadedFilter.empty()) return;
+
+      if(orgImg.empty()) return;
+
+      Mat grImg;
+
+      cv::cvtColor(orgImg,grImg,CV_BGR2GRAY);
+
+      Mat sonuc = ImageProcess::applyFilter(grImg);
+
+      imwrite("filterResult.jpg",sonuc);
+
+      vector<bubblePoint> bub =  bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
+
+      QFile file("bubbleFiltResult.txt");
+
+      file.open(QFile::WriteOnly);
+
+      bubbleProcess::saveBubble(&file,bub);
+
+      file.close();
 }

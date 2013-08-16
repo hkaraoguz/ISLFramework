@@ -159,35 +159,12 @@ std::vector<bubblePoint> DatabaseManager::readBubble(int type, int number)
 bool DatabaseManager::insertBubble(int type, int number, std::vector<bubblePoint> bubble)
 {
 
-    bool ret = false;
+   // bool ret = false;
 
     if (db.isOpen())
     {
 
         QSqlQuery query;
-
-        // First check, if a bubble has already entered to the table
-     /*   bool exists = query.exec(QString("select val from bubble where type = %1 and number = %2 LIMIT 2").arg(type).arg(number));
-
-        // If query is successfully executed
-        if(exists)
-        {
-            // if there are elements received from the table, then there exists a bubble, we should delete those entries
-            if(query.next())
-            {
-                ret = query.exec(QString("delete from bubble where type = %1 and number = %2").arg(type).arg(number));
-
-                // If deletion is not successfuly executed return false
-                if(!ret)
-
-                    return false;
-
-            }*/
-
-            //else return false;
-
-            // Speed up the multiple-row insertion by using transactions
-            //query.exec(QString("BEGIN TRANSACTION"));
 
           //  query.exec("PRAGMA journal_mode = MEMORY");
          //  query.exec("PRAGMA synchronous = OFF");
@@ -198,12 +175,15 @@ bool DatabaseManager::insertBubble(int type, int number, std::vector<bubblePoint
                           //    updateQuery.prepare("update bubble set val = :val where type = %type and number = %2 and pan = %3 and tilt = %4");
             QVariantList typee;
             QVariantList numberr;
+            QVariantList placeLabel;
             QVariantList pan;
             QVariantList tilt;
             QVariantList val;
+
             db.transaction();
+
             // Insert new bubble
-            for(int i = 0; i <bubble.size(); i++)
+            for(int i = 0; i < bubble.size(); i++)
             {
 
                 bubblePoint pt;
@@ -215,6 +195,15 @@ bool DatabaseManager::insertBubble(int type, int number, std::vector<bubblePoint
                 pan<<pt.panAng;
                 tilt<<pt.tiltAng;
                 val<<pt.val;
+
+                if(placeLabels.size() >= number)
+                {
+                    placeLabel<<placeLabels.at(number-1);
+                }
+
+                else
+                    placeLabel<<-1;
+
 
           /*      query.bindValue(":type",type);
                  query.bindValue(":number",number);
@@ -228,8 +217,11 @@ bool DatabaseManager::insertBubble(int type, int number, std::vector<bubblePoint
 
             }
 
+
+
             query.addBindValue(typee);
             query.addBindValue(numberr);
+            query.addBindValue(placeLabel);
             query.addBindValue(pan);
             query.addBindValue(tilt);
             query.addBindValue(val);
@@ -237,40 +229,18 @@ bool DatabaseManager::insertBubble(int type, int number, std::vector<bubblePoint
 
             if (!query.execBatch())
                  qDebug() << query.lastError();
+
             db.commit();
-            //query.exec(QString("COMMIT TRANSACTION"));
 
             return true;
 
         }
-       /* else
-        {
 
-            // Speed up the multiple-row insertion by using transactions
-            query.exec(QString("BEGIN TRANSACTION"));
-
-            // Insert new bubble
-            for(int i = 0; i <bubble.size(); i++)
-            {
-
-                bubblePoint pt;
-
-                pt = bubble.at(i);
-
-                query.exec(QString("insert into bubble values('%1', '%2', '%3', '%4', %5)").arg(type).arg(number).arg(pt.panAng).arg(pt.tiltAng).arg(pt.val));
-
-
-            }
-            query.exec(QString("END TRANSACTION"));
-
-            return true;
-
-        }*/
 
 
         return false;
 
-  //  }
+
 
 }
 bool DatabaseManager::insertInvariants(int type, int number, std::vector< std::vector<float> > invariants)

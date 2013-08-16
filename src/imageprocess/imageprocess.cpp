@@ -80,10 +80,6 @@ void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize, b
 
         }
 
-
-
-
-
         line = stream.readLine();
 
     }
@@ -96,14 +92,13 @@ void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize, b
 
     cv::convertScaleAbs(filterOrg,filter,128,128);
 
-
-
-
     cv::Mat resizedFilter;
 
     cv::resize(filter,resizedFilter,resizedFilter.size(),5,5);
 
-    if(show){
+    if(show)
+    {
+
         namedWindow("filter");
 
         imshow("filter",resizedFilter);
@@ -116,7 +111,7 @@ void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize, b
     if(save)
     {
 
-        imwrite("filt.jpg",resizedFilter);
+        imwrite("filter.jpg",resizedFilter);
         qDebug()<<"Filter image saved";
     }
 
@@ -124,6 +119,10 @@ void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize, b
 
 
 
+}
+Mat ImageProcess::getFilter()
+{
+    return filterOrg;
 }
 Mat ImageProcess::loadImage(QString fileName, bool show)
 {
@@ -318,4 +317,9 @@ int ImageProcess::getFrameNumber(QString fullFilePath)
            }
 
            return frameNumber;
+}
+Mat ImageProcess::getImage()
+{
+
+    return orgImg;
 }

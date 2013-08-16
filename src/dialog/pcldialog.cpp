@@ -561,6 +561,11 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 
     if(fileNames.size() == 0) return;
 
+    if(!DatabaseManager::isOpen())
+    {
+        qDebug()<<"Database is not opened!! returning...";
+    }
+
     //int start = ui->lEditDatasetStart->text().toInt();
 
    // int endd = ui->lEditDatasetEnd->text().toInt();
@@ -571,12 +576,13 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
         if(pcProcessing->loadItem(fileNames.at(i), pcProcessing->getCurrentCloud()))
         {
 
+            // Extract the frame number of current file
             int frameNumber = ImageProcess::getFrameNumber(fileNames.at(i));
 
             if(frameNumber == -1)
             {
 
-              //  dbmanager->closeDB();
+
                 qDebug()<<"Error!! Frame number could not be determined, returning...";
                 return;
             }
@@ -591,7 +597,8 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 
             pcl::fromROSMsg(*cloud,normalCloud);
 
-            for(unsigned int i = 0; i < normalCloud.points.size(); i++){
+            for(unsigned int i = 0; i < normalCloud.points.size(); i++)
+            {
 
                 bubblePointXYZ pt;
 
@@ -605,13 +612,15 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 
             double maxRangeMeters = ui->lEditCloudMaxRange->text().toDouble();
 
+             double noHarmonics = ui->lEditNoInvariantHarmonics->text().toInt();
+
             vector<bubblePoint> sphBubble = bubbleProcess::convertBubXYZ2BubSpherical(bubble,maxRangeMeters);
 
             vector<bubblePoint> sphRedBubble = bubbleProcess::reduceBubble(sphBubble);
 
-            DFCoefficients dfcoeff = bubbleProcess::calculateDFCoefficients(sphRedBubble,10,10);
+            DFCoefficients dfcoeff = bubbleProcess::calculateDFCoefficients(sphRedBubble,noHarmonics,noHarmonics);
 
-            std::vector< std::vector<float> > invariants = bubbleProcess::calculateInvariants(sphRedBubble, dfcoeff,10, 10);
+            std::vector< std::vector<float> > invariants = bubbleProcess::calculateInvariants(sphRedBubble, dfcoeff,noHarmonics, noHarmonics);
 
             DatabaseManager::insertInvariants(LASER_TYPE,frameNumber,invariants);
 

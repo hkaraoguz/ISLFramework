@@ -17,6 +17,8 @@ public:
 
     static void readFilter(QString fileName, int filterNum, int filterSize, bool transpose, bool save, bool show);
 
+    static Mat getFilter();
+
     static Mat loadImage(QString fileName, bool show);
 
     static Mat applyFilter(Mat singleChannelImage);
@@ -31,6 +33,9 @@ public:
 
     static void setImage(Mat image);
 
+    static Mat getImage();
+
+    // For extracting the frame number from the fileName
     static int getFrameNumber(QString fullFilePath);
 
 };
