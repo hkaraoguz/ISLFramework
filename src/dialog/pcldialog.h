@@ -64,8 +64,6 @@ private slots:
 
     void on_butApplyTransformationtoAll_clicked();
 
-    void on_butGeneratePointCloudBubble_clicked();
-
     void on_butGeneratePointCloudBubbles_clicked();
 
     void on_butCalculateBubbleInvariants_clicked();

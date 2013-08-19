@@ -129,7 +129,7 @@ void PclDialog::initializeView(){
 
     ui->lEditCloudMaxRange->setText("6");
 
-    ui->lEditInputBubbleName->setText("bubble_");
+    //ui->lEditInputBubbleName->setText("bubble_");
 
     ui->lEditOutputInvName->setText("invariants_");
 
@@ -397,7 +397,7 @@ void PclDialog::on_butApplyTransformationtoAll_clicked()
 
 }
 
-void PclDialog::on_butGeneratePointCloudBubble_clicked()
+/*void PclDialog::on_butGeneratePointCloudBubble_clicked()
 {
 
     clock_t start, end;
@@ -466,7 +466,7 @@ void PclDialog::on_butGeneratePointCloudBubble_clicked()
 
     bubbleProcess::calculateInvariants(sphRedBubble,pcProcessing->getDataSetPath(),outputFileName,itemNo,10,10);
 
-}
+}*/
 
 /******************* ORIJINAL FONKSIYON **************/
 
@@ -656,7 +656,58 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 }
 void PclDialog::on_butCalculateBubbleInvariants_clicked()
 {
-    int start = ui->lEditDatasetStart->text().toInt();
+
+    if(PCprocessing::getDataSetPath() == NULL) return;
+
+    QFileDialog dialog(this);
+
+    dialog.setDirectory(pcProcessing->getDataSetPath());
+
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+
+    dialog.setNameFilter("Bubble Files (*.m)");
+
+    QStringList fileNames;
+
+    if (dialog.exec())
+        fileNames = dialog.selectedFiles();
+
+    if(fileNames.size() == 0) return;
+
+    if(!DatabaseManager::isOpen())
+    {
+        qDebug()<<"Database is not opened!! returning...";
+    }
+
+
+    int noHarmonics = ui->lEditNoInvariantHarmonics->text().toInt();
+
+    for(int i = 0; i < fileNames.size(); i++)
+    {
+        QFile file(fileNames.at(i));
+
+        qDebug()<<"Bubble path is: "<<fileNames.at(i);
+
+        if(file.open(QFile::ReadOnly))
+        {
+            int frameNo = ImageProcess::getFrameNumber(fileNames.at(i));
+
+            //if(frameNo < -1) frameNo = 0;
+
+            vector<bubblePoint> bubble =  bubbleProcess::readBubble(&file);
+
+            DFCoefficients coeff =  bubbleProcess::calculateDFCoefficients(bubble,noHarmonics,noHarmonics);
+
+            std::vector< std::vector<float> > invs =  bubbleProcess::calculateInvariants(bubble,coeff,noHarmonics,noHarmonics);
+
+            DatabaseManager::insertInvariants(LASER_TYPE,frameNo,invs);
+
+        }
+
+    }
+
+
+    /*int start = ui->lEditDatasetStart->text().toInt();
 
     int endd = ui->lEditDatasetEnd->text().toInt();
 
@@ -696,7 +747,7 @@ void PclDialog::on_butCalculateBubbleInvariants_clicked()
         }
 
 
-    }
+    }*/
 
 
 }
