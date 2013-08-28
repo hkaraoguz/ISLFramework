@@ -39,6 +39,39 @@ QString bubbleProcess::getBubblesRootDirectory(){
 	return bubblesRootDirectory;
 
 }
+bubbleStatistics bubbleProcess::calculateBubbleStatistics(vector<bubblePoint> bubble, float maxDist)
+{
+
+   // cv::Mat bubbleArr(1,bubble.size(),CV_32FC1);
+   std::vector<float> values(bubble.size());
+    for(int i = 0; i < bubble.size(); i++)
+    {
+        values[i] = bubble.at(i).val;
+             //bubbleArr.at<float>(1,i) = (float)bubble.at(i).val;
+             //qDebug()<<bubbleArr.at<float>(1,i);
+    }
+
+/*    imshow("bubbleArr",bubbleArr);
+    cv::waitKey(0);
+    cv::destroyAllWindows();*/
+
+    cv::Scalar     mean;
+    cv::Scalar     stddev;
+
+    cv::meanStdDev(distances,mean,stddev);
+
+    bubbleStatistics result;
+
+    result.maxDist = maxDist;
+    result.mean = mean.val[0];
+    result.variance = stddev.val[0]*stddev.val[0];
+
+    return result;
+
+   // qDebug()<<"mean: "<<mean.val[0]<< "var: "<<stddev.val[0]*stddev.val[0];
+  //
+
+}
 vector<vector<int> > bubbleProcess::calculateImagePanAngles(int focalLengthPixels, int imageWidth, int imageHeight)
 {
     vector<vector<int> > result(imageHeight, std::vector<int>(imageWidth));

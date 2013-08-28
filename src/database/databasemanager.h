@@ -38,6 +38,8 @@ public:
 
    static bool insertInvariants(int type,int number, std::vector< std::vector<float> > invariants);
 
+   static bool insertBubbleStatistics(int type, int number, bubbleStatistics stats);
+
    static std::vector<bubblePoint> readBubble(int type, int number);
 
    static void determinePlaceLabels(QString filePath);

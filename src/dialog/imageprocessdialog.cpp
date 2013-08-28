@@ -1150,13 +1150,17 @@ void ImageProcessDialog::on_butApplyFilter_clicked()
 
       imwrite("filterResult.jpg",sonuc);
 
-      vector<bubblePoint> bub =  bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
+      vector<bubblePoint> initialBubble =  bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
+
+      vector<bubblePoint> reducedBubble= bubbleProcess::reduceBubble(initialBubble);
+
+      bubbleProcess::calculateBubbleStatistics(reducedBubble,255);
 
       QFile file("bubbleFiltResult.txt");
 
       file.open(QFile::WriteOnly);
 
-      bubbleProcess::saveBubble(&file,bub);
+      bubbleProcess::saveBubble(&file,reducedBubble);
 
       file.close();
 }

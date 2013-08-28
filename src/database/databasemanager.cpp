@@ -414,6 +414,28 @@ void DatabaseManager::determinePlaceLabels(QString filePath)
         count++;
     }
 
-    qDebug()<<valueMap;
-    qDebug()<<placeLabels.at(990);
+   // qDebug()<<valueMap;
+  //  qDebug()<<placeLabels.at(990);
+}
+bool DatabaseManager::insertBubbleStatistics(int type, int number, bubbleStatistics stats)
+{
+    if(db.isOpen())
+    {
+
+        QSqlQuery query;
+
+
+        int placeLabel = -1;
+
+        if(placeLabels.size() > number)
+            placeLabel = placeLabels.at(number-1);
+
+       bool ret = query.exec(QString("insert into bubblestats values(%1, %2, %3, %4, %5, %6)").arg(type).arg(number).arg(placeLabel).arg(stats.mean).arg(stats.variance).arg(stats.maxDist));
+
+
+        return ret;
+    }
+
+    return false;
+
 }

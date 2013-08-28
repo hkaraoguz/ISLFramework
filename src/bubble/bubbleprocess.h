@@ -35,6 +35,18 @@ struct bubblePoint{
 
 
 };
+struct bubbleStatistics
+{
+    // mean of the bubble Surface
+    double mean;
+
+    // variance of the bubble Surface
+    double variance;
+
+    // maximum value of the bubbble point
+    double maxDist;
+
+};
 struct bubblePointXYZ{
 
     double x;
@@ -88,6 +100,8 @@ public:
     void setBubblesXYZ( std::vector< std::vector<bubblePointXYZ> > bubblesXYZ);
 
     std::vector< std::vector<bubblePointXYZ> > getBubblesXYZ();
+
+    static bubbleStatistics calculateBubbleStatistics(vector<bubblePoint> bubble, float maxDist);
 
     // Add a single bubble to our bubble vector
     static void addToBubbles(std::vector< bubblePoint > aBubble);
