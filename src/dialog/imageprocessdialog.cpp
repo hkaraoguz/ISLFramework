@@ -74,8 +74,11 @@ void ImageProcessDialog::initView()
     ui->lEditValUpper->setText(QString::number(ui->horsliderValUpper->value()));
 
 
+    ui->rButHue->setChecked(true);
+    ui->rButFilter->setChecked(false);
 
-
+    //connect(ui->rButHue,SIGNAL(pressed()),ui->rButFilter,SLOT(toggle()));
+    //connect(ui->rButHue,SIGNAL(clicked(bool)),ui->rButHue,SLOT(setChecked(bool)));
 }
 
 ImageProcessDialog::~ImageProcessDialog()
@@ -141,13 +144,13 @@ void ImageProcessDialog::on_butSetDSetPath_clicked()
 
         ui->lEditDSetPath->setText(path);
 
-        if(this->bubbleFileNames.size() > 0){
+        if(this->imageFileNames.size() > 0){
 
-            this->bubbleFileNames.clear();
+            this->imageFileNames.clear();
 
-            QAbstractItemModel* model = new QStringListModel(this->bubbleFileNames);
+            QAbstractItemModel* model = new QStringListModel(this->imageFileNames);
 
-            ui->listViewBubbleNames->setModel(model);
+            ui->listViewInputFileNames->setModel(model);
 
         }
 
@@ -191,11 +194,91 @@ void ImageProcessDialog::on_butLoadFilter_clicked()
 
 void ImageProcessDialog::on_butApplyAll_clicked()
 {
-    if(this->imageFiles.size() <= 0) return;
+    if(this->imageFileNames.size() <= 0) return;
 
-    if(this->filters.size() != this->invariantFileNames.size()) return;
+    if(ui->rButHue->isChecked())
+    {
 
-    if(this->filters.size() != this->bubbleFileNames.size()) return;
+        if(!DatabaseManager::isOpen())
+        {
+
+            qDebug()<<"Bubble Database Could not be opened!! returning...";
+
+            return;
+
+        }
+        for(unsigned int i = 1; i <= imageFileNames.size(); i++)
+        {
+            clock_t start,ends;
+
+            QString fullPath = imageFileNames[i-1];
+
+            qDebug()<<"Full Path: "<<fullPath;
+
+            int frameNumber = ImageProcess::getFrameNumber(fullPath);
+
+            if(frameNumber == -1)
+            {
+
+              //  dbmanager->closeDB();
+                qDebug()<<"Error!! Frame number could not be determined, returning...";
+                return;
+            }
+
+            Mat img = ImageProcess::loadImage(fullPath,false);
+
+            if(img.empty())
+            {
+                qDebug()<<"Error!! Image could not be loaded, returning...";
+                return;
+            }
+
+            int satLower =  ui->horsliderSatLower->value();
+
+            int satUpper =  ui->horsliderSatUpper->value();
+
+            int valLower =  ui->horsliderValLower->value();
+
+            int valUpper = ui->horsliderValUpper->value();
+
+            Mat hueChannel= ImageProcess::generateHueImage(img,satLower,satUpper,valLower,valUpper);
+
+            QImage* image = new QImage(hueChannel.data,hueChannel.cols,hueChannel.rows,hueChannel.step,QImage::Format_Mono);
+
+            ui->labelProcessedImage->setPixmap(QPixmap::fromImage(*image));
+
+            start = clock();
+
+            vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(hueChannel,525,180);
+
+            qDebug()<<resultt.size();
+
+            vector<bubblePoint> resred = bubbleProcess::reduceBubble(resultt);
+
+            ends = clock();
+
+            qDebug()<<"Hue bubble generation time"<<((float)(ends-start)*1000/CLOCKS_PER_SEC)<<" ms";
+
+            int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
+
+            DFCoefficients dfcoeff = bubbleProcess::calculateDFCoefficients(resred,noHarmonics,noHarmonics);
+
+            std::vector< std::vector<float> > invariants = bubbleProcess::calculateInvariants(resred, dfcoeff,noHarmonics, noHarmonics);
+
+            DatabaseManager::insertInvariants(HUE_TYPE,frameNumber,invariants);
+
+
+
+        }
+
+
+
+    }
+
+
+    //if(this->filters.size() != this->invariantFileNames.size()) return;
+
+    //if(this->filters.size() != this->bubbleFileNames.size()) return;
 
 
     clock_t start,ends;
@@ -236,10 +319,10 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
         ImageProcess::readFilter(filters.at(i),18,29,false,false,false);
 
-        for(int j = 1; j <= this->imageFiles.size(); j++)
+        for(int j = 1; j <= this->imageFileNames.size(); j++)
         {
 
-            QString tempPath = imageFiles.at(j-1);
+            QString tempPath = imageFileNames.at(j-1);
 
             qDebug()<<"Temp path: "<<tempPath;
 
@@ -679,29 +762,7 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
     }*/
 }
 
-void ImageProcessDialog::on_butAddtoBubbleFileList_clicked()
-{
 
-   if(ui->lEditBubbleNameAdd->text().isEmpty()) return;
-
-    this->bubbleFileNames<<ui->lEditBubbleNameAdd->text();
-
-    QAbstractItemModel* mod = new QStringListModel(bubbleFileNames);
-
-    ui->listViewBubbleNames->setModel(mod);
-
-
-
-    //ui->listViewBubbleNames->model()->insertRow(1);
-    //ui->listViewBubbleNames->model()->insertColumn(1);
-
-    // QVariant m = QVariant(ui->lEditBubbleNameAdd->text());
-
-    //ui->listViewBubbleNames->model()->setData(ui->listViewBubbleNames->model()->index(0,0),m);
-
-
-
-}
 
 void ImageProcessDialog::on_butAddtoInputFileNames_clicked()
 {
@@ -727,10 +788,10 @@ void ImageProcessDialog::on_butAddtoInputFileNames_clicked()
     QStringList fileNames;
 
     if (dialog.exec())
-        this->imageFiles = dialog.selectedFiles();
+        this->imageFileNames = dialog.selectedFiles();
 
 
-    QAbstractItemModel* mod = new QStringListModel(this->imageFiles);
+    QAbstractItemModel* mod = new QStringListModel(this->imageFileNames);
 
     ui->listViewInputFileNames->setModel(mod);
 
@@ -769,18 +830,7 @@ void ImageProcessDialog::on_butAddtoFilterNames_clicked()
 
 }
 
-void ImageProcessDialog::on_butAddtoInvariantNames_clicked()
-{
 
-    if(ui->lEditInvariantNameAdd->text().isEmpty()) return;
-
-    this->invariantFileNames<<ui->lEditInvariantNameAdd->text();
-
-    QAbstractItemModel* mod = new QStringListModel(this->invariantFileNames);
-
-    ui->listViewInvariantNames->setModel(mod);
-
-}
 
 void ImageProcessDialog::on_butRemoveInputFileNames_clicked()
 {
@@ -791,11 +841,11 @@ void ImageProcessDialog::on_butRemoveInputFileNames_clicked()
 
         QStringListModel* sss = (QStringListModel*)ui->listViewInputFileNames->model();
 
-        this->imageFiles.clear();
+        this->imageFileNames.clear();
 
-        this->imageFiles = sss->stringList();
+        this->imageFileNames = sss->stringList();
 
-        qDebug()<<this->imageFiles;
+        qDebug()<<this->imageFileNames;
 
     }
 
@@ -820,42 +870,8 @@ void ImageProcessDialog::on_butRemoveFilterNames_clicked()
 
 }
 
-void ImageProcessDialog::on_butRemoveBubbleFileNames_clicked()
-{
 
-    if(ui->listViewBubbleNames->model()){
-
-        ui->listViewBubbleNames->model()->removeRow(ui->listViewBubbleNames->currentIndex().row());
-
-        QStringListModel* sss = (QStringListModel*)ui->listViewBubbleNames->model();
-
-        this->bubbleFileNames.clear();
-
-        this->bubbleFileNames =  sss->stringList();
-
-        qDebug()<<this->bubbleFileNames;
-    }
-
-}
-
-void ImageProcessDialog::on_butRemoveInvariantFileNames_clicked()
-{
-    if(ui->listViewInvariantNames->model()){
-
-        ui->listViewInvariantNames->model()->removeRow(ui->listViewInvariantNames->currentIndex().row());
-
-        QStringListModel* sss = (QStringListModel*)ui->listViewInvariantNames->model();
-
-        this->invariantFileNames.clear();
-
-        this->invariantFileNames =  sss->stringList();
-
-        qDebug()<<this->invariantFileNames;
-    }
-
-}
-
-void ImageProcessDialog::on_butGenerateHueHistograms_clicked()
+/*void ImageProcessDialog::on_butGenerateHueHistograms_clicked()
 {
     QString path = ImageProcess::getDataSetPath();
 
@@ -946,9 +962,9 @@ void ImageProcessDialog::on_butGenerateHueHistograms_clicked()
 
     }
 
-}
+}*/
 
-void ImageProcessDialog::on_butGenerateHueHistBubble_clicked()
+/*void ImageProcessDialog::on_butGenerateHueHistBubble_clicked()
 {
     QString path = ImageProcess::getDataSetPath();
 
@@ -1043,14 +1059,14 @@ void ImageProcessDialog::on_butGenerateHueHistBubble_clicked()
 
         std::vector<cv::Mat> channels ;
 
-        cv::split(img,channels);*/
+        cv::split(img,channels);
 
 
 
 
 
 
-}
+}*/
 
 void ImageProcessDialog::on_horsliderSatUpper_valueChanged(int value)
 {

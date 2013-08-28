@@ -58,7 +58,7 @@ bubbleStatistics bubbleProcess::calculateBubbleStatistics(vector<bubblePoint> bu
     cv::Scalar     mean;
     cv::Scalar     stddev;
 
-    cv::meanStdDev(distances,mean,stddev);
+    cv::meanStdDev(values,mean,stddev);
 
     bubbleStatistics result;
 

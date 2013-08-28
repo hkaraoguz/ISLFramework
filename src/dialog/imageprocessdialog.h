@@ -23,19 +23,16 @@ public:
     ~ImageProcessDialog();
     void setPCprocessing(PCprocessing* pcprocess);
 
-    // This is for holding the bubble File Names
-    QStringList bubbleFileNames;
+
 
     // This is for holding filter file names
     QStringList filters;
 
 
     // This is for holding the Image File names
-    QStringList imageFiles;
+    QStringList imageFileNames;
 
 
-    //This is for holding the invariant File Names
-    QStringList invariantFileNames;
     
 private slots:
 
@@ -53,27 +50,13 @@ private slots:
 
     void on_butGenerateInvariants_clicked();
 
-    void on_butAddtoBubbleFileList_clicked();
-
-
-
     void on_butAddtoInputFileNames_clicked();
 
     void on_butAddtoFilterNames_clicked();
 
-    void on_butAddtoInvariantNames_clicked();
-
     void on_butRemoveInputFileNames_clicked();
 
     void on_butRemoveFilterNames_clicked();
-
-    void on_butRemoveBubbleFileNames_clicked();
-
-    void on_butRemoveInvariantFileNames_clicked();
-
-    void on_butGenerateHueHistograms_clicked();
-
-    void on_butGenerateHueHistBubble_clicked();
 
     void on_horsliderSatUpper_valueChanged(int value);
 
