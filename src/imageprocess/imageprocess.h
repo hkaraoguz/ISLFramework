@@ -27,7 +27,7 @@ public:
 
     static QString getDataSetPath();
 
-    static Mat generateHueImage(Mat image, int satLower, int satUpper, int valLower, int valUpper);
+    static Mat generateChannelImage(Mat rgbimage, int channelNo, int satLower, int satUpper, int valLower, int valUpper);
 
     static Mat generateHueImage(int satLower, int satUpper, int valLower, int valUpper);
 

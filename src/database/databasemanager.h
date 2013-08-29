@@ -13,6 +13,8 @@
 
 #define LASER_TYPE 55
 #define HUE_TYPE 56
+#define SAT_TYPE 57
+#define VAL_TYPE 58
 
 class DatabaseManager : public QObject
 {

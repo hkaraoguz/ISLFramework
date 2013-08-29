@@ -174,27 +174,27 @@ Mat ImageProcess::applyFilter(Mat singleChannelImage)
 
 
 }
-Mat ImageProcess::generateHueImage(Mat image, int satLower, int satUpper, int valLower, int valUpper)
+Mat ImageProcess::generateChannelImage(Mat rgbimage, int channelNo, int satLower, int satUpper, int valLower, int valUpper)
 {
     Mat hsvimage;
-    cv::cvtColor(image,hsvimage,CV_BGR2HSV);
+    cv::cvtColor(rgbimage,hsvimage,CV_BGR2HSV);
 
     // channel_0 hue channel_1 saturation channel_2 value
   //  std::vector<Mat> channels;
 
     Mat result;
 
-    result = Mat::zeros(image.rows,image.cols,CV_8UC1);
+    result = Mat::zeros(rgbimage.rows,rgbimage.cols,CV_8UC1);
 
     cv::split(hsvimage,channels);
 
-    for(int i = 0; i < image.rows; i++)
+    for(int i = 0; i < rgbimage.rows; i++)
     {
 
-        for(int j = 0; j < image.cols; j++)
+        for(int j = 0; j < rgbimage.cols; j++)
         {
 
-            uchar hueval = channels[0].at<uchar>(i,j);
+            //uchar hueval = channels[0].at<uchar>(i,j);
 
             uchar satval = channels[1].at<uchar>(i,j);
 
@@ -207,7 +207,7 @@ Mat ImageProcess::generateHueImage(Mat image, int satLower, int satUpper, int va
                 {
                  //   if(hueval < 15 ) hueval = 180;
 
-                    result.at<uchar>(i,j) = hueval;
+                    result.at<uchar>(i,j) = channels[channelNo].at<uchar>(i,j);
 
                 }
 

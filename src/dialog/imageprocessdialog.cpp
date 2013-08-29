@@ -111,7 +111,7 @@ void ImageProcessDialog::on_but_LoadImage_clicked()
 
             ImageProcess::setImage(img);
 
-          /*  int satlower = ui->horsliderSatLower->value();
+            /*  int satlower = ui->horsliderSatLower->value();
 
             int satupper = ui->horsliderSatUpper->value();
 
@@ -128,7 +128,7 @@ void ImageProcessDialog::on_but_LoadImage_clicked()
 
 
 
-      //  ui->l
+        //  ui->l
 
     }
 
@@ -196,8 +196,12 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 {
     if(this->imageFileNames.size() <= 0) return;
 
+    clock_t start,ends;
+
     if(ui->rButHue->isChecked())
     {
+
+        qDebug()<<"Hue part is active";
 
         if(!DatabaseManager::isOpen())
         {
@@ -209,7 +213,7 @@ void ImageProcessDialog::on_butApplyAll_clicked()
         }
         for(unsigned int i = 1; i <= imageFileNames.size(); i++)
         {
-            clock_t start,ends;
+
 
             QString fullPath = imageFileNames[i-1];
 
@@ -220,7 +224,7 @@ void ImageProcessDialog::on_butApplyAll_clicked()
             if(frameNumber == -1)
             {
 
-              //  dbmanager->closeDB();
+                //  dbmanager->closeDB();
                 qDebug()<<"Error!! Frame number could not be determined, returning...";
                 return;
             }
@@ -241,7 +245,7 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             int valUpper = ui->horsliderValUpper->value();
 
-            Mat hueChannel= ImageProcess::generateHueImage(img,satLower,satUpper,valLower,valUpper);
+            Mat hueChannel= ImageProcess::generateChannelImage(img,0,satLower,satUpper,valLower,valUpper);
 
             QImage* image = new QImage(hueChannel.data,hueChannel.cols,hueChannel.rows,hueChannel.step,QImage::Format_Mono);
 
@@ -249,11 +253,11 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             start = clock();
 
-            vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(hueChannel,525,180);
+            vector<bubblePoint> hueBubble = bubbleProcess::convertGrayImage2Bub(hueChannel,525,180);
 
-            qDebug()<<resultt.size();
+           // qDebug()<<resultt.size();
 
-            vector<bubblePoint> resred = bubbleProcess::reduceBubble(resultt);
+            vector<bubblePoint> reducedHueBubble = bubbleProcess::reduceBubble(hueBubble);
 
             ends = clock();
 
@@ -261,99 +265,130 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
 
-            DFCoefficients dfcoeff = bubbleProcess::calculateDFCoefficients(resred,noHarmonics,noHarmonics);
+            if(ui->cBoxInvariants->isChecked())
+            {
+                qDebug()<<"Calculating invariants for hue";
 
-            std::vector< std::vector<float> > invariants = bubbleProcess::calculateInvariants(resred, dfcoeff,noHarmonics, noHarmonics);
+                DFCoefficients dfcoeff = bubbleProcess::calculateDFCoefficients(reducedHueBubble,noHarmonics,noHarmonics);
 
-            DatabaseManager::insertInvariants(HUE_TYPE,frameNumber,invariants);
+                std::vector< std::vector<float> > invariants = bubbleProcess::calculateInvariants(reducedHueBubble, dfcoeff,noHarmonics, noHarmonics);
 
+                DatabaseManager::insertInvariants(HUE_TYPE,frameNumber,invariants);
 
-
-        }
-
-
-
-    }
-
-
-    //if(this->filters.size() != this->invariantFileNames.size()) return;
-
-    //if(this->filters.size() != this->bubbleFileNames.size()) return;
-
-
-    clock_t start,ends;
-
-  /*  DatabaseManager* dbManager = new DatabaseManager(this);
-
-    if(!dbManager->openDB(DB_PATH))
-    {
-
-        qDebug()<<"Database could not be opened!! returning...";
-
-        return;
-    }*/
-
-
-    if(!DatabaseManager::isOpen())
-    {
-
-        qDebug()<<"Database could not be opened!! returning...";
-
-        return;
-    }
-
-    // Her bir filtre icin
-    for(int i = 0; i < filters.size(); i++)
-    {
-
-        int filterNumber = ImageProcess::getFrameNumber(filters.at(i));
-
-        if(filterNumber == -1)
-        {
-
-            qDebug()<<"Error!! Filter number could not be determined, returning...";
-            return;
-
-
-        }
-
-        ImageProcess::readFilter(filters.at(i),18,29,false,false,false);
-
-        for(int j = 1; j <= this->imageFileNames.size(); j++)
-        {
-
-            QString tempPath = imageFileNames.at(j-1);
-
-            qDebug()<<"Temp path: "<<tempPath;
-
-            QString fullFilePath =tempPath;
-
-            int frameNumber = ImageProcess::getFrameNumber(fullFilePath);
-
-            if(frameNumber == -1){
-
-                qDebug()<<"Error!! Frame number could not be determined, returning...";
-                return;
             }
 
+            if(ui->cBoxBubbleStats->isChecked())
+            {
+                qDebug()<<"Calculating stats for hue";
 
-            start = clock();
 
-            Mat img = ImageProcess::loadImage(tempPath,false);
+             /************************** Perform filtering and obtain resulting mat images ***********************/
+                 Mat satChannel= ImageProcess::generateChannelImage(img,1,satLower,satUpper,valLower,valUpper);
+                 Mat valChannel= ImageProcess::generateChannelImage(img,2,satLower,satUpper,valLower,valUpper);
+            /*****************************************************************************************************/
 
-            // qDebug()<<img.channels();
+            /*************************** Convert images to bubbles ***********************************************/
 
-            Mat resg;
+                 vector<bubblePoint> satBubble = bubbleProcess::convertGrayImage2Bub(satChannel,525,255);
+                 vector<bubblePoint> valBubble = bubbleProcess::convertGrayImage2Bub(valChannel,525,255);
 
-            cv::cvtColor(img,resg,CV_BGR2GRAY);
+            /*****************************************************************************************************/
 
-            Mat sonuc = ImageProcess::applyFilter(resg);
 
-            //  vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(channels[0],525,180);
+                 /***************** Reduce the bubbles ********************************************************/
+                 vector<bubblePoint> reducedSatBubble = bubbleProcess::reduceBubble(satBubble);
+                 vector<bubblePoint> reducedValBubble = bubbleProcess::reduceBubble(valBubble);
 
-            vector<bubblePoint> imgBubble = bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
 
-         /*   QString saveBubbleName = ImageProcess::getDataSetPath();
+                 // Calculate statistics
+                 bubbleStatistics statsHue =  bubbleProcess::calculateBubbleStatistics(reducedHueBubble,180);
+                 bubbleStatistics statsSat =  bubbleProcess::calculateBubbleStatistics(reducedSatBubble,255);
+                 bubbleStatistics statsVal =  bubbleProcess::calculateBubbleStatistics(reducedValBubble,255);
+
+                 DatabaseManager::insertBubbleStatistics(HUE_TYPE,frameNumber,statsHue);
+                 DatabaseManager::insertBubbleStatistics(SAT_TYPE,frameNumber,statsSat);
+                 DatabaseManager::insertBubbleStatistics(VAL_TYPE,frameNumber,statsVal);
+
+
+            }
+
+        }
+
+
+        return;
+
+    } // END HUE PART
+
+    else if(ui->rButFilter->isChecked())
+    {
+        qDebug()<<"Filter part is active";
+
+        if(!DatabaseManager::isOpen())
+        {
+
+            qDebug()<<"Database could not be opened!! returning...";
+
+            return;
+        }
+        if(filters.size() == 0)
+        {
+            qDebug()<<"There are no filters selected!! returning...";
+
+            return;
+        }
+
+        // Her bir filtre icin
+        for(int i = 0; i < filters.size(); i++)
+        {
+
+            int filterNumber = ImageProcess::getFrameNumber(filters.at(i));
+
+            if(filterNumber == -1)
+            {
+
+                qDebug()<<"Error!! Filter number could not be determined, returning...";
+                return;
+
+
+            }
+
+            ImageProcess::readFilter(filters.at(i),18,29,false,false,false);
+
+            for(int j = 1; j <= this->imageFileNames.size(); j++)
+            {
+
+                QString tempPath = imageFileNames.at(j-1);
+
+                qDebug()<<"Temp path: "<<tempPath;
+
+                QString fullFilePath =tempPath;
+
+                int frameNumber = ImageProcess::getFrameNumber(fullFilePath);
+
+                if(frameNumber == -1){
+
+                    qDebug()<<"Error!! Frame number could not be determined, returning...";
+                    return;
+                }
+
+
+                start = clock();
+
+                Mat img = ImageProcess::loadImage(tempPath,false);
+
+                // qDebug()<<img.channels();
+
+                Mat resg;
+
+                cv::cvtColor(img,resg,CV_BGR2GRAY);
+
+                Mat sonuc = ImageProcess::applyFilter(resg);
+
+                //  vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(channels[0],525,180);
+
+                vector<bubblePoint> imgBubble = bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
+
+                /*   QString saveBubbleName = ImageProcess::getDataSetPath();
 
             saveBubbleName.append(this->bubbleFileNames.at(i));
 
@@ -367,13 +402,13 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             qDebug()<<saveBubbleName;*/
 
-            vector<bubblePoint> resred ;
+                vector<bubblePoint> resred ;
 
-            resred = bubbleProcess::reduceBubble(imgBubble);
+                resred = bubbleProcess::reduceBubble(imgBubble);
 
-           // DatabaseManager::insertBubble(filterNumber,frameNumber,resred);
+                // DatabaseManager::insertBubble(filterNumber,frameNumber,resred);
 
-           /* QFile file(saveBubbleName);
+                /* QFile file(saveBubbleName);
 
             if(file.open(QFile::WriteOnly)){
 
@@ -390,99 +425,22 @@ void ImageProcessDialog::on_butApplyAll_clicked()
                 file.close();
 
             }*/
-            int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
+                int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
 
-           DFCoefficients dfcoeff =  bubbleProcess::calculateDFCoefficients(resred,noHarmonics,noHarmonics);
+                DFCoefficients dfcoeff =  bubbleProcess::calculateDFCoefficients(resred,noHarmonics,noHarmonics);
 
-            std::vector< std::vector< float > > invariants =  bubbleProcess::calculateInvariants(resred,dfcoeff,noHarmonics,noHarmonics);
+                std::vector< std::vector< float > > invariants =  bubbleProcess::calculateInvariants(resred,dfcoeff,noHarmonics,noHarmonics);
 
-            //qDebug()<<resred.size()<<"invariants 0-0 "<<invariants[0][0];
+                //qDebug()<<resred.size()<<"invariants 0-0 "<<invariants[0][0];
 
-            DatabaseManager::insertInvariants(filterNumber,frameNumber,invariants);
+                DatabaseManager::insertInvariants(filterNumber,frameNumber,invariants);
 
+
+            } // END FOR
 
         } // END FOR
 
-    } // END FOR
-
- //   dbManager->closeDB();
-
-    // int start = ui->lEditDatasetStart->text().toInt();
-
-    // int end = ui->lEditDatasetEnd->text().toInt();
-
-
-
-
-    /*  for(unsigned int i = 1; i <= fileNames.size(); i++)
-    {
-
-        QString tempPath = fileNames[i-1];
-
-        qDebug()<<"Temp path: "<<tempPath;
-
-        Mat img = ImageProcess::loadImage(tempPath,false);
-
-        // qDebug()<<img.channels();
-
-        Mat ressg;
-
-
-        cv::cvtColor(img,ressg,CV_BGR2GRAY);
-
-        Mat sonuc = ImageProcess::applyFilter(ressg);
-
-
-
-        //  vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(channels[0],525,180);
-
-        vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
-
-
-        qDebug()<<resultt.size();
-
-        vector<bubblePoint> resred = bubbleProcess::reduceBubble(resultt);
-
-        qDebug()<<resred.size();
-
-        QString saveBubbleName = path;
-
-        saveBubbleName.append(ui->lEditBubbleNameFilter->text());
-
-
-
-       QString str;
-
-        str.setNum(i);
-
-        saveBubbleName.append(str);
-
-        saveBubbleName.append(".m");
-
-        qDebug()<<saveBubbleName;
-
-
-        QFile file(saveBubbleName);
-
-        if(file.open(QFile::WriteOnly)){
-
-            bubbleProcess::saveBubble(&file,resred);
-
-            file.close();
-
-        }
-
-
-
-
-
-
-
     }
-
-
-
-*/
 }
 
 void ImageProcessDialog::on_cBoxTransposeFilter_stateChanged(int arg1)
@@ -513,7 +471,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
     if(path == NULL) return;
 
 
-  //  QString fileName = ui->lEditCloudFileName->text();
+    //  QString fileName = ui->lEditCloudFileName->text();
 
     QDir dirPath(path);
 
@@ -532,9 +490,9 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
     if(fileNames.size() == 0) return;
 
-   // DatabaseManager* dbmanager= new DatabaseManager(this);
+    // DatabaseManager* dbmanager= new DatabaseManager(this);
 
-   /* if(!dbmanager->openDB(DB_PATH))
+    /* if(!dbmanager->openDB(DB_PATH))
     {
         qDebug()<<"Bubble Database Could not be opened!! returning...";
 
@@ -562,7 +520,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
         if(frameNumber == -1)
         {
 
-          //  dbmanager->closeDB();
+            //  dbmanager->closeDB();
             qDebug()<<"Error!! Frame number could not be determined, returning...";
             return;
         }
@@ -582,7 +540,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         int valUpper = ui->horsliderValUpper->value();
 
-        Mat hueChannel= ImageProcess::generateHueImage(img,satLower,satUpper,valLower,valUpper);
+        Mat hueChannel= ImageProcess::generateChannelImage(img,0,satLower,satUpper,valLower,valUpper);
 
         QImage* image = new QImage(hueChannel.data,hueChannel.cols,hueChannel.rows,hueChannel.step,QImage::Format_Mono);
 
@@ -608,11 +566,11 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         DatabaseManager::insertInvariants(HUE_TYPE,frameNumber,invariants);
 
-     //   qDebug()<<resred.size();
+        //   qDebug()<<resred.size();
 
-       // DatabaseManager::insertBubble(HUE_TYPE,frameNumber,resred);
+        // DatabaseManager::insertBubble(HUE_TYPE,frameNumber,resred);
 
-     /*   QString saveBubbleName = path;
+        /*   QString saveBubbleName = path;
 
         saveBubbleName.append("bubble_");
 
@@ -645,14 +603,14 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
     }
 
-  //  dbmanager->closeDB();
+    //  dbmanager->closeDB();
 
 
 }
 
 void ImageProcessDialog::on_butGenerateInvariants_clicked()
 {
-   /* QString path = ImageProcess::getDataSetPath();
+    /* QString path = ImageProcess::getDataSetPath();
 
     if(path == NULL) return;
 
@@ -675,11 +633,11 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
 
         qDebug()<<"Invalid Range Values!! returning....";
 
-           return;
-}
-  //  DatabaseManager* dbmanager = new DatabaseManager(this);
+        return;
+    }
+    //  DatabaseManager* dbmanager = new DatabaseManager(this);
 
-   /* if(!dbmanager->openDB(DB_PATH))
+    /* if(!dbmanager->openDB(DB_PATH))
     {
 
         qDebug()<<"Failed to open database!! returning...";
@@ -711,12 +669,12 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
         }
     }
 
-   // dbmanager->closeDB();
+    // dbmanager->closeDB();
     //int
 
     //dirPath.setNameFilters();
 
-  /*  QFileDialog dialog(this);
+    /*  QFileDialog dialog(this);
     dialog.setDirectory(dirPath);
     dialog.setFileMode(QFileDialog::ExistingFiles);
 
@@ -729,7 +687,7 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
         fileNames = dialog.selectedFiles(); */
 
 
-  /*  for(unsigned int i = 1; i <= fileNames.size(); i++)
+    /*  for(unsigned int i = 1; i <= fileNames.size(); i++)
     {
 
         QString tempPath = fileNames[i-1];
@@ -1070,7 +1028,7 @@ void ImageProcessDialog::on_butRemoveFilterNames_clicked()
 
 void ImageProcessDialog::on_horsliderSatUpper_valueChanged(int value)
 {
-     ui->lEditSatUpper->setText(QString::number(value)) ;
+    ui->lEditSatUpper->setText(QString::number(value)) ;
 
     int satlower = ui->horsliderSatLower->value();
 
@@ -1089,7 +1047,7 @@ void ImageProcessDialog::on_horsliderSatUpper_valueChanged(int value)
 void ImageProcessDialog::on_horsliderSatLower_valueChanged(int value)
 {
 
-     ui->lEditSatLower->setText(QString::number(value));
+    ui->lEditSatLower->setText(QString::number(value));
 
     int satlower = value ;
 
@@ -1150,33 +1108,33 @@ void ImageProcessDialog::on_horsliderValLower_valueChanged(int value)
 
 void ImageProcessDialog::on_butApplyFilter_clicked()
 {
-      Mat orgImg= ImageProcess::getImage();
+    Mat orgImg= ImageProcess::getImage();
 
-      Mat loadedFilter = ImageProcess::getFilter();
+    Mat loadedFilter = ImageProcess::getFilter();
 
-      if(loadedFilter.empty()) return;
+    if(loadedFilter.empty()) return;
 
-      if(orgImg.empty()) return;
+    if(orgImg.empty()) return;
 
-      Mat grImg;
+    Mat grImg;
 
-      cv::cvtColor(orgImg,grImg,CV_BGR2GRAY);
+    cv::cvtColor(orgImg,grImg,CV_BGR2GRAY);
 
-      Mat sonuc = ImageProcess::applyFilter(grImg);
+    Mat sonuc = ImageProcess::applyFilter(grImg);
 
-      imwrite("filterResult.jpg",sonuc);
+    imwrite("filterResult.jpg",sonuc);
 
-      vector<bubblePoint> initialBubble =  bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
+    vector<bubblePoint> initialBubble =  bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
 
-      vector<bubblePoint> reducedBubble= bubbleProcess::reduceBubble(initialBubble);
+    vector<bubblePoint> reducedBubble= bubbleProcess::reduceBubble(initialBubble);
 
-      bubbleProcess::calculateBubbleStatistics(reducedBubble,255);
+    bubbleProcess::calculateBubbleStatistics(reducedBubble,255);
 
-      QFile file("bubbleFiltResult.txt");
+    QFile file("bubbleFiltResult.txt");
 
-      file.open(QFile::WriteOnly);
+    file.open(QFile::WriteOnly);
 
-      bubbleProcess::saveBubble(&file,reducedBubble);
+    bubbleProcess::saveBubble(&file,reducedBubble);
 
-      file.close();
+    file.close();
 }
