@@ -90,6 +90,10 @@ void MainWindow::initView(){
    impDialog = 0;
    robot = 0;
 
+   ui->lEditImageWidth->setText("640");
+   ui->lEditImageHeight->setText("480");
+
+   ui->lEditFocalLength->setText("525");
 
 }
 
@@ -135,7 +139,14 @@ void MainWindow::on_openFileButton_clicked()
 
     if(!impDialog){
 
-        impDialog = new ImageProcessDialog(this);
+        int imageWidth = ui->lEditImageWidth->text().toInt();
+
+        int imageHeight = ui->lEditImageHeight->text().toInt();
+
+        int focalLength = ui->lEditFocalLength->text().toInt();
+
+
+        impDialog = new ImageProcessDialog(this,imageWidth,imageHeight,focalLength);
 
         impDialog->show();
         impDialog->raise();

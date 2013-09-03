@@ -33,7 +33,7 @@ void ImageProcess::setImage(Mat image)
     orgImg = image;
 
 }
-void ImageProcess::readFilter(QString fileName, int filterNum, int filterSize, bool transpose, bool save, bool show)
+void ImageProcess::readFilter(QString fileName, int filterSize, bool transpose, bool save, bool show)
 {
 
     filterOrg = Mat(filterSize,filterSize,CV_32FC1);

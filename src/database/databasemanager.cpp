@@ -352,6 +352,8 @@ void DatabaseManager::determinePlaceLabels(QString filePath)
 
      while(st != NULL)
      {
+         st.replace(" ","");
+
          list =  st.split(":",QString::SkipEmptyParts);
 
          mainList.push_back(list.at(1));

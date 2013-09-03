@@ -18,6 +18,8 @@ public:
 
     ImageProcessDialog(QWidget *parent, PCprocessing* pcprocess);
 
+    ImageProcessDialog(QWidget *parent, int imageWidth,int imageHeight,int focalLengthPixels);
+
     void initView();
 
     ~ImageProcessDialog();
@@ -44,11 +46,7 @@ private slots:
 
     void on_butApplyAll_clicked();
 
-    void on_cBoxTransposeFilter_stateChanged(int arg1);
-
     void on_butGenerateHueBubble_clicked();
-
-    void on_butGenerateInvariants_clicked();
 
     void on_butAddtoInputFileNames_clicked();
 
@@ -75,6 +73,11 @@ private:
     PCprocessing* pcProcess;
 
 
+    int imageHeight;
+
+    int imageWidth;
+
+    int focalLengthPixels;
 
 };
 

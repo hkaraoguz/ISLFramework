@@ -49,17 +49,41 @@ ImageProcessDialog::ImageProcessDialog(QWidget *parent, PCprocessing *pcprocess)
 
     initView();
 }
+ImageProcessDialog::ImageProcessDialog(QWidget *parent, int imageWidth, int imageHeight, int focalLengthPixels):QDialog(parent),ui(new Ui::ImageProcessDialog)
+{
+
+    ui->setupUi(this);
+
+    this->setWindowTitle("Image Process Dialog");
+
+    //  ui->listViewBubbleNames->grabKeyboard();
+
+    //  this->setAttribute(Qt::WA_DeleteOnClose);
+
+
+    this->focalLengthPixels = focalLengthPixels;
+
+    this->imageHeight = imageHeight;
+
+    this->imageWidth = imageWidth;
+
+    initView();
+
+
+
+
+}
 void ImageProcessDialog::initView()
 {
-    ui->lEditInputBubbleName->setText("bubble_hue_");
+  //  ui->lEditInputBubbleName->setText("bubble_hue_");
 
-    ui->lEditInvariantName->setText("invariants_hue_");
+   // ui->lEditInvariantName->setText("invariants_hue_");
 
     ui->lEditNoHarmonicsInvariant->setText("10");
 
-    bubbleProcess::calculateImagePanAngles(525,640,480);
+    bubbleProcess::calculateImagePanAngles(focalLengthPixels,imageWidth,imageHeight);
 
-    bubbleProcess::calculateImageTiltAngles(525,640,480);
+    bubbleProcess::calculateImageTiltAngles(focalLengthPixels,imageWidth,imageHeight);
 
     ui->labelOrgImage->setScaledContents(true);
 
@@ -174,22 +198,17 @@ void ImageProcessDialog::on_butSetDSetPath_clicked()
 
 void ImageProcessDialog::on_butLoadFilter_clicked()
 {
-    //QString fileName = "/home/hakan/Downloads/tekImge_CV2_1/filtreler/filtre";
+
 
     // Get the root directory
     filterpath =   QFileDialog::getOpenFileName(this,"Open Filter File","/home/hakan/Development", tr("*.txt"));
 
     if(filterpath != NULL)
-    {
-        //  QString filterType = "h";
+            ImageProcess::readFilter(filterpath, 29,false,false,true);
 
-        if(ui->cBoxTransposeFilter->checkState()  == Qt::Checked)
-            ImageProcess::readFilter(filterpath,18,29,true,false,true);
-        else
-            ImageProcess::readFilter(filterpath,18,29,false,false,true);
 
-        cv::destroyAllWindows();
-    }
+
+
 }
 
 void ImageProcessDialog::on_butApplyAll_clicked()
@@ -253,7 +272,7 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             start = clock();
 
-            vector<bubblePoint> hueBubble = bubbleProcess::convertGrayImage2Bub(hueChannel,525,180);
+            vector<bubblePoint> hueBubble = bubbleProcess::convertGrayImage2Bub(hueChannel,focalLengthPixels,180);
 
            // qDebug()<<resultt.size();
 
@@ -289,8 +308,8 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             /*************************** Convert images to bubbles ***********************************************/
 
-                 vector<bubblePoint> satBubble = bubbleProcess::convertGrayImage2Bub(satChannel,525,255);
-                 vector<bubblePoint> valBubble = bubbleProcess::convertGrayImage2Bub(valChannel,525,255);
+                 vector<bubblePoint> satBubble = bubbleProcess::convertGrayImage2Bub(satChannel,focalLengthPixels,255);
+                 vector<bubblePoint> valBubble = bubbleProcess::convertGrayImage2Bub(valChannel,focalLengthPixels,255);
 
             /*****************************************************************************************************/
 
@@ -352,7 +371,7 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
             }
 
-            ImageProcess::readFilter(filters.at(i),18,29,false,false,false);
+            ImageProcess::readFilter(filters.at(i),29,false,false,false);
 
             for(int j = 1; j <= this->imageFileNames.size(); j++)
             {
@@ -376,7 +395,6 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
                 Mat img = ImageProcess::loadImage(tempPath,false);
 
-                // qDebug()<<img.channels();
 
                 Mat resg;
 
@@ -384,57 +402,34 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
                 Mat sonuc = ImageProcess::applyFilter(resg);
 
-                //  vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(channels[0],525,180);
-
-                vector<bubblePoint> imgBubble = bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
-
-                /*   QString saveBubbleName = ImageProcess::getDataSetPath();
-
-            saveBubbleName.append(this->bubbleFileNames.at(i));
-
-            QString str;
-
-            str.setNum(j);
-
-            saveBubbleName.append(str);
-
-            saveBubbleName.append(".m");
-
-            qDebug()<<saveBubbleName;*/
+                vector<bubblePoint> imgBubble = bubbleProcess::convertGrayImage2Bub(sonuc,focalLengthPixels,255);
 
                 vector<bubblePoint> resred ;
 
                 resred = bubbleProcess::reduceBubble(imgBubble);
 
-                // DatabaseManager::insertBubble(filterNumber,frameNumber,resred);
+                if(ui->cBoxInvariants->isChecked())
+                {
+                    int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
 
-                /* QFile file(saveBubbleName);
+                    DFCoefficients dfcoeff =  bubbleProcess::calculateDFCoefficients(resred,noHarmonics,noHarmonics);
 
-            if(file.open(QFile::WriteOnly)){
+                    std::vector< std::vector< float > > invariants =  bubbleProcess::calculateInvariants(resred,dfcoeff,noHarmonics,noHarmonics);
 
-                qDebug()<<resultt.size();
 
-                resred = bubbleProcess::reduceBubble(resultt);
 
-                 ends = clock();
+                    DatabaseManager::insertInvariants(filterNumber,frameNumber,invariants);
+                }
 
-                 qDebug()<<"Filter + bubble + generation time"<<((float)(ends-start)*1000/CLOCKS_PER_SEC);
+                if(ui->cBoxBubbleStats->isChecked())
+                {
+                    qDebug()<<"Calculating stats for filter";
 
-                bubbleProcess::saveBubble(&file,resred);
+                    bubbleStatistics stats =  bubbleProcess::calculateBubbleStatistics(resred,255);
 
-                file.close();
+                    DatabaseManager::insertBubbleStatistics(filterNumber,frameNumber,stats);
 
-            }*/
-                int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
-
-                DFCoefficients dfcoeff =  bubbleProcess::calculateDFCoefficients(resred,noHarmonics,noHarmonics);
-
-                std::vector< std::vector< float > > invariants =  bubbleProcess::calculateInvariants(resred,dfcoeff,noHarmonics,noHarmonics);
-
-                //qDebug()<<resred.size()<<"invariants 0-0 "<<invariants[0][0];
-
-                DatabaseManager::insertInvariants(filterNumber,frameNumber,invariants);
-
+                }
 
             } // END FOR
 
@@ -443,25 +438,7 @@ void ImageProcessDialog::on_butApplyAll_clicked()
     }
 }
 
-void ImageProcessDialog::on_cBoxTransposeFilter_stateChanged(int arg1)
-{
-    if(filterpath != NULL){
 
-        if(arg1 == Qt::Checked){
-
-
-
-            ImageProcess::readFilter(filterpath,18,29,true,false,true);
-
-        }
-        else
-        {
-
-            ImageProcess::readFilter(filterpath,18,29,false,false,true);
-
-        }
-    }
-}
 
 void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 {
@@ -548,7 +525,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
         start = clock();
 
-        vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(hueChannel,525,180);
+        vector<bubblePoint> resultt = bubbleProcess::convertGrayImage2Bub(hueChannel,focalLengthPixels,180);
 
         qDebug()<<resultt.size();
 
@@ -608,7 +585,7 @@ void ImageProcessDialog::on_butGenerateHueBubble_clicked()
 
 }
 
-void ImageProcessDialog::on_butGenerateInvariants_clicked()
+/*void ImageProcessDialog::on_butGenerateInvariants_clicked()
 {
     /* QString path = ImageProcess::getDataSetPath();
 
@@ -618,7 +595,7 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
 
     QDir dirPath(path);
 
-    dirPath.setFilter(QDir::NoDotAndDotDot | QDir::Files);*/
+    dirPath.setFilter(QDir::NoDotAndDotDot | QDir::Files);
 
     int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
 
@@ -643,7 +620,7 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
         qDebug()<<"Failed to open database!! returning...";
 
         return;
-    }*/
+    }
 
     if(!DatabaseManager::isOpen())
     {
@@ -717,8 +694,8 @@ void ImageProcessDialog::on_butGenerateInvariants_clicked()
         }
 
 
-    }*/
-}
+    }
+}*/
 
 
 
@@ -1124,7 +1101,7 @@ void ImageProcessDialog::on_butApplyFilter_clicked()
 
     imwrite("filterResult.jpg",sonuc);
 
-    vector<bubblePoint> initialBubble =  bubbleProcess::convertGrayImage2Bub(sonuc,525,255);
+    vector<bubblePoint> initialBubble =  bubbleProcess::convertGrayImage2Bub(sonuc,focalLengthPixels,255);
 
     vector<bubblePoint> reducedBubble= bubbleProcess::reduceBubble(initialBubble);
 

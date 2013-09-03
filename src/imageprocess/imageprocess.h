@@ -15,7 +15,7 @@ public:
 
     //Mat filter;
 
-    static void readFilter(QString fileName, int filterNum, int filterSize, bool transpose, bool save, bool show);
+    static void readFilter(QString fileName, int filterSize, bool transpose, bool save, bool show);
 
     static Mat getFilter();
 
