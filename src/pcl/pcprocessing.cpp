@@ -479,14 +479,14 @@ void PCprocessing::rotatePointCloud(sensor_msgs::PointCloud2::Ptr input, int rot
 void PCprocessing::scalePointCloud(sensor_msgs::PointCloud2::Ptr input, double scale)
 {
 
-    pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
+    pcl::PointCloud<pcl::PointXYZRGBA> tempCloud;
 
     pcl::fromROSMsg(*input,tempCloud);
 
 
     for(long k = 0; k < tempCloud.width; k++){
 
-        pcl::PointXYZRGB pt =  tempCloud.points[k];
+        pcl::PointXYZRGBA pt =  tempCloud.points[k];
 
         pt.x = pt.x/scale;
         pt.y = pt.y/scale;
@@ -499,9 +499,37 @@ void PCprocessing::scalePointCloud(sensor_msgs::PointCloud2::Ptr input, double s
 
     pcl::toROSMsg(tempCloud,*input);
 
+    pcl::PointXYZRGBA pt = tempCloud.points.at(0);
 
-    viewer->removeAllPointClouds();
-    viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+    if(pt.r == pt.r )
+    {
+
+        if(pt.r != 0 || pt.b != 0 || pt.g != 0)
+        {
+
+            qDebug()<<"r is"<<pt.r;
+
+            viewer->removeCoordinateSystem();
+
+            this->initializeViewer(true);
+
+            viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud");
+
+        }
+        else
+        {
+
+            viewer->removeAllPointClouds();
+
+            viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
+
+        }
+    }
+
+
+
+  //  viewer->removeAllPointClouds();
+ //   viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
 
 
     viewer->resetCamera();
@@ -787,7 +815,7 @@ bool PCprocessing::savePointCloud(int itemNumber, QString fileName){
 
     qDebug()<<itemPath;
 
-    pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
+    pcl::PointCloud<pcl::PointXYZRGBA> tempCloud;
 
     pcl::fromROSMsg(*currentCloud,tempCloud);
 

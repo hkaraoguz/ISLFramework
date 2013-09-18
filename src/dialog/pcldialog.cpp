@@ -593,6 +593,103 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 
             sensor_msgs::PointCloud2::Ptr cloud = pcProcessing->getCurrentCloud();
 
+            pcl::PointCloud<pcl::PointXYZRGBA> normalCloud;
+
+            pcl::fromROSMsg(*cloud,normalCloud);
+
+            for(unsigned int i = 0; i < normalCloud.points.size(); i++)
+            {
+
+                bubblePointXYZ pt;
+
+                pt.x = normalCloud.points.at(i).x;
+                pt.y = normalCloud.points.at(i).y;
+                pt.z = normalCloud.points.at(i).z;
+
+                bubble.push_back(pt);
+
+            }
+
+            double maxRangeMeters = ui->lEditCloudMaxRange->text().toDouble();
+
+             double noHarmonics = ui->lEditNoInvariantHarmonics->text().toInt();
+
+            vector<bubblePoint> sphBubble = bubbleProcess::convertBubXYZ2BubSpherical(bubble,maxRangeMeters);
+
+            vector<bubblePoint> sphRedBubble = bubbleProcess::reduceBubble(sphBubble);
+
+            DFCoefficients dfcoeff = bubbleProcess::calculateDFCoefficients(sphRedBubble,noHarmonics,noHarmonics);
+
+            std::vector< std::vector<float> > invariants = bubbleProcess::calculateInvariants(sphRedBubble, dfcoeff,noHarmonics, noHarmonics);
+
+            DatabaseManager::insertInvariants(LASER_TYPE,frameNumber,invariants);
+
+            // Calculate statistics
+            bubbleStatistics statsLaser=  bubbleProcess::calculateBubbleStatistics(sphRedBubble,maxRangeMeters);
+
+            DatabaseManager::insertBubbleStatistics(LASER_TYPE,frameNumber,statsLaser);
+
+
+
+
+
+        }
+    }
+
+}
+/*void PclDialog::on_butGeneratePointCloudBubbles_clicked()
+{
+    //  double maxRangeMeters = ui->lEditCloudMaxRange->text().toDouble();
+
+    if(PCprocessing::getDataSetPath() == NULL) return;
+
+    QFileDialog dialog(this);
+
+    dialog.setDirectory(pcProcessing->getDataSetPath());
+
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+
+    dialog.setNameFilter("PCD Files (*.pcd)");
+
+    QStringList fileNames;
+
+    if (dialog.exec())
+        fileNames = dialog.selectedFiles();
+
+    if(fileNames.size() == 0) return;
+
+    if(!DatabaseManager::isOpen())
+    {
+        qDebug()<<"Database is not opened!! returning...";
+    }
+
+    //int start = ui->lEditDatasetStart->text().toInt();
+
+   // int endd = ui->lEditDatasetEnd->text().toInt();
+
+    for(int i = 0; i < fileNames.size(); i++)
+    {
+
+        if(pcProcessing->loadItem(fileNames.at(i), pcProcessing->getCurrentCloud()))
+        {
+
+            // Extract the frame number of current file
+            int frameNumber = ImageProcess::getFrameNumber(fileNames.at(i));
+
+            if(frameNumber == -1)
+            {
+
+
+                qDebug()<<"Error!! Frame number could not be determined, returning...";
+                return;
+            }
+
+
+
+            std::vector<bubblePointXYZ> bubble;
+
+            sensor_msgs::PointCloud2::Ptr cloud = pcProcessing->getCurrentCloud();
+
             pcl::PointCloud<pcl::PointXYZRGB> normalCloud;
 
             pcl::fromROSMsg(*cloud,normalCloud);
@@ -648,12 +745,12 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 
                 file.close();
 
-            }*/
+            }
 
         }
     }
 
-}
+}*/
 void PclDialog::on_butCalculateBubbleInvariants_clicked()
 {
 

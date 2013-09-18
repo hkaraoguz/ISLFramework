@@ -429,7 +429,7 @@ bool DatabaseManager::insertBubbleStatistics(int type, int number, bubbleStatist
 
         int placeLabel = -1;
 
-        if(placeLabels.size() > number)
+        if(placeLabels.size() >= number)
             placeLabel = placeLabels.at(number-1);
 
        bool ret = query.exec(QString("insert into bubblestats values(%1, %2, %3, %4, %5, %6)").arg(type).arg(number).arg(placeLabel).arg(stats.mean).arg(stats.variance).arg(stats.maxDist));
