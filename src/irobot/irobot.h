@@ -21,8 +21,9 @@
 #include <pcl-1.5/pcl/io/pcd_io.h>
 #include <pcl-1.5/pcl/ros/conversions.h>
 
+#include <turtlebot_node/TurtlebotSensorState.h>
 
-#include <brown_drivers/irobot_create_2_1/msg_gen/cpp/include/irobot_create_2_1/SensorPacket.h>
+//#include <brown_drivers/irobot_create_2_1/msg_gen/cpp/include/irobot_create_2_1/SensorPacket.h>
 #include <QProcess>
 
 class Irobot : public QObject
@@ -37,21 +38,17 @@ public:
 
     bool initIrobotConnection(QString robotPortName);
 
-    QProcess* irobotSetSerialProcess;
-
-    QProcess* irobotRunProcess;
-
-    QProcess* os5000RunProcess;
-
     void setMotion(double forward, double angular);
 
     void saveData(QFile* file);
 
     double getFirstOrientation();
 
+    bool isConnected();
+
 private:
 
-    void sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packet);
+    void sensorCB(const turtlebot_node::TurtlebotSensorStateConstPtr& packet);
 
     void os5000CB(const sensor_msgs::Imu::ConstPtr& packet);
 
@@ -63,8 +60,7 @@ private:
 
     geometry_msgs::Quaternion currentOrientation;
 
-    irobot_create_2_1::SensorPacket::ConstPtr currentSensorPacket;
-
+    turtlebot_node::TurtlebotSensorStateConstPtr currentSensorPacket;
 
      ros::Subscriber createSubscriber;
 
@@ -89,6 +85,8 @@ private:
      double totalAngularHeading;
 
      double firstOrientation;
+
+     bool connected;
     
 signals:
     

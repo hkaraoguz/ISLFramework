@@ -62,7 +62,8 @@ void KinectGrabber::cb(const sensor_msgs::PointCloud2ConstPtr& input){
 
     // ROS_INFO("i am here");
 
-    if(saveCloud){
+    if(saveCloud)
+    {
 
         pcl::PointCloud<pcl::PointXYZRGB> cld;
 

@@ -4,11 +4,6 @@
 Irobot::Irobot(QObject *parent) :
     QObject(parent)
 {
-    irobotSetSerialProcess = new QProcess(this);
-
-    irobotRunProcess = new QProcess(this);
-
-    os5000RunProcess = new QProcess(this);
 
     saveInProgress = false;
 
@@ -28,6 +23,12 @@ Irobot::Irobot(QObject *parent) :
     // Holds the first orientation that is measured at the beginning position of the robot
     firstOrientation = 0;
 
+    connected = false;
+
+}
+bool Irobot::isConnected()
+{
+    return connected;
 }
 void Irobot::handleSetFirstOrientation(){
 
@@ -36,15 +37,20 @@ void Irobot::handleSetFirstOrientation(){
 
 }
 
-void Irobot::sensorCB(const irobot_create_2_1::SensorPacket::ConstPtr& packet){
+void Irobot::sensorCB(const turtlebot_node::TurtlebotSensorStateConstPtr& packet){
 
 
-  //  qDebug()<<packet->batteryCharge/100;
+    connected = true;
 
-    if(!saveInProgress){
+    if(!saveInProgress)
+    {
+
         currentSensorPacket = packet;
+
+      //  qDebug()<<currentSensorPacket->angle<<" "<<currentSensorPacket->distance;
         updateOdometry();
-}
+    }
+
   //  totalTraveledDistance += currentSensorPacket->distance/10;
 
   //  totalAngularHeading += currentSensorPacket->angle;
@@ -81,31 +87,29 @@ void Irobot::updateOdometry()
     // IF we don't receive compass updates
     if(currentOrientation.z == 1111)
     {
+        totalAngularHeading += currentSensorPacket->angle;
 
-        double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos(((double)currentSensorPacket->angle)*M_PI/180);
+        totalTraveledDistanceX += ((double)currentSensorPacket->distance*100)*cos(currentSensorPacket->angle*M_PI/180);
 
-        totalTraveledDistanceX = x;
+        //totalTraveledDistanceX = x;
 
-        double y = totalTraveledDistanceY + ((double)currentSensorPacket->distance/10 - prevDist)*sin((double)currentSensorPacket->angle*M_PI/180);
+        totalTraveledDistanceY+= ((double)currentSensorPacket->distance*100)*sin(currentSensorPacket->angle*M_PI/180);
 
-        totalTraveledDistanceY = y;
+        //totalTraveledDistanceY = y;
 
-        prevDist = (double)currentSensorPacket->distance/10;
+       // prevDist = (double)currentSensorPacket->distance;
 
-
+        qDebug()<<"total traveled distances: "<<totalTraveledDistanceX<<" "<<totalTraveledDistanceY<<" "<<totalAngularHeading;
     }
     else
     {
 
-        double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos(((double)currentOrientation.z - firstOrientation)*M_PI/180);
+        totalTraveledDistanceX += ((double)currentSensorPacket->distance*100)*cos(((double)currentOrientation.z - firstOrientation)*M_PI/180);
 
-        totalTraveledDistanceX = x;
 
-        double y = totalTraveledDistanceY + (((double)currentSensorPacket->distance/10 - prevDist)*sin(((double)currentOrientation.z - firstOrientation)*M_PI/180));
+        totalTraveledDistanceY += (((double)currentSensorPacket->distance*100)*sin(((double)currentOrientation.z - firstOrientation)*M_PI/180));
 
-        totalTraveledDistanceY = y;
 
-        prevDist = (double)currentSensorPacket->distance/10;
     }
 
 
@@ -159,7 +163,7 @@ void Irobot::saveData(QFile* file)
 
 bool Irobot::initIrobotConnection(QString robotPortName)
 {
-    connect(irobotRunProcess,SIGNAL(error(QProcess::ProcessError)),this,SLOT(handleRobotRunError(QProcess::ProcessError)));
+    /*connect(irobotRunProcess,SIGNAL(error(QProcess::ProcessError)),this,SLOT(handleRobotRunError(QProcess::ProcessError)));
 
     QString launchCommand = "rosparam set /brown/irobot_create_2_1/port /dev/";
     launchCommand.append(robotPortName);
@@ -175,13 +179,17 @@ bool Irobot::initIrobotConnection(QString robotPortName)
 
     irobotSetSerialProcess->close();
 
-    launchCommand = "rosrun os5000 oscompass";
+    launchCommand = "rosrun os5000 oscompass";*/
 
   //  os5000RunProcess->start(launchCommand);
 
     os5000Subscriber = n.subscribe("os5000_data",10,&Irobot::os5000CB,this);
 
-    launchCommand = "rosrun irobot_create_2_1 driver.py";
+    createSubscriber = n.subscribe("turtlebot_node/sensor_state",10,&Irobot::sensorCB,this);
+
+    createPublisher =  n.advertise<geometry_msgs::Twist>("cmd_vel",1);
+
+   /* launchCommand = "rosrun irobot_create_2_1 driver.py";
 
     irobotRunProcess->setProcessChannelMode(QProcess::MergedChannels);
     irobotRunProcess->start(launchCommand);
@@ -209,14 +217,14 @@ bool Irobot::initIrobotConnection(QString robotPortName)
 
         createSubscriber = n.subscribe("sensorPacket",100,&Irobot::sensorCB,this);
 
-        createPublisher = n.advertise<geometry_msgs::Twist>("cmd_vel",100);
+        createPublisher = n.advertise<geometry_msgs::Twist>("cmd_vel",1);
 
 
         return true;
 
-    }
+    }*/
 
-    return false;
+   // return false;
 
 }
 Irobot::~Irobot(){
@@ -225,22 +233,7 @@ Irobot::~Irobot(){
 
    // createSubscriber.shutdown();
 
-    if(irobotSetSerialProcess->isOpen()){
 
-        irobotSetSerialProcess->terminate();
-
-        if(irobotSetSerialProcess->waitForFinished(1000))
-            qDebug()<<"Serial Process has just ended";
-    }
-    if(irobotRunProcess->isOpen()){
-
-        irobotRunProcess->terminate();
-
-        if(irobotRunProcess->waitForFinished(3000))
-                qDebug()<<"Irobot run process has just ended";
-
-
-    }
 
 }
 

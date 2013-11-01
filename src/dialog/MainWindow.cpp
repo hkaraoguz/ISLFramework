@@ -221,6 +221,7 @@ void MainWindow::on_butBubbleProcessing_clicked()
 
 void MainWindow::handleRobotDataSaveRequest()
 {
+    if(!robot->isConnected()) return;
 
     if(saveDataFileName == NULL){
 
