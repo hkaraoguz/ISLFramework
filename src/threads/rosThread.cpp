@@ -1,27 +1,19 @@
 #include "rosThread.h"
-
+#include <QDebug>
 RosThread::RosThread()
 {
     shutdown = false;
 
+    velocityCommand.linear.x = 0;
+    velocityCommand.angular.z = 0;
 
 }
 
-RosThread::RosThread(int argc, char **argv, std::string nodeName){
+void RosThread::loop()
+{
+    ros::NodeHandle n;
 
-    //  ros::init(argc, argv, nodeName);
-
- //   ros::init(argc,argv,nodeName);
-}
-
-void RosThread::run(){
-
-  //  int argc; // Player Main() method does not take argument
-  //  char **argv; // What to do with argc and argv??
-
-   // const M_string nnn;
-
- //   ros::init(argc,argv,"ISLFramework");
+   velocityCommandPublisher =  n.advertise<geometry_msgs::Twist>("cmd_vel",1);
 
     if(!ros::ok()){
 
@@ -32,19 +24,20 @@ void RosThread::run(){
 
      emit rosStarted();
 
-     ros::AsyncSpinner spinner(2);
+    // ros::AsyncSpinner spinner(2);
 
-     spinner.start();
+    // spinner.start();
 
-   // ros::Rate loop(30);
+    ros::Rate loop(10);
 
-    while(ros::ok() &&  !shutdown){
+    while(ros::ok())
+    {
 
+        velocityCommandPublisher.publish(velocityCommand);
 
+        ros::spinOnce();
 
-             //   ros::spinOnce();
-
-             //   loop.sleep();
+        loop.sleep();
 
 
 
@@ -62,3 +55,25 @@ void RosThread::shutdownROS()
 
 
 }
+/*void RosThread::handleVelocityCommand(QVector<double> velCommand)
+{
+     qDebug()<<"Helllo"<<velCommand.size();
+
+    if(velCommand.size() == 2){
+
+        qDebug()<<"Helllo"<<velCommand.size();
+
+
+        velocityCommand.linear.x = (double)velCommand.at(0);
+        velocityCommand.angular.z = (double)velCommand.at(1);
+
+        qDebug()<<"Hello"<<velocityCommand.linear.x<<" "<<velocityCommand.angular.z;
+    }
+    else
+    {
+        velocityCommand.linear.x = 0.0;
+        velocityCommand.angular.z = 0.0;
+
+    }
+}*/
+

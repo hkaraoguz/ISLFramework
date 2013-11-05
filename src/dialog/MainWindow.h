@@ -61,7 +61,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    RosThread rosThread;
+    RosThread* rosLoop;
+    QThread* rosLoopThread;
     ros::NodeHandle n;
     PCprocessing pcProcess;
 

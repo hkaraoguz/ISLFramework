@@ -25,9 +25,26 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    initView();
 
-    rosThread.start();
+
+    rosLoop =  new RosThread;
+    rosLoopThread = new QThread(this);
+
+
+    rosLoop->moveToThread(rosLoopThread);
+
+    connect(rosLoopThread,SIGNAL(finished()),rosLoop,SLOT(deleteLater()));
+    connect(rosLoopThread,SIGNAL(started()),rosLoop,SLOT(loop()));
+
+
+
+     initView();
+
+     rosLoopThread->start();
+
+
+
+
 
 
 
@@ -70,8 +87,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    this->rosThread.shutdownROS();
-    while(rosThread.isRunning());
+    this->rosLoop->shutdownROS();
+    rosLoopThread->quit();
+    while(rosLoopThread->isRunning());
     DatabaseManager::closeDB();
     //delete viv;
     delete ui;
@@ -81,9 +99,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::initView(){
 
-    connect(&rosThread,SIGNAL(rosStartFailed(void)),this,SLOT(handleROSStartFailure(void)));
+    connect(rosLoop,SIGNAL(rosStartFailed(void)),this,SLOT(handleROSStartFailure(void)));
 
-    connect(&rosThread,SIGNAL(rosStarted(void)),this,SLOT(handleRosThreadStart(void)));
+    connect(rosLoop,SIGNAL(rosStarted(void)),this,SLOT(handleRosThreadStart(void)));
 
    pclDialog = 0;
    irobotDialog = 0;
@@ -181,6 +199,11 @@ void MainWindow::handleRosThreadStart(){
   //   subs = n.subscribe("sensorPacket",1000,&MainWindow::sensorCB,this);
 
     robot = new Irobot(this);
+
+    robot->rosThread = this->rosLoop;
+
+   // qRegisterMetaType<QVector<double> >("QVector<double>");
+   // connect(robot,SIGNAL(velocityCommand(QVector<double>)),rosLoop,SLOT(handleVelocityCommand(QVector<double>)));
 
     if(!irobotDialog){
 

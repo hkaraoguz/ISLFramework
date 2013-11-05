@@ -20,11 +20,15 @@
 #include <pcl-1.5/pcl/point_types.h>
 #include <pcl-1.5/pcl/io/pcd_io.h>
 #include <pcl-1.5/pcl/ros/conversions.h>
-
 #include <turtlebot_node/TurtlebotSensorState.h>
 
-//#include <brown_drivers/irobot_create_2_1/msg_gen/cpp/include/irobot_create_2_1/SensorPacket.h>
 #include <QProcess>
+#include <QVector>
+
+
+/* Forward Decleration */
+class RosThread;
+
 
 class Irobot : public QObject
 {
@@ -45,6 +49,8 @@ public:
     double getFirstOrientation();
 
     bool isConnected();
+
+    RosThread* rosThread;
 
 private:
 
@@ -89,6 +95,8 @@ private:
      bool connected;
     
 signals:
+
+     void velocityCommand(QVector<double> cmd);
     
 public slots:
 

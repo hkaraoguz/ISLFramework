@@ -1,4 +1,5 @@
 #include "irobot.h"
+#include "rosThread.h"
 #include <QDebug>
 #include <QIODevice>
 Irobot::Irobot(QObject *parent) :
@@ -99,7 +100,7 @@ void Irobot::updateOdometry()
 
        // prevDist = (double)currentSensorPacket->distance;
 
-        qDebug()<<"total traveled distances: "<<totalTraveledDistanceX<<" "<<totalTraveledDistanceY<<" "<<totalAngularHeading;
+     //   qDebug()<<"total traveled distances: "<<totalTraveledDistanceX<<" "<<totalTraveledDistanceY<<" "<<totalAngularHeading;
     }
     else
     {
@@ -126,30 +127,24 @@ void Irobot::saveData(QFile* file)
     if(currentOrientation.z == 1111)
     {
 
-        double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos((double)currentSensorPacket->angle*M_PI/180);
+        totalTraveledDistanceX += ((double)currentSensorPacket->distance*100)*cos(currentSensorPacket->angle*M_PI/180);
 
-        totalTraveledDistanceX = x;
+        //totalTraveledDistanceX = x;
 
-        double y = totalTraveledDistanceY + (((double)currentSensorPacket->distance/10 - prevDist)*sin((double)currentSensorPacket->angle*M_PI/180));
+        totalTraveledDistanceY+= ((double)currentSensorPacket->distance*100)*sin(currentSensorPacket->angle*M_PI/180);
 
-        totalTraveledDistanceY = y;
-
-        prevDist = (double)currentSensorPacket->distance/10;
-
-        stream<<frameCount<<" "<<x<<" "<<y<<" "<<currentSensorPacket->angle<<" "<<currentOrientation.z<<"\n";
+        stream<<frameCount<<" "<<totalTraveledDistanceX<<" "<<totalTraveledDistanceY<<" "<<currentSensorPacket->angle<<" "<<currentOrientation.z<<"\n";
     }
     else
     {
 
-        double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance/10 - prevDist)*cos((double)currentOrientation.z*M_PI/180);
+        double x = totalTraveledDistanceX  + ((double)currentSensorPacket->distance*100)*cos((double)currentOrientation.z*M_PI/180);
 
         totalTraveledDistanceX = x;
 
-        double y = totalTraveledDistanceY + (((double)currentSensorPacket->distance/10 - prevDist)*sin((double)currentOrientation.z*M_PI/180));
+        double y = totalTraveledDistanceY + (((double)currentSensorPacket->distance*100)*sin((double)currentOrientation.z*M_PI/180));
 
         totalTraveledDistanceY = y;
-
-        prevDist = (double)currentSensorPacket->distance/10;
 
         stream<<frameCount<<" "<<x<<" "<<y<<" "<<currentSensorPacket->angle<<" "<<currentOrientation.z<<"\n";
 
@@ -239,11 +234,16 @@ Irobot::~Irobot(){
 
 void Irobot::setMotion(double forward, double angular){
 
-    velCommand.linear.x = forward;
 
-    velCommand.angular.z = angular;
 
-    createPublisher.publish(velCommand);
+    if(this->rosThread)
+    {
+        this->rosThread->velocityCommand.linear.x = forward;
+        this->rosThread->velocityCommand.angular.z = angular;
+
+        qDebug()<<"Motion Command sent";
+    }
+
 
 }
 
