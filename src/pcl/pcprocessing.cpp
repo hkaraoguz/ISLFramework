@@ -30,7 +30,7 @@ PCprocessing::PCprocessing()
 
     currentCloudNormals = boost::shared_ptr< pcl::PointCloud<pcl::Normal> >(new pcl::PointCloud<pcl::Normal>());
 
-   // cloud = pcl::PointCloud<pcl::PointXYZRGB>::Ptr(new pcl::PointCloud<pcl::PointXYZRGB>());
+    // cloud = pcl::PointCloud<pcl::PointXYZRGB>::Ptr(new pcl::PointCloud<pcl::PointXYZRGB>());
     cloud = boost::shared_ptr< pcl::PointCloud<pcl::PointXYZRGB> >(new pcl::PointCloud<pcl::PointXYZRGB>());
 
     // this->initializeViewer();
@@ -431,16 +431,19 @@ void PCprocessing::rotatePointCloud(sensor_msgs::PointCloud2::Ptr input, int rot
             0, 0, 0, 1;
 
 
+    std::vector<sensor_msgs::PointField> fields = input->fields;
 
-    pcl::PointCloud<pcl::PointXYZRGBA> tempCloud;
+    if(fields.at(3).name == "rgba")
+    {
+        pcl::PointCloud<pcl::PointXYZRGBA> tempCloud;
 
-    pcl::fromROSMsg(*input,tempCloud);
+        pcl::fromROSMsg(*input,tempCloud);
 
-    pcl::transformPointCloud(tempCloud,tempCloud,xx*yy*zz);
+        pcl::transformPointCloud(tempCloud,tempCloud,xx*yy*zz);
 
-    pcl::toROSMsg(tempCloud,*currentCloud);
+        pcl::toROSMsg(tempCloud,*currentCloud);
 
-    pcl::PointXYZRGBA pt = tempCloud.points.at(0);
+        pcl::PointXYZRGBA pt = tempCloud.points.at(0);
 
         if(pt.r == pt.r )
         {
@@ -468,68 +471,163 @@ void PCprocessing::rotatePointCloud(sensor_msgs::PointCloud2::Ptr input, int rot
         }
 
 
-   // viewer->removeAllPointClouds();
+        // viewer->removeAllPointClouds();
 
-   // viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
+        // viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
+    }
+    else
+    {
 
+        pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
+
+        pcl::fromROSMsg(*input,tempCloud);
+
+        pcl::transformPointCloud(tempCloud,tempCloud,xx*yy*zz);
+
+        pcl::toROSMsg(tempCloud,*currentCloud);
+
+        pcl::PointXYZRGB pt = tempCloud.points.at(0);
+
+        if(pt.r == pt.r )
+        {
+
+            if(pt.r != 0 || pt.b != 0 || pt.g != 0)
+            {
+
+                qDebug()<<"r is"<<pt.r;
+
+                viewer->removeCoordinateSystem();
+
+                this->initializeViewer(true);
+
+                viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud");
+
+            }
+            else
+            {
+
+                viewer->removeAllPointClouds();
+
+                viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+
+            }
+        }
+
+
+
+    }
 
     viewer->resetCamera();
 
 }
 void PCprocessing::scalePointCloud(sensor_msgs::PointCloud2::Ptr input, double scale)
 {
+     std::vector<sensor_msgs::PointField> fields = input->fields;
 
-    pcl::PointCloud<pcl::PointXYZRGBA> tempCloud;
-
-    pcl::fromROSMsg(*input,tempCloud);
-
-
-    for(long k = 0; k < tempCloud.width; k++){
-
-        pcl::PointXYZRGBA pt =  tempCloud.points[k];
-
-        pt.x = pt.x/scale;
-        pt.y = pt.y/scale;
-        pt.z = pt.z/scale;
-
-        tempCloud.points[k] = pt;
-
-
-    }
-
-    pcl::toROSMsg(tempCloud,*input);
-
-    pcl::PointXYZRGBA pt = tempCloud.points.at(0);
-
-    if(pt.r == pt.r )
+    if(fields.at(3).name == "rgba")
     {
 
-        if(pt.r != 0 || pt.b != 0 || pt.g != 0)
-        {
+        pcl::PointCloud<pcl::PointXYZRGBA> tempCloud;
 
-            qDebug()<<"r is"<<pt.r;
+        pcl::fromROSMsg(*input,tempCloud);
 
-            viewer->removeCoordinateSystem();
 
-            this->initializeViewer(true);
+        for(long k = 0; k < tempCloud.width; k++){
 
-            viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud");
+            pcl::PointXYZRGBA pt =  tempCloud.points[k];
 
-        }
-        else
-        {
+            pt.x = pt.x/scale;
+            pt.y = pt.y/scale;
+            pt.z = pt.z/scale;
 
-            viewer->removeAllPointClouds();
+            tempCloud.points[k] = pt;
 
-            viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
 
         }
+
+        pcl::toROSMsg(tempCloud,*input);
+
+        pcl::PointXYZRGBA pt = tempCloud.points.at(0);
+
+        if(pt.r == pt.r )
+        {
+
+            if(pt.r != 0 || pt.b != 0 || pt.g != 0)
+            {
+
+                qDebug()<<"r is"<<pt.r;
+
+                viewer->removeCoordinateSystem();
+
+                this->initializeViewer(true);
+
+                viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud");
+
+            }
+            else
+            {
+
+                viewer->removeAllPointClouds();
+
+                viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
+
+            }
+        }
+
+    }
+    else
+    {
+        pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
+
+        pcl::fromROSMsg(*input,tempCloud);
+
+
+        for(long k = 0; k < tempCloud.width; k++){
+
+            pcl::PointXYZRGB pt =  tempCloud.points[k];
+
+            pt.x = pt.x/scale;
+            pt.y = pt.y/scale;
+            pt.z = pt.z/scale;
+
+            tempCloud.points[k] = pt;
+
+
+        }
+
+        pcl::toROSMsg(tempCloud,*input);
+
+        pcl::PointXYZRGB pt = tempCloud.points.at(0);
+
+        if(pt.r == pt.r )
+        {
+
+            if(pt.r != 0 || pt.b != 0 || pt.g != 0)
+            {
+
+                qDebug()<<"r is"<<pt.r;
+
+                viewer->removeCoordinateSystem();
+
+                this->initializeViewer(true);
+
+                viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud");
+
+            }
+            else
+            {
+
+                viewer->removeAllPointClouds();
+
+                viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+
+            }
+        }
+
     }
 
-
-
-  //  viewer->removeAllPointClouds();
- //   viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
+    //  viewer->removeAllPointClouds();
+    //   viewer->addPointCloud<pcl::PointXYZRGB>(tempCloud.makeShared());
 
 
     viewer->resetCamera();
@@ -582,32 +680,32 @@ void PCprocessing::applyVoxelGridFilter(sensor_msgs::PointCloud2::Ptr input)
 
     pcl::PointXYZRGBA pt = tempCloud.points.at(0);
 
-        if(pt.r == pt.r )
+    if(pt.r == pt.r )
+    {
+
+        if(pt.r != 0 || pt.b != 0 || pt.g != 0)
         {
 
-            if(pt.r != 0 || pt.b != 0 || pt.g != 0)
-            {
+            qDebug()<<"r is"<<pt.r;
 
-                qDebug()<<"r is"<<pt.r;
+            viewer->removeCoordinateSystem();
 
-                viewer->removeCoordinateSystem();
+            this->initializeViewer(true);
 
-                this->initializeViewer(true);
+            viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud");
 
-                viewer->updatePointCloud(tempCloud.makeShared(),"kinect cloud");
-
-            }
-            else
-            {
-
-                viewer->removeAllPointClouds();
-
-                viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
-
-            }
         }
+        else
+        {
 
-   /* viewer->removeAllPointClouds();
+            viewer->removeAllPointClouds();
+
+            viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());
+
+        }
+    }
+
+    /* viewer->removeAllPointClouds();
     viewer->addPointCloud<pcl::PointXYZRGBA>(tempCloud.makeShared());*/
 
 
@@ -815,11 +913,28 @@ bool PCprocessing::savePointCloud(int itemNumber, QString fileName){
 
     qDebug()<<itemPath;
 
+    std::vector<sensor_msgs::PointField> fields = currentCloud->fields;
+
+   if(fields.at(3).name == "rgba")
+   {
+
     pcl::PointCloud<pcl::PointXYZRGBA> tempCloud;
 
     pcl::fromROSMsg(*currentCloud,tempCloud);
 
     pcl::io::savePCDFileBinary(itemPath.toStdString(),tempCloud);
+
+    return true;
+   }
+   else
+   {
+       pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
+
+       pcl::fromROSMsg(*currentCloud,tempCloud);
+
+       pcl::io::savePCDFileBinary(itemPath.toStdString(),tempCloud);
+
+   }
 
     return false;
 }
