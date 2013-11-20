@@ -46,7 +46,7 @@ PclDialog::PclDialog(QWidget *parent,PCprocessing* pcprocess) :QDialog(parent),u
 
     this->setWindowTitle("PC Processing Dialog");
 
-   // this->setAttribute(Qt::WA_DeleteOnClose);
+    // this->setAttribute(Qt::WA_DeleteOnClose);
 
     pcProcessing = pcprocess;
 
@@ -57,14 +57,14 @@ PclDialog::PclDialog(QWidget *parent,PCprocessing* pcprocess) :QDialog(parent),u
     ui->qvtkwidget->SetRenderWindow(renderWindow);
 
 
-/********This part is needed in order to solve the random chrash problem of qvtk widget*************/
+    /********This part is needed in order to solve the random chrash problem of qvtk widget*************/
     viwer->setupInteractor(ui->qvtkwidget->GetInteractor(),ui->qvtkwidget->GetRenderWindow());
     viwer->getInteractorStyle()->setKeyboardModifier(pcl::visualization::INTERACTOR_KB_MOD_SHIFT);
     viwer->getRenderWindow()->Render();
-/****************************************************************************************************/
+    /****************************************************************************************************/
 
 
-   // sleep(1);
+    // sleep(1);
 
     this->initializeView();
 
@@ -86,9 +86,9 @@ PclDialog::PclDialog(QWidget *parent) :
 
     ui->qvtkwidget->SetRenderWindow(renderWindow);
 
-   // viwer->setBackgroundColor (0, 0, 0);
+    // viwer->setBackgroundColor (0, 0, 0);
 
-  //  viwer->initCameraParameters ();
+    //  viwer->initCameraParameters ();
 
 
 
@@ -97,7 +97,7 @@ PclDialog::PclDialog(QWidget *parent) :
     //PCprocessing::initializeViewer();
 
 
-  //  sleep(1);
+    //  sleep(1);
 
     this->initializeView();
 
@@ -211,10 +211,10 @@ void PclDialog::on_butSetDSetPath_clicked()
 
 void PclDialog::on_butLoadItem_clicked()
 {
-     int num = 0;
+    int num = 0;
 
     if(ui->lEditItemNumber->text().length() != 0)
-    num = ui->lEditItemNumber->text().toInt();
+        num = ui->lEditItemNumber->text().toInt();
     else num = -1;
 
     int datasetSize = PCprocessing::getNumofItems();
@@ -300,7 +300,7 @@ void PclDialog::on_butCalNormals_clicked()
 
 void PclDialog::on_butSaveNormalAngleHist_clicked()
 {
-     int itemNumber = ui->lEditItemNumber->text().toInt();
+    int itemNumber = ui->lEditItemNumber->text().toInt();
 
     if(pcProcessing->saveNormalAngleHistogram(pcProcessing->getCurrentCloudNormals(),itemNumber)){
 
@@ -338,13 +338,13 @@ void PclDialog::on_butScalePointCloud_clicked()
 
 void PclDialog::handleKinectFrame(const sensor_msgs::PointCloud2ConstPtr &cloud)
 {
-   // sensor_msgs::PointCloud2::Ptr ncloud = cloud;
+    // sensor_msgs::PointCloud2::Ptr ncloud = cloud;
 
     pcl::PointCloud<pcl::PointXYZRGB> tempCloud;
 
     pcl::fromROSMsg(*cloud,tempCloud);
 
-   // qDebug()<<"Height of captured cloud: "<<tempCloud.height;
+    // qDebug()<<"Height of captured cloud: "<<tempCloud.height;
 
     pcProcessing->showPointCloud(tempCloud);
 
@@ -568,7 +568,7 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 
     //int start = ui->lEditDatasetStart->text().toInt();
 
-   // int endd = ui->lEditDatasetEnd->text().toInt();
+    // int endd = ui->lEditDatasetEnd->text().toInt();
 
     for(int i = 0; i < fileNames.size(); i++)
     {
@@ -589,30 +589,57 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 
 
 
+
+
             std::vector<bubblePointXYZ> bubble;
 
             sensor_msgs::PointCloud2::Ptr cloud = pcProcessing->getCurrentCloud();
 
-            pcl::PointCloud<pcl::PointXYZRGBA> normalCloud;
+            std::vector<sensor_msgs::PointField> fields = cloud->fields;
 
-            pcl::fromROSMsg(*cloud,normalCloud);
-
-            for(unsigned int i = 0; i < normalCloud.points.size(); i++)
+            if(fields.at(3).name == "rgba")
             {
 
-                bubblePointXYZ pt;
+                pcl::PointCloud<pcl::PointXYZRGBA> normalCloud;
 
-                pt.x = normalCloud.points.at(i).x;
-                pt.y = normalCloud.points.at(i).y;
-                pt.z = normalCloud.points.at(i).z;
+                pcl::fromROSMsg(*cloud,normalCloud);
 
-                bubble.push_back(pt);
+                for(unsigned int i = 0; i < normalCloud.points.size(); i++)
+                {
 
+                    bubblePointXYZ pt;
+
+                    pt.x = normalCloud.points.at(i).x;
+                    pt.y = normalCloud.points.at(i).y;
+                    pt.z = normalCloud.points.at(i).z;
+
+                    bubble.push_back(pt);
+
+                }
             }
+            else
+            {
 
+                pcl::PointCloud<pcl::PointXYZRGB> normalCloud;
+
+                pcl::fromROSMsg(*cloud,normalCloud);
+
+                for(unsigned int i = 0; i < normalCloud.points.size(); i++)
+                {
+
+                    bubblePointXYZ pt;
+
+                    pt.x = normalCloud.points.at(i).x;
+                    pt.y = normalCloud.points.at(i).y;
+                    pt.z = normalCloud.points.at(i).z;
+
+                    bubble.push_back(pt);
+
+                }
+            }
             double maxRangeMeters = ui->lEditCloudMaxRange->text().toDouble();
 
-             double noHarmonics = ui->lEditNoInvariantHarmonics->text().toInt();
+            double noHarmonics = ui->lEditNoInvariantHarmonics->text().toInt();
 
             vector<bubblePoint> sphBubble = bubbleProcess::convertBubXYZ2BubSpherical(bubble,maxRangeMeters);
 
@@ -855,9 +882,9 @@ void PclDialog::on_butCalculateAllNormalAngleHistogram_clicked()
 
     int endd = ui->lEditDatasetEnd->text().toInt();
 
-   // QString inputBubbleName = ui->lEditInputBubbleName->text();
+    // QString inputBubbleName = ui->lEditInputBubbleName->text();
 
-   // QString outputFileName =  ui->lEditOutputInvName->text();
+    // QString outputFileName =  ui->lEditOutputInvName->text();
 
     for(int i = start; i < endd; i++){
 
@@ -899,7 +926,7 @@ void PclDialog::on_butKinectStart_clicked()
 
 
 
-   // ui->qvtkwidget->set
+        // ui->qvtkwidget->set
 
         grabber->grabFromKinect();
     }

@@ -719,7 +719,7 @@ void ImageProcessDialog::on_butAddtoInputFileNames_clicked()
     QFileDialog dialog(this);
     dialog.setDirectory(dirPath);
     dialog.setFileMode(QFileDialog::ExistingFiles);
-    dialog.setNameFilter("All image files (*.png *.jpeg *.jpg)");
+    dialog.setNameFilter("All image files (*.ppm *.png *.jpeg *.jpg)");
     QStringList fileNames;
 
     if (dialog.exec())
