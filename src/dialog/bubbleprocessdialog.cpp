@@ -2,11 +2,13 @@
 #include "ui_bubbleprocessdialog.h"
 #include "bubbleprocess.h"
 #include "bubbletransformer.h"
+#include "databasemanager.h"
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
 
 vector<bubblePoint> aBubble;
+
 int counter = 0;
 
 BubbleProcessDialog::BubbleProcessDialog(QWidget *parent) :
@@ -259,8 +261,36 @@ void BubbleProcessDialog::on_But_fetchBubbleFiles_clicked()
 
 void BubbleProcessDialog::on_But_chooseFile_clicked()
 {
+
+    if(DatabaseManager::isOpen())
+    {
+        int bubbleType = ui->Edit_bubbleType->text().toInt();
+
+        int bubbleNumber = ui->Edit_bubbleNumber->text().toInt();
+
+        std::vector<bubblePoint> bubble = DatabaseManager::readBubble(bubbleType, bubbleNumber);
+
+        if(bubble.size() > 0)
+        {
+            ui->Widget_BPbubbleViewer->Points = bubble;
+
+            ui->Widget_BPbubbleViewer->setDrawType(DRAW_TYPE_DEFAULT);
+
+
+        }
+        else
+        {
+            qDebug()<<"Error!! Bubble can't be read from database";
+        }
+    }
+    else
+    {
+        qDebug()<<"Error!! Database is not open!!";
+    }
+
+
     // Get the root directory
-    QString path =   QFileDialog::getOpenFileName(this,"Open Bubble File",".",NULL);
+    /*   QString path =   QFileDialog::getOpenFileName(this,"Open Bubble File",".",NULL);
 
     if(path != NULL)
     {
@@ -283,7 +313,9 @@ void BubbleProcessDialog::on_But_chooseFile_clicked()
 
 
 
-    }
+    }*/
+
+
 
 
 }
@@ -333,7 +365,7 @@ void BubbleProcessDialog::on_ComboBox_fetchedBubbles_currentIndexChanged(int ind
 
         ui->Widget_BPbubbleViewer->Points = bubbles.at(index);
 
-         ui->Widget_BPbubbleViewer->setDrawType(DRAW_TYPE_DEFAULT);
+        ui->Widget_BPbubbleViewer->setDrawType(DRAW_TYPE_DEFAULT);
     }
 
 }
@@ -357,7 +389,7 @@ void BubbleProcessDialog::on_But_readPoseData_clicked()
 
         bubbleProcess::setPositionData(poses);
 
-       // bubbleProcess::se
+        // bubbleProcess::se
 
 
 
@@ -382,7 +414,7 @@ void BubbleProcessDialog::on_But_transformBubbles_clicked()
     if(bubbles.size() == 0) return;
 
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-             return;
+        return;
 
     vector < vector <bubblePoint> > transformedBubbles;
 
@@ -416,8 +448,8 @@ void BubbleProcessDialog::on_But_transformBubbles_clicked()
     file.close();
     //ui->Widget_BPbubbleViewer->Points = transformedBubble;
 
-   // ui->Widget_BPbubbleViewer->setDrawType(DRAW_TYPE_DEFAULT);
-  //  bubbleProcess::
+    // ui->Widget_BPbubbleViewer->setDrawType(DRAW_TYPE_DEFAULT);
+    //  bubbleProcess::
 
 }
 
@@ -425,7 +457,52 @@ void BubbleProcessDialog::on_But_calcDiff_clicked()
 {
     if(ui->Edit_transformSource->text() == NULL || ui->Edit_transformTarget->text() ==NULL) return;
 
-    int source = ui->Edit_transformSource->text().toInt();
+    if(DatabaseManager::isOpen())
+    {
+        int bubbleType = ui->Edit_bubbleType->text().toInt();
+
+        int sourceBubbleNumber = ui->Edit_transformSource->text().toInt();
+
+        int targetBubbleNumber = ui->Edit_transformTarget->text().toInt();
+
+        std::vector<bubblePoint> sourcebubble = DatabaseManager::readBubble(bubbleType, sourceBubbleNumber);
+
+        QFile file("bubbleDiffs.txt");
+        file.open(QFile::WriteOnly);
+        QTextStream str(&file);
+        for(int i = 0; i < 1340; i++ ){
+
+            std::vector<bubblePoint> targetbubble = DatabaseManager::readBubble(bubbleType, i);
+
+
+            if(sourcebubble.size() > 0 && targetbubble.size() > 0)
+            {
+
+                vector <double> res = bubbleProcess::calculateEuclideanDiff(sourcebubble,targetbubble);
+
+                qDebug()<<"diff is"<<res[0]<<" "<<sourceBubbleNumber<<" "<<targetBubbleNumber;
+
+                str<<res[0]<<"\n";
+
+                // ui->Widget_BPbubbleViewer->Points = bubble;
+
+                // ui->Widget_BPbubbleViewer->setDrawType(DRAW_TYPE_DEFAULT);
+
+
+            }
+            else
+            {
+                qDebug()<<"Error!! One of the bubbles cannot be read from the database";
+            }
+        }
+        file.close();
+    }
+    else
+    {
+        qDebug()<<"Error!! Database is not open!!";
+    }
+
+    /* int source = ui->Edit_transformSource->text().toInt();
 
     int target = ui->Edit_transformTarget->text().toInt();
 
@@ -468,6 +545,6 @@ void BubbleProcessDialog::on_But_calcDiff_clicked()
     ui->Widget_BPbubbleViewer->Points = transformedBubble;
 
     ui->Widget_BPbubbleViewer->setDrawType(DRAW_TYPE_DEFAULT);
-  //  bubbleProcess::
+  //  bubbleProcess::*/
 
 }

@@ -573,7 +573,7 @@ border-color: rgb(0, 0, 0);
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>66</y>
+      <y>60</y>
       <width>41</width>
       <height>27</height>
      </rect>
@@ -586,13 +586,26 @@ border-color: rgb(0, 0, 0);
     <property name="geometry">
      <rect>
       <x>124</x>
-      <y>71</y>
+      <y>65</y>
       <width>101</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
      <string>Harmonic No:</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cBoxBubble">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>97</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Bubble</string>
     </property>
    </widget>
   </widget>

@@ -680,17 +680,19 @@ std::vector< double > bubbleProcess::calculateEuclideanDiff(vector<bubblePoint> 
 
         for(unsigned long j = 0; j < bubble2.size(); j++){
 
-            if(bubble1[i].panAng == bubble2[j].panAng && bubble1[i].tiltAng == bubble2[j].tiltAng && bubble2[j].val < 1){
+            if(bubble1[i].panAng == bubble2[j].panAng && bubble1[i].tiltAng == bubble2[j].tiltAng && bubble2[j].val < 1)
+            {
                 if(sum == -1000) sum = 0;
+
                 sum += fabs(bubble1[i].val - bubble2[j].val);
                 count++;
                // bubble2.erase(bubble2.begin()+j);
                 bubble2[j].val = 1000;
 
 
-
             }
-            else{
+            else
+            {
 
                // sum += fabs(bubble1[i].val);
             }
@@ -713,8 +715,8 @@ std::vector< double > bubbleProcess::calculateEuclideanDiff(vector<bubblePoint> 
     if(sum == -1000) sum = 10000;
 
     // Sum over overlap
-    result.push_back(sum/overlap);
-
+    //result.push_back(sum/overlap);
+    result.push_back(sum);
     // Overlap
     result.push_back(overlap);
 

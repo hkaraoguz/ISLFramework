@@ -141,11 +141,11 @@ std::vector<bubblePoint> DatabaseManager::readBubble(int type, int number)
     {
         bubblePoint pt ;
 
-        pt.panAng = query.value(2).toInt();
+        pt.panAng = query.value(3).toInt();
 
-        pt.tiltAng = query.value(3).toInt();
+        pt.tiltAng = query.value(4).toInt();
 
-        pt.val = query.value(4).toDouble();
+        pt.val = query.value(5).toDouble();
 
         bubble.push_back(pt);
 
@@ -168,7 +168,7 @@ bool DatabaseManager::insertBubble(int type, int number, std::vector<bubblePoint
 
           //  query.exec("PRAGMA journal_mode = MEMORY");
          //  query.exec("PRAGMA synchronous = OFF");
-            query.prepare(QString("replace into bubble values( ?, ?, ?, ?, ?)"));
+            query.prepare(QString("replace into bubble values( ?, ?, ?, ?, ?, ?)"));
 
                           //    query.prepare(QString("insert into bubble values( :type, :number, :pan, :tilt, :val) ON DUPLICATE KEY update val = :val)"));
 

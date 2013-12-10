@@ -217,6 +217,9 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
     clock_t start,ends;
 
+
+
+
     if(ui->rButHue->isChecked())
     {
 
@@ -283,6 +286,16 @@ void ImageProcessDialog::on_butApplyAll_clicked()
             qDebug()<<"Hue bubble generation time"<<((float)(ends-start)*1000/CLOCKS_PER_SEC)<<" ms";
 
             int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
+
+
+            // We want to add bubbles to the database
+            if(ui->cBoxBubble->isChecked())
+            {
+                    qDebug()<<"Calculating bubble for hue";
+
+                    DatabaseManager::insertBubble(HUE_TYPE, frameNumber,reducedHueBubble);
+
+            }
 
             if(ui->cBoxInvariants->isChecked())
             {
@@ -408,6 +421,15 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
                 resred = bubbleProcess::reduceBubble(imgBubble);
 
+                // We want to add bubbles to the database
+                if(ui->cBoxBubble->isChecked())
+                {
+                        qDebug()<<"Calculating bubble for filter";
+
+                        DatabaseManager::insertBubble(filterNumber,frameNumber,resred);
+
+                }
+
                 if(ui->cBoxInvariants->isChecked())
                 {
                     int noHarmonics = ui->lEditNoHarmonicsInvariant->text().toInt();
@@ -415,8 +437,6 @@ void ImageProcessDialog::on_butApplyAll_clicked()
                     DFCoefficients dfcoeff =  bubbleProcess::calculateDFCoefficients(resred,noHarmonics,noHarmonics);
 
                     std::vector< std::vector< float > > invariants =  bubbleProcess::calculateInvariants(resred,dfcoeff,noHarmonics,noHarmonics);
-
-
 
                     DatabaseManager::insertInvariants(filterNumber,frameNumber,invariants);
                 }
