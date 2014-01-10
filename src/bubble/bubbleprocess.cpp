@@ -41,6 +41,7 @@ QString bubbleProcess::getBubblesRootDirectory(){
 }
 bubbleStatistics bubbleProcess::calculateBubbleStatistics(vector<bubblePoint> bubble, float maxDist)
 {
+    bubbleStatistics result;
 
    // cv::Mat bubbleArr(1,bubble.size(),CV_32FC1);
    std::vector<float> values(bubble.size());
@@ -51,6 +52,11 @@ bubbleStatistics bubbleProcess::calculateBubbleStatistics(vector<bubblePoint> bu
              //qDebug()<<bubbleArr.at<float>(1,i);
     }
 
+    cv::Scalar summ = cv::sum(values);
+
+    result.mean = summ[0]/(60*60);
+
+    if(result.mean > 1.0) result.mean = 1.0;
 /*    imshow("bubbleArr",bubbleArr);
     cv::waitKey(0);
     cv::destroyAllWindows();*/
@@ -60,10 +66,10 @@ bubbleStatistics bubbleProcess::calculateBubbleStatistics(vector<bubblePoint> bu
 
     cv::meanStdDev(values,mean,stddev);
 
-    bubbleStatistics result;
-
     result.maxDist = maxDist;
-    result.mean = mean.val[0];
+
+    //  result.mean = mean.val[0];
+
     result.variance = stddev.val[0]*stddev.val[0];
 
     return result;
