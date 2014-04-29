@@ -34,6 +34,10 @@ private slots:
 
     void on_But_calcDiff_clicked();
 
+
+
+    void on_but_SaveGLWidget_clicked();
+
 private:
     Ui::BubbleProcessDialog *ui;
 

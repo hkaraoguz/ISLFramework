@@ -622,6 +622,19 @@
       <string>Calculate Diff</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="but_SaveGLWidget">
+     <property name="geometry">
+      <rect>
+       <x>560</x>
+       <y>340</y>
+       <width>97</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Save</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>

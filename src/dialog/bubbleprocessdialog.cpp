@@ -6,6 +6,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include <QDir>
 
 vector<bubblePoint> aBubble;
 
@@ -546,5 +547,23 @@ void BubbleProcessDialog::on_But_calcDiff_clicked()
 
     ui->Widget_BPbubbleViewer->setDrawType(DRAW_TYPE_DEFAULT);
   //  bubbleProcess::*/
+
+}
+
+
+
+void BubbleProcessDialog::on_but_SaveGLWidget_clicked()
+{
+
+    QString path = QDir::homePath();
+
+    path.append("/bubble.jpg");
+
+    QPixmap image = QPixmap::grabWidget( ui->Widget_BPbubbleViewer );
+
+    if( !image.save( path, "JPG",99 ) )
+       {
+          QMessageBox::warning( this, "Save Image", "Error saving image." );
+       }
 
 }

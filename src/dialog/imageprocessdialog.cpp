@@ -295,6 +295,28 @@ void ImageProcessDialog::on_butApplyAll_clicked()
 
                     DatabaseManager::insertBubble(HUE_TYPE, frameNumber,reducedHueBubble);
 
+                    /************************** Perform filtering and obtain resulting mat images ***********************/
+                        Mat satChannel= ImageProcess::generateChannelImage(img,1,satLower,satUpper,valLower,valUpper);
+                        Mat valChannel= ImageProcess::generateChannelImage(img,2,satLower,satUpper,valLower,valUpper);
+                   /*****************************************************************************************************/
+
+                   /*************************** Convert images to bubbles ***********************************************/
+
+                        vector<bubblePoint> satBubble = bubbleProcess::convertGrayImage2Bub(satChannel,focalLengthPixels,255);
+                        vector<bubblePoint> valBubble = bubbleProcess::convertGrayImage2Bub(valChannel,focalLengthPixels,255);
+
+                   /*****************************************************************************************************/
+
+
+                        /***************** Reduce the bubbles ********************************************************/
+                        vector<bubblePoint> reducedSatBubble = bubbleProcess::reduceBubble(satBubble);
+                        vector<bubblePoint> reducedValBubble = bubbleProcess::reduceBubble(valBubble);
+
+                         DatabaseManager::insertBubble(SAT_TYPE, frameNumber,reducedSatBubble);
+
+                         DatabaseManager::insertBubble(VAL_TYPE, frameNumber,reducedValBubble);
+
+
             }
 
             if(ui->cBoxInvariants->isChecked())

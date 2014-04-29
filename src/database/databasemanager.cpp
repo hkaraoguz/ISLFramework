@@ -40,7 +40,28 @@ bool DatabaseManager::openDB(QString filePath)
         return db.open();
     }
 
-    return true;
+        db.close();
+
+        db.removeDatabase("QSQLITE");
+
+        db = QSqlDatabase::addDatabase("QSQLITE");
+
+#ifdef Q_OS_LINUX
+        // NOTE: We have to store database file into user home folder in Linux
+        //QString path(QDir::home().path());
+
+        //path.append(QDir::separator()).append("Development").append(QDir::separator()).append("ISL").append(QDir::separator()).append("Datasets").append(QDir::separator()).append("ImageClef2012").append(QDir::separator()).append("bubble.bubbledb");
+        QString path = QDir::toNativeSeparators(filePath);
+
+        db.setDatabaseName(path);
+        //Development/ISL/Datasets/ImageClef2012
+#else
+        // NOTE: File exists in the application private folder, in Symbian Qt implementation
+        //  bubbledb.setDatabaseName("my.bubbledb.sqlite");
+#endif
+
+
+    return db.open();
 }
 /*DatabaseManager::~DatabaseManager()
 {
