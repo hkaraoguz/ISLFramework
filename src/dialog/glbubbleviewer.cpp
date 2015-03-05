@@ -41,7 +41,7 @@ GLBubbleViewer::GLBubbleViewer(QWidget *parent)
 // initialize the GL Scene
 void GLBubbleViewer::initializeGL()
 {
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClearColor(1.0, 1.0, 1.0, 0.0);
     glClearDepth(1.0);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -307,7 +307,7 @@ void GLBubbleViewer::drawPointsOnly()
         float y1 = xy*sin((pan)*3.14/180);
         float z1 =  newVal*sin(tilt*3.14/180);
 
-         glColor3f(1,1,1);
+         glColor3f(0,0,0);
 
         glBegin(GL_LINES);
 
