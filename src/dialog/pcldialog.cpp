@@ -651,6 +651,8 @@ void PclDialog::on_butGeneratePointCloudBubbles_clicked()
 
             DatabaseManager::insertInvariants(LASER_TYPE,frameNumber,invariants);
 
+            DatabaseManager::insertBubble(LASER_TYPE,frameNumber,sphRedBubble);
+
             // Calculate statistics
             bubbleStatistics statsLaser=  bubbleProcess::calculateBubbleStatistics(sphRedBubble,maxRangeMeters);
 
