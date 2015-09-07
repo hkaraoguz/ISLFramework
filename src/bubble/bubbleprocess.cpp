@@ -184,6 +184,68 @@ vector<vector<int> > bubbleProcess::calculateImageTiltAngles(int focalLengthPixe
     return result;
 
 }
+vector<bubblePoint> bubbleProcess::convertGrayImage2Bub(cv::Mat grayImage, int focalLengthPixels, int maxval, float angleOffset)
+{
+
+    vector<bubblePoint> result;
+
+   // if(imagePanAngles[12][12] == 0) calculateImagePanAngles(focalLengthPixels,grayImage.cols,grayImage.rows);
+
+   // if(imageTiltAngles.size() == 0) calculateImageTiltAngles(focalLengthPixels,grayImage.cols,grayImage.rows);
+
+
+    int centerx = grayImage.cols/2;
+
+    int centery = grayImage.rows/2;
+
+    for(int i = 0; i < grayImage.rows; i++)
+    {
+        for(int j = 0; j < grayImage.cols; j++)
+        {
+        /*    int deltax = centerx - j;
+
+            int deltay = centery - i;
+
+            float pan = atan2((double)deltax,(double)focalLengthPixels);
+
+            float tilt = atan2((double)deltay,(double)focalLengthPixels);*/
+
+            float val = (float)grayImage.at<uchar>(i,j)/(float)maxval;
+
+            if(val > 0){
+        //    qDebug()<<pan<<" "<<tilt;
+
+                bubblePoint pt;
+
+                pt.panAng = imagePanAngles[i][j] + angleOffset;
+
+                pt.tiltAng = imageTiltAngles[i][j];
+
+             //   pt.panAng = pan*180/M_PI;
+
+                if(pt.panAng < 0)pt.panAng += 360;
+                else if(pt.panAng > 359) pt.panAng -=360;
+
+              //  pt.tiltAng = tilt*180/M_PI;
+
+                if(pt.tiltAng < 0)pt.tiltAng += 360;
+                else if(pt.tiltAng > 359) pt.tiltAng -=360;
+
+                pt.val = val;
+
+                result.push_back(pt);
+            }
+        }
+
+
+
+    }
+
+    return result;
+
+
+}
+
 vector<bubblePoint> bubbleProcess::convertGrayImage2Bub(cv::Mat grayImage, int focalLengthPixels, int maxval)
 {
 

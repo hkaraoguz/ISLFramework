@@ -15,7 +15,7 @@ int frameCounter = 0;
 
 int returnValtoRadius(float val){
 
-    return (SPHERE_RADIUS + SPHERE_RADIUS*2*val);
+    return (SPHERE_RADIUS + SPHERE_RADIUS*0.04*val);
 }
 
 GLBubbleViewer::GLBubbleViewer(QWidget *parent)
@@ -289,11 +289,17 @@ void GLBubbleViewer::drawPointsOnly()
     {
         float pan = tempPoints.at(k).panAng;
 
+
+
         float tilt = tempPoints.at(k).tiltAng;
 
         float val = tempPoints.at(k).val;
 
+
+
         float newVal = returnValtoRadius(val);
+
+       //  qDebug()<<pan<<tilt<<val<<newVal;
 
         float xy =    SPHERE_RADIUS*cos((tilt)*3.14/180);
 

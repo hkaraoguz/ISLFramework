@@ -608,6 +608,65 @@ border-color: rgb(0, 0, 0);
      <string>Bubble</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="cBoxOmni">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>90</y>
+      <width>97</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Omni</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lEditNoImagesOmni">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>110</y>
+      <width>41</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lEditAngleOffsetOmni">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>140</y>
+      <width>41</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>125</x>
+      <y>145</y>
+      <width>91</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Angle Offset</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>122</x>
+      <y>116</y>
+      <width>91</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>No of Images</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

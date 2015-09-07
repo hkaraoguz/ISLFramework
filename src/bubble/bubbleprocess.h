@@ -182,6 +182,9 @@ public:
 
     static vector<bubblePoint> convertGrayImage2Bub(cv::Mat grayImage, int focalLengthPixels, int maxval);
 
+    static vector<bubblePoint> convertGrayImage2Bub(cv::Mat grayImage, int focalLengthPixels, int maxval, float angleOffset);
+
+
     static vector<vector <int> > calculateImagePanAngles(int focalLengthPixels,int imageWidth,int imageHeight);
 
     static vector<vector <int> > calculateImageTiltAngles(int focalLengthPixels,int imageWidth,int imageHeight);
